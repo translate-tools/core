@@ -9,10 +9,9 @@
 		"build": "gulp",
 		"clean:build": "rm -rf ./dist",
 		"prettify": "prettier --write **/*.{ts,tsx,js} && eslint --fix **/*.{ts,tsx,js}",
-		"publish": "npm run clean:build && npm run build && npm publish",
+		"publish": "npm run clean:build && npm run build && cd ./dist && npm publish",
 		"publish:patch": "npm version patch && npm run publish",
-		"prepare": "husky install",
-		"prepublishOnly": "npm run publish"
+		"prepare": "husky install"
 	},
 	"publishConfig": {
 		"access": "public"
