@@ -6,8 +6,16 @@
 	"license": "Apache-2.0",
 	"author": "Vitonsky <https://github.com/vitonsky>",
 	"scripts": {
+		"build": "gulp",
+		"clean:build": "rm -rf ./dist",
 		"prettify": "prettier --write **/*.{ts,tsx,js} && eslint --fix **/*.{ts,tsx,js}",
-		"prepare": "husky install"
+		"publish": "npm run clean:build && npm run build && npm publish",
+		"publish:patch": "npm version patch && npm run publish",
+		"prepare": "husky install",
+		"prepublishOnly": "npm run publish"
+	},
+	"publishConfig": {
+		"access": "public"
 	},
 	"dependencies": {
 		"idb": "^6.0.7",
@@ -15,18 +23,25 @@
 		"query-string": "^6.14.1"
 	},
 	"devDependencies": {
+		"@babel/plugin-transform-modules-commonjs": "^7.14.5",
 		"@commitlint/cli": "^12.1.4",
 		"@commitlint/config-conventional": "^12.1.4",
-		"@types/node": "^15.12.1",
 		"@types/lodash": "^4.14.170",
+		"@types/node": "^15.12.1",
 		"@typescript-eslint/eslint-plugin": "^4.8.1",
 		"@typescript-eslint/parser": "^4.8.1",
 		"eslint": "^7.27.0",
 		"eslint-plugin-react": "^7.24.0",
 		"eslint-plugin-react-hooks": "^4.2.0",
+		"gulp": "^4.0.2",
+		"gulp-babel": "^8.0.0",
+		"gulp-typescript": "^6.0.0-alpha.1",
 		"husky": "^7.0.0",
 		"lint-staged": "^11.0.0",
+		"merge-stream": "^2.0.0",
+		"plugin-error": "^1.0.1",
 		"prettier": "^2.3.1",
+		"through2": "^4.0.2",
 		"typescript": "^4.3.2"
 	}
 }

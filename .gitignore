@@ -5,3 +5,6 @@ package-lock.json
 
 # VSC
 debug.log
+
+# Build
+dist
