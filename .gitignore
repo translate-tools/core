@@ -1,0 +1,7 @@
+# NPM
+node_modules
+package-lock.json
+.npmrc
+
+# VSC
+debug.log

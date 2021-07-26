@@ -1,13 +1,32 @@
 {
-	"name": "core",
+	"name": "@translate-tools/core",
 	"version": "0.0.1",
-	"license": "GPL-3.0",
+	"description": "",
+	"keywords": [],
+	"license": "Apache-2.0",
+	"author": "Vitonsky <https://github.com/vitonsky>",
+	"scripts": {
+		"prettify": "prettier --write **/*.{ts,tsx,js} && eslint --fix **/*.{ts,tsx,js}",
+		"prepare": "husky install"
+	},
 	"dependencies": {
 		"idb": "^6.0.7",
 		"lodash": "^4.17.21",
 		"query-string": "^6.14.1"
 	},
 	"devDependencies": {
-		"@types/lodash": "^4.14.170"
+		"@commitlint/cli": "^12.1.4",
+		"@commitlint/config-conventional": "^12.1.4",
+		"@types/node": "^15.12.1",
+		"@types/lodash": "^4.14.170",
+		"@typescript-eslint/eslint-plugin": "^4.8.1",
+		"@typescript-eslint/parser": "^4.8.1",
+		"eslint": "^7.27.0",
+		"eslint-plugin-react": "^7.24.0",
+		"eslint-plugin-react-hooks": "^4.2.0",
+		"husky": "^7.0.0",
+		"lint-staged": "^11.0.0",
+		"prettier": "^2.3.1",
+		"typescript": "^4.3.2"
 	}
 }
