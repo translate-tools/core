@@ -16,11 +16,27 @@ function tsCompilerFactory(outPath, settings) {
 	};
 }
 
+function copyNotTranspilableSourcesFactory(outPath) {
+	return function copyNotTranspilableSources() {
+		return gulp.src([`src/**/*.{js,d.ts}`]).pipe(gulp.dest(outPath));
+	};
+}
+
 // Main
 function buildESM() {
 	const out = `${buildDir}/esm`;
 
-	return tsCompilerFactory(out, { module: 'esnext' });
+	return gulp.parallel([
+		// Compile TS files
+		Object.assign(tsCompilerFactory(out, { module: 'esnext' }), {
+			displayName: 'TSC:esnext',
+		}),
+
+		// Copy js files and declarations
+		Object.assign(copyNotTranspilableSourcesFactory(out), {
+			displayName: 'CopyPureSources:esnext',
+		}),
+	]);
 }
 
 function makeCJSFromESM() {

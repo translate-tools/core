@@ -7,9 +7,10 @@
 	"author": "Vitonsky <https://github.com/vitonsky>",
 	"scripts": {
 		"build": "gulp",
+		"build:full": "npm run clean:build && npm run build",
 		"clean:build": "rm -rf ./dist",
 		"prettify": "prettier --write **/*.{ts,tsx,js} && eslint --fix **/*.{ts,tsx,js}",
-		"publish": "npm run clean:build && npm run build && cd ./dist && npm publish",
+		"publish": "npm run build:full && cd ./dist && npm publish",
 		"publish:patch": "npm version patch && npm run publish",
 		"prepare": "husky install"
 	},
