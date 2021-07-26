@@ -1,7 +1,7 @@
 // This code contains parts from https://github.com/plainheart/bing-translate-api/blob/e5ac48d346096681a758856bd606f147854d07cb/src/index.js
 
 const fetchConfig = async () => {
-	var pageText = await fetch('https://www.bing.com/translator').then((r) => r.text());
+	const pageText = await fetch('https://www.bing.com/translator').then((r) => r.text());
 
 	const IIGSearch = pageText.match(/IG:"([^"]+)"/);
 	if (IIGSearch === null) {

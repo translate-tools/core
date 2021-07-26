@@ -36,8 +36,8 @@ export class FakeTranslator extends Translator implements ITranslator {
 			this.delay === undefined
 				? 0
 				: this.delay === 'random'
-				? Math.floor(Math.random() * 1000)
-				: this.delay;
+					? Math.floor(Math.random() * 1000)
+					: this.delay;
 		return new Promise<string>((resolve) => {
 			setTimeout(() => resolve(`*[${from}-${to}]` + text), delay);
 		});

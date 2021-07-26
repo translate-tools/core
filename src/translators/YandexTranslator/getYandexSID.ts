@@ -1,7 +1,7 @@
 // Source: https://github.com/FilipePS/Traduzir-paginas-web/blob/f3a4956a1aa96b7a9124864158a5200827694521/background/translationService.js
 
 let lastYandexRequestSIDTime: number | null = null;
-var yandexTranslateSID: string | null = null;
+let yandexTranslateSID: string | null = null;
 let yandexSIDNotFound: boolean = false;
 
 export function getYandexSID() {
