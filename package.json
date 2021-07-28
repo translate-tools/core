@@ -1,8 +1,18 @@
 {
 	"name": "@translate-tools/core",
 	"version": "0.0.4",
-	"description": "",
-	"keywords": [],
+	"description": "A free and unlimited API for Google Translate, Yandex, Bing",
+	"keywords": [
+		"translate",
+		"translator",
+		"google",
+		"translate",
+		"yandex",
+		"bing",
+		"api",
+		"free",
+		"language"
+	],
 	"license": "Apache-2.0",
 	"author": "Vitonsky <https://github.com/vitonsky>",
 	"scripts": {
