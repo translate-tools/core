@@ -4,6 +4,23 @@ This package is part of [translate tools project](https://github.com/translate-t
 
 Main purpose of core package it's standardization a translator entities.
 
+# Usage
+
+Install package `npm install @translate-tools/core`
+
+Code example
+
+```ts
+import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTranslator';
+
+const translator = new GoogleTranslator();
+
+// Translate single string
+translator
+	.translate('Hello world', 'en', 'de')
+	.then((translate) => console.log('Translate result', translate));
+```
+
 # Package contents
 
 ## Translator
