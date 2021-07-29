@@ -15,6 +15,11 @@
 	],
 	"license": "Apache-2.0",
 	"author": "Vitonsky <https://github.com/vitonsky>",
+	"homepage": "https://github.com/translate-tools/core",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/translate-tools/core"
+	},
 	"scripts": {
 		"build": "gulp",
 		"build:full": "npm run clean:build && npm run build",
