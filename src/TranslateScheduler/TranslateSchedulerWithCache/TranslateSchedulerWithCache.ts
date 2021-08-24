@@ -1,13 +1,14 @@
+import { langCode, langCodeWithAuto } from '../../types/Translator';
+import { ICache } from '../../types/Cache';
+
 import { ITranslateScheduler, ITranslateOptions } from '../ITranslateScheduler';
 import { TranslateScheduler } from '../TranslateScheduler';
-import { TranslatorCache } from './TranslatorCache';
-import { langCode, langCodeWithAuto } from '../../types/Translator';
 
 export class TranslateSchedulerWithCache implements ITranslateScheduler {
 	private readonly scheduler: TranslateScheduler;
-	private readonly cache?: TranslatorCache;
+	private readonly cache?: ICache;
 
-	constructor(scheduler: TranslateScheduler, cache?: TranslatorCache) {
+	constructor(scheduler: TranslateScheduler, cache?: ICache) {
 		this.scheduler = scheduler;
 		this.cache = cache;
 	}
@@ -28,7 +29,11 @@ export class TranslateSchedulerWithCache implements ITranslateScheduler {
 		const cache = this.cache;
 
 		if (cache !== undefined) {
-			const cacheData = await cache.get(trimmedText, from, to).catch(console.warn);
+			const cacheData = await cache.get(trimmedText, from, to).catch((reason) => {
+				console.warn(reason);
+				return null;
+			});
+
 			if (cacheData !== undefined) {
 				return start + cacheData + end;
 			}
@@ -41,7 +46,7 @@ export class TranslateSchedulerWithCache implements ITranslateScheduler {
 					try {
 						// Prevent write if entry already exist
 						const textFromCache = await cache.get(trimmedText, from, to);
-						if (textFromCache === undefined) {
+						if (textFromCache === null) {
 							await cache.set(trimmedText, translatedText, from, to);
 						}
 					} catch (err) {
