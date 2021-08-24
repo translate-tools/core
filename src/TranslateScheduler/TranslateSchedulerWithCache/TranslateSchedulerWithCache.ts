@@ -6,9 +6,9 @@ import { TranslateScheduler } from '../TranslateScheduler';
 
 export class TranslateSchedulerWithCache implements ITranslateScheduler {
 	private readonly scheduler: TranslateScheduler;
-	private readonly cache?: ICache;
+	private readonly cache: ICache;
 
-	constructor(scheduler: TranslateScheduler, cache?: ICache) {
+	constructor(scheduler: TranslateScheduler, cache: ICache) {
 		this.scheduler = scheduler;
 		this.cache = cache;
 	}
@@ -19,40 +19,38 @@ export class TranslateSchedulerWithCache implements ITranslateScheduler {
 		to: langCode,
 		options?: ITranslateOptions,
 	) {
-		// Return text without letters
+		// Immediately return text without letters
 		if (text.replace(this.notLetterRegExp, '').length === 0) {
 			return text;
 		}
 
 		const { text: trimmedText, start, end } = this.getTrimmed(text);
-
 		const cache = this.cache;
 
-		if (cache !== undefined) {
-			const cacheData = await cache.get(trimmedText, from, to).catch((reason) => {
-				console.warn(reason);
-				return null;
-			});
+		// Try to get cache
+		const cacheData = await cache.get(trimmedText, from, to).catch((reason) => {
+			console.warn(reason);
+			return null;
+		});
 
-			if (cacheData !== undefined) {
-				return start + cacheData + end;
-			}
+		if (cacheData !== null) {
+			return start + cacheData + end;
 		}
 
+		// Translate and cache
 		return this.scheduler
 			.translate(trimmedText, from, to, options)
 			.then(async (translatedText) => {
-				if (cache !== undefined) {
-					try {
-						// Prevent write if entry already exist
-						const textFromCache = await cache.get(trimmedText, from, to);
-						if (textFromCache === null) {
-							await cache.set(trimmedText, translatedText, from, to);
-						}
-					} catch (err) {
-						console.warn(err);
-						console.warn('^ data for error above', [trimmedText]);
+				// Try write to cache
+				try {
+					// Write only if not exist
+					const textFromCache = await cache.get(trimmedText, from, to);
+					if (textFromCache === null) {
+						await cache.set(trimmedText, translatedText, from, to);
 					}
+				} catch (err) {
+					console.warn(err);
+					console.warn('^ data for error above', [trimmedText]);
 				}
 
 				return start + translatedText + end;
