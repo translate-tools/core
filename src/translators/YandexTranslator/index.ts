@@ -2,6 +2,8 @@ import { stringify } from 'query-string';
 import { unescape } from 'lodash';
 
 import { langCode, langCodeWithAuto, Translator } from '../../types/Translator';
+import { fetchResponseToJson } from '../../lib/fetchResponseToJson';
+
 import { getYandexSID } from './getYandexSID';
 
 export class YandexTranslator extends Translator {
@@ -84,7 +86,7 @@ export class YandexTranslator extends Translator {
 				'Content-Type': 'application/x-www-form-urlencoded',
 			},
 		})
-			.then((resp) => resp.json())
+			.then(fetchResponseToJson)
 			.then((resp) => {
 				if (
 					!(resp instanceof Object) ||

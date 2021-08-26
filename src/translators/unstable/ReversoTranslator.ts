@@ -1,5 +1,6 @@
 import { langCode, Translator } from '../../types/Translator';
 import { Multiplexor } from '../../lib/Multiplexor';
+import { fetchResponseToJson } from '../../lib/fetchResponseToJson';
 
 /**
  * This module did not test too ago
@@ -84,7 +85,7 @@ export class ReversoTranslator extends Translator {
 			},
 			body: JSON.stringify(data),
 		})
-			.then((r) => r.json())
+			.then(fetchResponseToJson)
 			.then((response) => {
 				if (
 					!(response instanceof Object) ||

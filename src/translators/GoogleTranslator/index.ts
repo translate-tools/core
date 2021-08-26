@@ -2,6 +2,7 @@ import { stringify } from 'query-string';
 import { unescape } from 'lodash';
 
 import { langCode, langCodeWithAuto, Translator } from '../../types/Translator';
+import { fetchResponseToJson } from '../../lib/fetchResponseToJson';
 import { getToken } from './token';
 
 export class GoogleTranslator extends Translator {
@@ -85,7 +86,7 @@ export class GoogleTranslator extends Translator {
 				mode: 'no-cors',
 				referrerPolicy: 'no-referrer',
 			})
-				.then((resp) => resp.json())
+				.then(fetchResponseToJson)
 				.then((rsp) => {
 					if (!(rsp instanceof Array) || !(rsp[0] instanceof Array)) {
 						throw new Error('Unexpected response');
@@ -135,7 +136,7 @@ export class GoogleTranslator extends Translator {
 				},
 				body,
 			})
-				.then((resp) => resp.json())
+				.then(fetchResponseToJson)
 				.then((rawResp) => {
 					let resp = rawResp;
 					if (text.length == 1) {

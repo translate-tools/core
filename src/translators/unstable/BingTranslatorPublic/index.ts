@@ -1,5 +1,7 @@
 import { langCode, langCodeWithAuto, Translator } from '../../../types/Translator';
 import { Multiplexor } from '../../../lib/Multiplexor';
+import { fetchResponseToJson } from '../../../lib/fetchResponseToJson';
+
 import { getConfig } from './getConfig';
 
 /**
@@ -93,7 +95,7 @@ export class BingTranslatorPublic extends Translator {
 					}),
 			},
 		)
-			.then((r) => r.json())
+			.then(fetchResponseToJson)
 			.then((rsp) => {
 				const text = this.findInObj(rsp, [0, 'translations', 0, 'text']);
 				if (typeof text === 'string') {
