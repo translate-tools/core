@@ -86,7 +86,7 @@ export class GoogleTranslator extends Translator {
 					'Content-type': 'application/x-www-form-urlencoded',
 				},
 			})
-				.then((r) => r.json())
+				.then(fetchResponseToJson)
 				.then((rsp) => {
 					if (!(rsp instanceof Array) || !(rsp[0] instanceof Array)) {
 						throw new Error('Unexpected response');
