@@ -82,9 +82,6 @@ export class GoogleTranslator extends Translator {
 
 			return fetch(url, {
 				method: 'GET',
-				headers: {
-					'Content-type': 'application/x-www-form-urlencoded',
-				},
 				credentials: 'omit',
 				mode: 'no-cors',
 				referrerPolicy: 'no-referrer',
