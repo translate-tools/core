@@ -86,7 +86,7 @@ export class GoogleTranslator extends Translator {
 				mode: 'no-cors',
 				referrerPolicy: 'no-referrer',
 			})
-				.then(fetchResponseToJson)
+				.then((r) => r.json())
 				.then((rsp) => {
 					if (!(rsp instanceof Array) || !(rsp[0] instanceof Array)) {
 						throw new Error('Unexpected response');
