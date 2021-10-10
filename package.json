@@ -1,6 +1,6 @@
 {
 	"name": "@translate-tools/core",
-	"version": "0.0.9-test.6",
+	"version": "0.0.9-test.7",
 	"description": "A free and unlimited API for Google Translate, Yandex, Bing",
 	"keywords": [
 		"translate",
