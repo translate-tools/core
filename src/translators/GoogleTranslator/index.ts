@@ -82,9 +82,6 @@ export class GoogleTranslator extends Translator {
 
 			return fetch(url, {
 				method: 'GET',
-				headers: {
-					'Content-type': 'application/x-www-form-urlencoded',
-				},
 			})
 				.then(fetchResponseToJson)
 				.then((rsp) => {
