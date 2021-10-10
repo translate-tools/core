@@ -81,10 +81,13 @@ export class GoogleTranslator extends Translator {
 			const url = apiPath + '?' + stringify(data);
 
 			return fetch(url, {
-				method: 'POST',
+				method: 'GET',
 				headers: {
 					'Content-type': 'application/x-www-form-urlencoded',
 				},
+				credentials: 'omit',
+				mode: 'no-cors',
+				referrerPolicy: 'no-referrer',
 			})
 				.then(fetchResponseToJson)
 				.then((rsp) => {
