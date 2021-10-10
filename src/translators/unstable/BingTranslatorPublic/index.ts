@@ -18,11 +18,11 @@ export class BingTranslatorPublic extends Translator {
 		// eslint-disable
 		// prettier-ignore
 		return [
-			'en', 'ar', 'af', 'bg', 'cy', 'hu', 'vi', 'el', 'da', 'he', 
-			'id', 'is', 'es', 'it', 'ca', 'ko', 'ht', 'lv', 'lt', 'mg', 
-			'ms', 'mt', 'de', 'nl', 'nb', 'fa', 'pl', 'pt', 'ro', 'ru', 
-			'sm', 'sk', 'sl', 'sw', 'ty', 'th', 'ta', 'te', 'to', 'tr', 
-			'uk', 'ur', 'fj', 'fi', 'fr', 'hi', 'hr', 'cs', 'sv', 'et', 
+			'en', 'ar', 'af', 'bg', 'cy', 'hu', 'vi', 'el', 'da', 'he',
+			'id', 'is', 'es', 'it', 'ca', 'ko', 'ht', 'lv', 'lt', 'mg',
+			'ms', 'mt', 'de', 'nl', 'nb', 'fa', 'pl', 'pt', 'ro', 'ru',
+			'sm', 'sk', 'sl', 'sw', 'ty', 'th', 'ta', 'te', 'to', 'tr',
+			'uk', 'ur', 'fj', 'fi', 'fr', 'hi', 'hr', 'cs', 'sv', 'et',
 			'ja',
 		];
 		// eslint-enable
@@ -84,6 +84,9 @@ export class BingTranslatorPublic extends Translator {
 				headers: {
 					'Content-type': 'application/x-www-form-urlencoded',
 				},
+				credentials: 'omit',
+				mode: 'no-cors',
+				referrerPolicy: 'no-referrer',
 				body:
 					'&' +
 					this.encodeObject({
