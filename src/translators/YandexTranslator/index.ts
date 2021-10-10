@@ -19,14 +19,14 @@ export class YandexTranslator extends Translator {
 		// eslint-disable
 		// prettier-ignore
 		return [
-			'az', 'ml', 'sq', 'mt', 'am', 'mk', 'en', 'mi', 'ar', 'mr', 
-			'hy', 'af', 'mn', 'eu', 'de', 'ba', 'ne', 'be', 'no', 'bn', 
-			'pa', 'my', 'bg', 'fa', 'bs', 'pl', 'cy', 'pt', 'hu', 'ro', 
-			'vi', 'ru', 'ht', 'gl', 'sr', 'nl', 'si', 'sk', 'el', 'sl', 
-			'ka', 'sw', 'gu', 'su', 'da', 'tg', 'he', 'th', 'yi', 'tl', 
-			'id', 'ta', 'ga', 'tt', 'it', 'te', 'is', 'tr', 'es', 'kk', 
-			'uz', 'kn', 'uk', 'ca', 'ur', 'ky', 'fi', 'zh', 'fr', 'ko', 
-			'hi', 'xh', 'hr', 'km', 'cs', 'lo', 'sv', 'la', 'gd', 'lv', 
+			'az', 'ml', 'sq', 'mt', 'am', 'mk', 'en', 'mi', 'ar', 'mr',
+			'hy', 'af', 'mn', 'eu', 'de', 'ba', 'ne', 'be', 'no', 'bn',
+			'pa', 'my', 'bg', 'fa', 'bs', 'pl', 'cy', 'pt', 'hu', 'ro',
+			'vi', 'ru', 'ht', 'gl', 'sr', 'nl', 'si', 'sk', 'el', 'sl',
+			'ka', 'sw', 'gu', 'su', 'da', 'tg', 'he', 'th', 'yi', 'tl',
+			'id', 'ta', 'ga', 'tt', 'it', 'te', 'is', 'tr', 'es', 'kk',
+			'uz', 'kn', 'uk', 'ca', 'ur', 'ky', 'fi', 'zh', 'fr', 'ko',
+			'hi', 'xh', 'hr', 'km', 'cs', 'lo', 'sv', 'la', 'gd', 'lv',
 			'et', 'lt', 'eo', 'lb', 'jv', 'mg', 'ja', 'ms',
 		];
 		// eslint-enable
@@ -80,7 +80,6 @@ export class YandexTranslator extends Translator {
 		return fetch(urlWithSid + body, {
 			method: 'GET',
 			credentials: 'omit',
-			mode: 'no-cors',
 			referrerPolicy: 'no-referrer',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
