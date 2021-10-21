@@ -18,11 +18,11 @@ export class BingTranslatorPublic extends Translator {
 		// eslint-disable
 		// prettier-ignore
 		return [
-			'en', 'ar', 'af', 'bg', 'cy', 'hu', 'vi', 'el', 'da', 'he', 
-			'id', 'is', 'es', 'it', 'ca', 'ko', 'ht', 'lv', 'lt', 'mg', 
-			'ms', 'mt', 'de', 'nl', 'nb', 'fa', 'pl', 'pt', 'ro', 'ru', 
-			'sm', 'sk', 'sl', 'sw', 'ty', 'th', 'ta', 'te', 'to', 'tr', 
-			'uk', 'ur', 'fj', 'fi', 'fr', 'hi', 'hr', 'cs', 'sv', 'et', 
+			'en', 'ar', 'af', 'bg', 'cy', 'hu', 'vi', 'el', 'da', 'he',
+			'id', 'is', 'es', 'it', 'ca', 'ko', 'ht', 'lv', 'lt', 'mg',
+			'ms', 'mt', 'de', 'nl', 'nb', 'fa', 'pl', 'pt', 'ro', 'ru',
+			'sm', 'sk', 'sl', 'sw', 'ty', 'th', 'ta', 'te', 'to', 'tr',
+			'uk', 'ur', 'fj', 'fi', 'fr', 'hi', 'hr', 'cs', 'sv', 'et',
 			'ja',
 		];
 		// eslint-enable
@@ -78,11 +78,14 @@ export class BingTranslatorPublic extends Translator {
 		const { IIG, IID, key, token } = await getConfig();
 
 		return fetch(
-			`https://www.bing.com/ttranslatev3?isVertical=1&=&IG=${IIG}&=&IID=${IID}`,
+			this.wrapUrlToCorsProxy(
+				`https://www.bing.com/ttranslatev3?isVertical=1&=&IG=${IIG}&=&IID=${IID}`,
+			),
 			{
 				method: 'POST',
 				headers: {
 					'Content-type': 'application/x-www-form-urlencoded',
+					...this.options.headers,
 				},
 				body:
 					'&' +

@@ -78,13 +78,17 @@ export class ReversoTranslator extends Translator {
 			},
 		};
 
-		return fetch('https://api.reverso.net/translate/v1/translation', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json; charset=utf-8',
+		return fetch(
+			this.wrapUrlToCorsProxy('https://api.reverso.net/translate/v1/translation'),
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json; charset=utf-8',
+					...this.options.headers,
+				},
+				body: JSON.stringify(data),
 			},
-			body: JSON.stringify(data),
-		})
+		)
 			.then(fetchResponseToJson)
 			.then((response) => {
 				if (
