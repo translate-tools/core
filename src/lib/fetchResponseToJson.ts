@@ -9,8 +9,8 @@ export const fetchResponseToJson = async (response: Response) => {
 	try {
 		return JSON.parse(text);
 	} catch (error) {
+		console.error('Data for exception below', text);
 		if (error instanceof SyntaxError) {
-			console.error('Data for exception below', text);
 			throw new Error('Unexpected response');
 		} else {
 			throw error;

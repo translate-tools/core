@@ -1,8 +1,10 @@
 import { stringify } from 'query-string';
 import { unescape } from 'lodash';
 
+import { DOMParser } from 'xmldom';
+import axios from 'axios';
+
 import { langCode, langCodeWithAuto, Translator } from '../../types/Translator';
-import { fetchResponseToJson } from '../../lib/fetchResponseToJson';
 import { getToken } from './token';
 
 export class GoogleTranslator extends Translator {
@@ -80,12 +82,9 @@ export class GoogleTranslator extends Translator {
 
 			const url = apiPath + '?' + stringify(data);
 
-			return fetch(url, {
-				method: 'GET',
-				credentials: 'omit',
-				referrerPolicy: 'no-referrer',
-			})
-				.then(fetchResponseToJson)
+			return axios
+				.get(url, { withCredentials: false })
+				.then((rsp) => rsp.data)
 				.then((rsp) => {
 					if (!(rsp instanceof Array) || !(rsp[0] instanceof Array)) {
 						throw new Error('Unexpected response');
@@ -125,16 +124,19 @@ export class GoogleTranslator extends Translator {
 				.map((text) => `&q=${encodeURIComponent(text)}`)
 				.join('');
 
-			return fetch(url, {
+			return axios({
+				url,
 				method: 'POST',
-				credentials: 'omit',
-				referrerPolicy: 'no-referrer',
+				withCredentials: false,
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded',
+					'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
+					// TODO: forward user agents
+					// 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36'
 				},
-				body,
+				data: body,
 			})
-				.then(fetchResponseToJson)
+				.then((rsp) => rsp.data)
 				.then((rawResp) => {
 					let resp = rawResp;
 					if (text.length == 1) {
