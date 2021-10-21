@@ -1,7 +1,7 @@
 import { stringify } from 'query-string';
 import { unescape } from 'lodash';
 
-import { DOMParser } from 'xmldom';
+import { DOMParser } from '@xmldom/xmldom';
 import axios from 'axios';
 
 import { langCode, langCodeWithAuto, Translator } from '../../types/Translator';
