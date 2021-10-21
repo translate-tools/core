@@ -98,7 +98,7 @@ export type CorsProxy = string | ((url: string) => string);
 
 export interface TranslatorOptions {
 	/**
-	 * Access key for requests to API
+	 * Access key for requests to translator API
 	 */
 	apiKey?: string;
 

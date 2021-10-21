@@ -21,6 +21,17 @@ translator
 	.then((translate) => console.log('Translate result', translate));
 ```
 
+# Translators info
+
+This package contains few translators and its have different status and support different platforms.
+
+| Translator name      | Platforms       | Status                                                             |
+| -------------------- | --------------- | ------------------------------------------------------------------ |
+| GoogleTranslator     | browser, nodejs | ready to use                                                       |
+| YandexTranslator     | browser         | ready to use                                                       |
+| BingTranslatorPublic | browser         | unstable, ready to use for translate short text with low frequency |
+| ReversoTranslator    | browser         | unstable                                                           |
+
 # Package contents
 
 ## Translator
@@ -103,3 +114,39 @@ scheduler
 	.translate('My second translation request', 'en', 'de')
 	.then((translate) => console.log('Request #2', translate));
 ```
+
+# API
+
+You can specify options in constructor for each `Translator` class.
+
+## apiKey
+
+type: `string`
+
+Access key for requests to translator API
+
+## useMultiplexing
+
+type: `boolean`
+
+Union text array to 1 request (or more, but less than usualy anyway).
+
+Option for reduce the number of requests, but it can make artefacts in translated text.
+
+Some modules may not support this feature.
+
+## headers
+
+type: `Record<string, string>`
+
+Additional headers for requests
+
+## corsProxy
+
+type: `string | ((url: string) => string)`
+
+Proxy prefix or transform function which return url with CORS proxy
+
+CORS proxy useful to avoid CORS error in browser or to mask server requests as browser requests.
+
+All requests will send through this proxy server and this server will modify headers
