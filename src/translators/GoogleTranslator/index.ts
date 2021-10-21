@@ -1,11 +1,13 @@
 import { stringify } from 'query-string';
 import { unescape } from 'lodash';
 
-import { DOMParser } from '@xmldom/xmldom';
+import { DOMParser as DOMParserPonyfil } from '@xmldom/xmldom';
 import axios from 'axios';
 
 import { langCode, langCodeWithAuto, Translator } from '../../types/Translator';
 import { getToken } from './token';
+
+const DOMParser = globalThis.DOMParser || DOMParserPonyfil;
 
 export class GoogleTranslator extends Translator {
 	static readonly moduleName = 'GoogleTranslator';
