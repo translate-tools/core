@@ -21,6 +21,49 @@ translator
 	.then((translate) => console.log('Translate result', translate));
 ```
 
+For use with nodejs you should specify user agent in most cases
+
+```ts
+import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTranslator';
+
+const translator = new GoogleTranslator({
+	headers: {
+		'User-Agent':
+			'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36',
+	},
+});
+
+translator
+	.translate('Hello world', 'en', 'de')
+	.then((translate) => console.log('Translate result', translate));
+```
+
+For use with browser you should specify CORS proxy in most cases when translator is not work
+
+```ts
+import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTranslator';
+
+// Use some CORS proxy service address as prefix
+const translator = new GoogleTranslator({
+	corsProxy: 'https://crossorigin.me/',
+});
+
+translator
+	.translate('Hello world', 'en', 'de')
+	.then((translate) => console.log('Translate result', translate));
+
+// Or use your own transform function
+const translator = new GoogleTranslator({
+	corsProxy(url) {
+		return `https://my-cors-proxy/${url}/some-postfix`;
+	},
+});
+
+translator
+	.translate('Hello world', 'en', 'de')
+	.then((translate) => console.log('Translate result', translate));
+```
+
 # Translators info
 
 This package contains few translators and its have different status and support different platforms.
