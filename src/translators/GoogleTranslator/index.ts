@@ -83,7 +83,10 @@ export class GoogleTranslator extends Translator {
 			const url = apiPath + '?' + stringify(data);
 
 			return axios
-				.get(url, { withCredentials: false })
+				.get(this.wrapUrlToCorsProxy(url), {
+					withCredentials: false,
+					headers: this.options.headers,
+				})
 				.then((rsp) => rsp.data)
 				.then((rsp) => {
 					if (!(rsp instanceof Array) || !(rsp[0] instanceof Array)) {
@@ -125,14 +128,12 @@ export class GoogleTranslator extends Translator {
 				.join('');
 
 			return axios({
-				url,
+				url: this.wrapUrlToCorsProxy(url),
 				method: 'POST',
 				withCredentials: false,
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded',
-					'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
-					// TODO: forward user agents
-					// 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36'
+					...this.options.headers,
 				},
 				data: body,
 			})
