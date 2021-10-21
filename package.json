@@ -53,6 +53,7 @@
 		"eslint-plugin-react-hooks": "^4.2.0",
 		"gulp": "^4.0.2",
 		"gulp-babel": "^8.0.0",
+		"gulp-sourcemaps": "^3.0.0",
 		"gulp-typescript": "^6.0.0-alpha.1",
 		"husky": "^7.0.0",
 		"jest": "^27.3.1",

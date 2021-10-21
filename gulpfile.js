@@ -2,6 +2,7 @@ const gulp = require('gulp');
 const ts = require('gulp-typescript');
 const mergeStream = require('merge-stream');
 const babel = require('gulp-babel');
+const sourcemaps = require('gulp-sourcemaps');
 
 const cleanPackageJson = require('./scripts/gulp/cleanPackageJson');
 
@@ -12,7 +13,12 @@ function tsCompilerFactory(outPath, settings) {
 	return function compileTS() {
 		const tsProject = ts.createProject('tsconfig.json', settings);
 
-		return gulp.src(['src/**/*.{ts,tsx}']).pipe(tsProject()).pipe(gulp.dest(outPath));
+		return gulp
+			.src(['src/**/*.{ts,tsx}'])
+			.pipe(sourcemaps.init())
+			.pipe(tsProject())
+			.pipe(sourcemaps.write())
+			.pipe(gulp.dest(outPath));
 	};
 }
 
@@ -47,11 +53,15 @@ function makeCJSFromESM() {
 		// Copy type declarations
 		gulp.src([`${esm}/**/*.ts`]),
 		// Convert to CJS
-		gulp.src([`${esm}/**/*.js`]).pipe(
-			babel({
-				plugins: ['@babel/plugin-transform-modules-commonjs'],
-			}),
-		),
+		gulp
+			.src([`${esm}/**/*.js`])
+			.pipe(sourcemaps.init())
+			.pipe(
+				babel({
+					plugins: ['@babel/plugin-transform-modules-commonjs'],
+				}),
+			)
+			.pipe(sourcemaps.write()),
 	).pipe(gulp.dest(out));
 }
 
