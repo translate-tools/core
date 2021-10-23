@@ -4,6 +4,17 @@ This package is part of [translate tools project](https://github.com/translate-t
 
 Main purpose of core package it's standardization a translator entities.
 
+# Translators info
+
+This package contains few translators and its have different status and support different platforms.
+
+| Translator name      | Platforms       | API key      | Status                                                             |
+| -------------------- | --------------- | ------------ | ------------------------------------------------------------------ |
+| GoogleTranslator     | browser, nodejs | not required | ready to use                                                       |
+| YandexTranslator     | browser         | not required | ready to use                                                       |
+| BingTranslatorPublic | browser         | not required | unstable, ready to use for translate short text with low frequency |
+| ReversoTranslator    | browser         | not required | unstable                                                           |
+
 # Usage
 
 Install package `npm install @translate-tools/core`
@@ -63,17 +74,6 @@ translator
 	.translate('Hello world', 'en', 'de')
 	.then((translate) => console.log('Translate result', translate));
 ```
-
-# Translators info
-
-This package contains few translators and its have different status and support different platforms.
-
-| Translator name      | Platforms       | Status                                                             |
-| -------------------- | --------------- | ------------------------------------------------------------------ |
-| GoogleTranslator     | browser, nodejs | ready to use                                                       |
-| YandexTranslator     | browser         | ready to use                                                       |
-| BingTranslatorPublic | browser         | unstable, ready to use for translate short text with low frequency |
-| ReversoTranslator    | browser         | unstable                                                           |
 
 # Package contents
 
