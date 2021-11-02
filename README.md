@@ -162,21 +162,21 @@ scheduler
 
 You can specify options in constructor for each `Translator` class.
 
+Not all modules is use all keys.
+
 ## apiKey
 
 type: `string`
 
-Access key for requests to translator API
+Access key for requests to API
 
 ## useMultiplexing
 
 type: `boolean`
 
-Union text array to 1 request (or more, but less than usualy anyway).
+Union text array to 1 request (or more, but less than usually anyway).
 
-Option for reduce the number of requests, but it can make artefacts in translated text.
-
-Some modules may not support this feature.
+Option for reduce the number of requests, but it may generate artifacts in translated text.
 
 ## headers
 
