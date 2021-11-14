@@ -3,7 +3,9 @@ node_modules
 package-lock.json
 .npmrc
 
-# VSC
+# Editors
+.idea
+.vscode
 debug.log
 
 # Build
