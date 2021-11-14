@@ -6,13 +6,13 @@ import { fetchResponseToJson } from '../../lib/fetchResponseToJson';
  * This module did not test too ago
  */
 export class ReversoTranslator extends Translator {
-	static readonly translatorName = 'ReversoTranslator (public)';
+	public static readonly translatorName = 'ReversoTranslator (public)';
 
-	isSupportedAutoFrom() {
+	public static isSupportedAutoFrom() {
 		return false;
 	}
 
-	getSupportedLanguages(): langCode[] {
+	public static getSupportedLanguages(): langCode[] {
 		// eslint-disable
 		// prettier-ignore
 		return [
@@ -22,15 +22,15 @@ export class ReversoTranslator extends Translator {
 		// eslint-enable
 	}
 
-	getLengthLimit() {
+	public getLengthLimit() {
 		return 5000;
 	}
 
-	getRequestsTimeout() {
+	public getRequestsTimeout() {
 		return 1000;
 	}
 
-	checkLimitExceeding(text: string | string[]) {
+	public checkLimitExceeding(text: string | string[]) {
 		if (Array.isArray(text)) {
 			const encodedText = this.mtp.encode(
 				text.map((text, id) => ({ text, id: '' + id })),

@@ -8,13 +8,13 @@ import { getConfig } from './getConfig';
  * This translator is very slow for translate page, but may use to translate user input
  */
 export class BingTranslatorPublic extends Translator {
-	static readonly translatorName = 'BingTranslator (public)';
+	public static readonly translatorName = 'BingTranslator (public)';
 
-	isSupportedAutoFrom() {
+	public static isSupportedAutoFrom() {
 		return true;
 	}
 
-	getSupportedLanguages(): langCode[] {
+	public static getSupportedLanguages(): langCode[] {
 		// eslint-disable
 		// prettier-ignore
 		return [
@@ -28,15 +28,15 @@ export class BingTranslatorPublic extends Translator {
 		// eslint-enable
 	}
 
-	getLengthLimit() {
+	public getLengthLimit() {
 		return 3000;
 	}
 
-	getRequestsTimeout() {
+	public getRequestsTimeout() {
 		return 500;
 	}
 
-	checkLimitExceeding(text: string | string[]) {
+	public checkLimitExceeding(text: string | string[]) {
 		if (Array.isArray(text)) {
 			const encodedText = this.mtp.encode(
 				text.map((text, id) => ({ text, id: '' + id })),

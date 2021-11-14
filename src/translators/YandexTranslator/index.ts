@@ -7,13 +7,13 @@ import { fetchResponseToJson } from '../../lib/fetchResponseToJson';
 import { getYandexSID } from './getYandexSID';
 
 export class YandexTranslator extends Translator {
-	static readonly translatorName = 'YandexTranslator';
+	public static readonly translatorName = 'YandexTranslator';
 
-	isSupportedAutoFrom() {
+	public static isSupportedAutoFrom() {
 		return true;
 	}
 
-	getSupportedLanguages(): langCode[] {
+	public static getSupportedLanguages(): langCode[] {
 		// Supported, but not valid languages ['mhr', 'pap', 'ceb', 'mrj', 'udm']
 
 		// eslint-disable
@@ -32,15 +32,15 @@ export class YandexTranslator extends Translator {
 		// eslint-enable
 	}
 
-	getLengthLimit() {
+	public getLengthLimit() {
 		return 4000;
 	}
 
-	getRequestsTimeout() {
+	public getRequestsTimeout() {
 		return 500;
 	}
 
-	checkLimitExceeding(text: string | string[]) {
+	public checkLimitExceeding(text: string | string[]) {
 		if (Array.isArray(text)) {
 			const arrayLen = text.reduce((acc, text) => acc + text.length, 0);
 			const extra = arrayLen - this.getLengthLimit();

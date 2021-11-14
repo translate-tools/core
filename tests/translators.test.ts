@@ -16,12 +16,12 @@ const commonTranslatorOptions = {
 };
 
 // Verify types
-const translators = [
+const translators: TranslatorClass[] = [
 	GoogleTranslator,
 	YandexTranslator,
 	BingTranslatorPublic,
 	ReversoTranslator,
-] as TranslatorClass[];
+];
 
 const translatorClass: TranslatorClass = translators[0];
 

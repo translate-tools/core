@@ -150,7 +150,9 @@ export interface TranslatorOptions {
 /**
  * Basic abstract class for translator
  */
-export abstract class Translator implements TranslatorInstance {
+export abstract class Translator<C extends Record<any, any> = {}>
+implements TranslatorInstance
+{
 	public static readonly translatorName: string = 'UnknownTranslator';
 
 	public static isRequiredKey = () => false;
@@ -163,8 +165,8 @@ export abstract class Translator implements TranslatorInstance {
 
 	public abstract getRequestsTimeout(): number;
 
-	protected readonly options: TranslatorOptions = {};
-	constructor(options?: TranslatorOptions) {
+	protected readonly options: TranslatorOptions & C = {} as any;
+	constructor(options?: TranslatorOptions & C) {
 		if (options !== undefined) {
 			this.options = options;
 		}
