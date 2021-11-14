@@ -51,11 +51,11 @@ export class YandexTranslator extends Translator {
 		}
 	}
 
-	async translate(text: string, from: langCodeWithAuto, to: langCode) {
+	public async translate(text: string, from: langCodeWithAuto, to: langCode) {
 		return this.translateBatch([text], from, to).then((resp) => resp[0]);
 	}
 
-	async translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
+	public async translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
 		const sid = await getYandexSID();
 		if (sid === null) {
 			throw new Error('Invalid SID');

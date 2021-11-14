@@ -334,7 +334,7 @@ export class TranslateScheduler implements ITranslateScheduler {
 						const task = taskContainer.tasks[index];
 
 						const translatedText = result[index];
-						if (translatedText !== undefined) {
+						if (translatedText !== null) {
 							task.resolve(translatedText);
 						} else {
 							this.taskErrorHandler(

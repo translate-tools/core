@@ -62,7 +62,7 @@ export class GoogleTranslator extends Translator {
 		return lang in this.langReplacements ? this.langReplacements[lang] : lang;
 	}
 
-	translate(text: string, from: langCodeWithAuto, to: langCode) {
+	public translate(text: string, from: langCodeWithAuto, to: langCode) {
 		return getToken(text).then(({ value: tk }) => {
 			const apiPath = 'https://translate.google.com/translate_a/single';
 
@@ -109,7 +109,7 @@ export class GoogleTranslator extends Translator {
 	}
 
 	private parser = new DOMParser();
-	translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
+	public translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
 		const preparedText = this.encodeForBatch(text);
 		return getToken(preparedText.join('')).then(({ value: tk }) => {
 			const apiPath = 'https://translate.googleapis.com/translate_a/t';
@@ -151,7 +151,7 @@ export class GoogleTranslator extends Translator {
 						throw new Error('Unexpected response');
 					}
 
-					const result: (string | undefined)[] = [];
+					const result: (string | null)[] = [];
 
 					resp.forEach((chunk) => {
 						let translatedText = '';
@@ -201,7 +201,7 @@ export class GoogleTranslator extends Translator {
 
 						if (translationResult.length === 0) {
 							// I don't sure why it here. I think it for keep right length of result array
-							result.push(undefined);
+							result.push(null);
 						} else {
 							result.push(translationResult);
 						}

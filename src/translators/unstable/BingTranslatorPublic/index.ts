@@ -72,7 +72,7 @@ export class BingTranslatorPublic extends Translator {
 		}
 	}
 
-	async translate(text: string, from: langCodeWithAuto, to: langCode) {
+	public async translate(text: string, from: langCodeWithAuto, to: langCode) {
 		const fixedFrom = from === 'auto' ? 'auto-detect' : from;
 
 		const { IIG, IID, key, token } = await getConfig();
@@ -114,13 +114,13 @@ export class BingTranslatorPublic extends Translator {
 	}
 
 	private readonly mtp = new Multiplexor({ tokenStart: '😀', tokenEnd: '😃' });
-	translateBatch(text: string[], langFrom: langCodeWithAuto, langTo: langCode) {
+	public translateBatch(text: string[], langFrom: langCodeWithAuto, langTo: langCode) {
 		const encodedText = this.mtp.encode(
 			text.map((text, id) => ({ text, id: '' + id })),
 		);
 
 		return this.translate(encodedText, langFrom, langTo).then((rawTranslate) => {
-			const result = Array<string | undefined>(text.length);
+			const result = Array<string | null>(text.length);
 
 			const decodedMap = this.mtp.decode(rawTranslate);
 			decodedMap.forEach(({ id, text }) => {

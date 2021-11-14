@@ -61,7 +61,7 @@ export class ReversoTranslator extends Translator {
 		ja: 'jpn',
 	};
 
-	translate(text: string, from: langCode, to: langCode) {
+	public translate(text: string, from: langCode, to: langCode) {
 		const localFrom = this.langMap[from];
 		const localTo = this.langMap[to];
 
@@ -104,13 +104,13 @@ export class ReversoTranslator extends Translator {
 	}
 
 	private readonly mtp = new Multiplexor({ tokenStart: '<', tokenEnd: '>' });
-	translateBatch(text: string[], langFrom: langCode, langTo: langCode) {
+	public translateBatch(text: string[], langFrom: langCode, langTo: langCode) {
 		const encodedText = this.mtp.encode(
 			text.map((text, id) => ({ text, id: '' + id })),
 		);
 
 		return this.translate(encodedText, langFrom, langTo).then((rawTranslate) => {
-			const result = Array<string | undefined>(text.length);
+			const result = Array<string | null>(text.length);
 
 			const decodedMap = this.mtp.decode(rawTranslate);
 			decodedMap.forEach(({ id, text }) => {
