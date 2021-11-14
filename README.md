@@ -126,24 +126,23 @@ It's very useful for cases when you have many requests to translate short text b
 
 ### Abstraction
 
-Namespace `TranslateScheduler`
+Namespace `util/Scheduler`
 
-- Interface `ITranslateScheduler`
+Interface `ITranslateScheduler`
 
 ### Implementation
 
-Namespace `TranslateScheduler`
-
-- `TranslateScheduler`
+- `Scheduler`
+- `SchedulerWithCache`
 
 ### Examples
 
 ```ts
-import { TranslateScheduler } from '@translate-tools/core/TranslateScheduler/TranslateScheduler';
+import { Scheduler } from '@translate-tools/core/util/Scheduler';
 import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTranslator';
 
 const translator = new GoogleTranslator();
-const scheduler = new TranslateScheduler(translator);
+const scheduler = new Scheduler(translator);
 
 // Scheduler will join this requests and execute it as one request
 // Scheduler may implement it any way, it may group requests by languages or other way,
