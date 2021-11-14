@@ -88,7 +88,7 @@ export interface TranslatorInstance {
  * Base translator object contract
  */
 export interface TranslatorClass<C extends TranslatorInstance = TranslatorInstance> {
-	new (): C;
+	new (...args: any[]): C;
 
 	/**
 	 * Public translator name to displaying

@@ -1,4 +1,9 @@
+import { TranslatorClass } from '../src/types/Translator';
+
 import { GoogleTranslator } from '../src/translators/GoogleTranslator';
+import { YandexTranslator } from '../src/translators/YandexTranslator';
+import { BingTranslatorPublic } from '../src/translators/unstable/BingTranslatorPublic';
+import { ReversoTranslator } from '../src/translators/unstable/ReversoTranslator';
 
 // TODO: write tests for other translators
 
@@ -10,8 +15,18 @@ const commonTranslatorOptions = {
 	},
 };
 
+// Verify types
+const translators = [
+	GoogleTranslator,
+	YandexTranslator,
+	BingTranslatorPublic,
+	ReversoTranslator,
+] as TranslatorClass[];
+
+const translatorClass: TranslatorClass = translators[0];
+
 test('test `translate` method', (done) => {
-	const translator = new GoogleTranslator(commonTranslatorOptions);
+	const translator = new translatorClass(commonTranslatorOptions);
 	translator
 		.translate('Hello world', 'en', 'ru')
 		.then((translation) => {
@@ -24,7 +39,7 @@ test('test `translate` method', (done) => {
 });
 
 test('test `translateBatch` method', (done) => {
-	const translator = new GoogleTranslator(commonTranslatorOptions);
+	const translator = new translatorClass(commonTranslatorOptions);
 	translator
 		.translateBatch(['Hello world', 'my name is Jeff'], 'en', 'ru')
 		.then((translation) => {
