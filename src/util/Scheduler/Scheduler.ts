@@ -1,6 +1,6 @@
-import { ITranslateOptions, ITranslateScheduler } from './ITranslateScheduler';
-import { langCode, langCodeWithAuto, Translator } from '../types/Translator';
-import { QueueSemafor } from '../lib/QueueSemafor';
+import { ITranslateOptions, IScheduler } from './IScheduler';
+import { langCode, langCodeWithAuto, Translator } from '../../types/Translator';
+import { QueueSemafor } from '../../lib/QueueSemafor';
 
 interface Config {
 	/**
@@ -91,7 +91,7 @@ interface TaskContainer {
  * - You can group any requests by context
  * - It's configurable. You can set retry limit and edge for direct translate
  */
-export class TranslateScheduler implements ITranslateScheduler {
+export class Scheduler implements IScheduler {
 	private readonly semafor;
 	private readonly translator;
 	private readonly config: Required<Config> = {

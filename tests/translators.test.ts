@@ -5,6 +5,7 @@ import { YandexTranslator } from '../src/translators/YandexTranslator';
 import { BingTranslatorPublic } from '../src/translators/unstable/BingTranslatorPublic';
 import { ReversoTranslator } from '../src/translators/unstable/ReversoTranslator';
 
+// TODO: write tests for scheduler
 // TODO: write tests for other translators
 
 const commonTranslatorOptions = {

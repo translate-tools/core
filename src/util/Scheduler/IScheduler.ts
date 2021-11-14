@@ -1,4 +1,4 @@
-import { langCodeWithAuto, langCode } from '../types/Translator';
+import { langCodeWithAuto, langCode } from '../../types/Translator';
 
 export interface ITranslateOptions {
 	/**
@@ -12,7 +12,7 @@ export interface ITranslateOptions {
 	directTranslate?: boolean;
 }
 
-export interface ITranslateScheduler {
+export interface IScheduler {
 	translate(
 		text: string,
 		from: langCodeWithAuto,
