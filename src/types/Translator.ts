@@ -32,23 +32,29 @@ export type langCode = typeof langCodes[number];
 export type langCodeWithAuto = 'auto' | langCode;
 
 /**
- * Basic interface for translator
+ * Base translator instance
  */
-export interface ITranslator {
+export interface TranslatorInstance {
 	/**
-	 * Is it supported value `auto` in `langFrom` argument of `translate` and `translateBatch` methods
+	 * Translate text from string
+	 * @returns Translated string
 	 */
-	isSupportAutodetect(): boolean;
+	translate(
+		text: string,
+		langFrom: langCodeWithAuto,
+		langTo: langCode,
+	): Promise<string>;
 
 	/**
-	 * Array of supported languages as ISO 639-1 codes
+	 * Translate text from array of string
+	 * @returns Array with translated strings and same length as input array
+	 * @returns Text which did not translated will replaced to `null`
 	 */
-	supportedLanguages(): langCode[];
-
-	/**
-	 * Max length of string for `translate` or total length of strings from array for `translateBatch`
-	 */
-	lengthLimit(): number;
+	translateBatch(
+		text: string[],
+		langFrom: langCodeWithAuto,
+		langTo: langCode,
+	): Promise<Array<string | null>>;
 
 	/**
 	 * Check string or array of stings to exceeding of a limit
@@ -63,35 +69,51 @@ export interface ITranslator {
 	checkLimitExceeding(text: string | string[]): number;
 
 	/**
-	 * Recomended delay between requests
-	 */
-	throttleTime?: () => number;
-
-	/**
 	 * Check supporting of translate direction
 	 */
 	checkDirection?: (langFrom: langCodeWithAuto, langTo: langCode) => boolean;
 
 	/**
-	 * Translate text from string
-	 * @returns Translated string
+	 * Max length of string for `translate` or total length of strings from array for `translateBatch`
 	 */
-	translate(
-		text: string,
-		langFrom: langCodeWithAuto,
-		langTo: langCode,
-	): Promise<string>;
+	getLengthLimit(): number;
 
 	/**
-	 * Translate text from array of string
-	 * @returns Array with translated strings and same length as input array. Not translated elements replace to undefined
+	 * Recommended delay between requests
 	 */
-	translateBatch(
-		text: string[],
-		langFrom: langCodeWithAuto,
-		langTo: langCode,
-	): Promise<Array<string | undefined>>;
+	getRequestsTimeout: () => number;
 }
+
+/**
+ * Base translator object contract
+ */
+export interface TranslatorClass<C extends TranslatorInstance = TranslatorInstance> {
+	new (): C;
+
+	/**
+	 * Public translator name to displaying
+	 */
+	readonly translatorName: string;
+
+	/**
+	 * Is required API key for this module
+	 */
+	isRequiredKey(): boolean;
+
+	/**
+	 * Is it supported value `auto` in `langFrom` argument of `translate` and `translateBatch` methods
+	 */
+	isSupportedAutoFrom(): boolean;
+
+	/**
+	 * Array of supported languages as ISO 639-1 codes
+	 */
+	getSupportedLanguages(): langCode[];
+}
+
+//
+// Base implementation
+//
 
 export type CorsProxy = string | ((url: string) => string);
 
@@ -125,24 +147,44 @@ export interface TranslatorOptions {
 	corsProxy?: CorsProxy;
 }
 
-// TODO: make all information methods static, for simplify filtration of modules
-
 /**
  * Basic abstract class for translator
  */
-export abstract class Translator implements ITranslator {
-	/**
-	 * Is it required API key in constructor
-	 */
-	static isRequiredKey() {
-		return false;
+export abstract class Translator implements TranslatorInstance {
+	public static readonly translatorName: string = 'UnknownTranslator';
+
+	public static isRequiredKey = () => false;
+
+	public static isSupportedAutoFrom = () => false;
+
+	public static getSupportedLanguages = (): langCode[] => [];
+
+	public abstract getLengthLimit(): number;
+
+	public abstract getRequestsTimeout(): number;
+
+	protected readonly options: TranslatorOptions = {};
+	constructor(options?: TranslatorOptions) {
+		if (options !== undefined) {
+			this.options = options;
+		}
 	}
 
-	static readonly moduleName: string = 'UnknownTranslator';
+	abstract translate(
+		text: string,
+		langFrom: langCodeWithAuto,
+		langTo: langCode,
+	): Promise<string>;
 
-	checkLimitExceeding(text: string | string[]) {
+	abstract translateBatch(
+		text: string[],
+		langFrom: langCodeWithAuto,
+		langTo: langCode,
+	): Promise<Array<string | null>>;
+
+	public checkLimitExceeding(text: string | string[]) {
 		const plainText = Array.isArray(text) ? text.join('') : text;
-		const extra = plainText.length - this.lengthLimit();
+		const extra = plainText.length - this.getLengthLimit();
 		return extra > 0 ? extra : 0;
 	}
 
@@ -162,31 +204,4 @@ export abstract class Translator implements ITranslator {
 
 		return url;
 	};
-
-	throttleTime() {
-		return 0;
-	}
-
-	protected readonly options: TranslatorOptions = {};
-	constructor(options?: TranslatorOptions) {
-		if (options !== undefined) {
-			this.options = options;
-		}
-	}
-
-	abstract isSupportAutodetect(): boolean;
-	abstract supportedLanguages(): langCode[];
-	abstract lengthLimit(): number;
-
-	abstract translate(
-		text: string,
-		langFrom: langCodeWithAuto,
-		langTo: langCode,
-	): Promise<string>;
-
-	abstract translateBatch(
-		text: string[],
-		langFrom: langCodeWithAuto,
-		langTo: langCode,
-	): Promise<Array<string | undefined>>;
 }

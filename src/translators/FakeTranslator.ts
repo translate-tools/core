@@ -1,9 +1,14 @@
-import { ITranslator, Translator, langCode, langCodeWithAuto } from '../types/Translator';
+import {
+	TranslatorInstance,
+	Translator,
+	langCode,
+	langCodeWithAuto,
+} from '../types/Translator';
 
 /**
  * Fake translator for use in tests and debug
  */
-export class FakeTranslator extends Translator implements ITranslator {
+export class FakeTranslator extends Translator implements TranslatorInstance {
 	delay?: number | 'random';
 
 	constructor(delay?: number | 'random') {
@@ -11,19 +16,19 @@ export class FakeTranslator extends Translator implements ITranslator {
 		this.delay = delay;
 	}
 
-	isSupportAutodetect() {
+	isSupportedAutoFrom() {
 		return false;
 	}
 
-	supportedLanguages(): langCode[] {
+	getSupportedLanguages(): langCode[] {
 		return ['ru', 'en', 'de', 'ja'];
 	}
 
-	lengthLimit() {
+	getLengthLimit() {
 		return 3000;
 	}
 
-	throttleTime() {
+	getRequestsTimeout() {
 		return 10;
 	}
 
@@ -45,7 +50,7 @@ export class FakeTranslator extends Translator implements ITranslator {
 
 	translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
 		return Promise.all(
-			text.map((i) => this.translate(i, from, to).catch(() => undefined)),
+			text.map((i) => this.translate(i, from, to).catch(() => null)),
 		);
 	}
 }

@@ -111,7 +111,7 @@ export class TranslateScheduler implements ITranslateScheduler {
 			}
 		}
 
-		this.semafor = new QueueSemafor({ timeout: translator.throttleTime() });
+		this.semafor = new QueueSemafor({ timeout: translator.getRequestsTimeout() });
 	}
 
 	private contextCounter = 0;
@@ -253,7 +253,7 @@ export class TranslateScheduler implements ITranslateScheduler {
 			// Lightweight check to overflow
 			// NOTE: Do strict check here if you need comply a limit contract
 			if (
-				this.translator.lengthLimit() >=
+				this.translator.getLengthLimit() >=
 				taskContainer.length + task.text.length
 			) {
 				taskContainer.tasks.push(task);

@@ -10,13 +10,13 @@ import { getToken } from './token';
 const DOMParser = globalThis.DOMParser || DOMParserPonyfil;
 
 export class GoogleTranslator extends Translator {
-	static readonly moduleName = 'GoogleTranslator';
+	static readonly translatorName = 'GoogleTranslator';
 
-	isSupportAutodetect() {
+	isSupportedAutoFrom() {
 		return true;
 	}
 
-	supportedLanguages(): langCode[] {
+	getSupportedLanguages(): langCode[] {
 		// Supported, but not valid languages ["zh-cn", "zh-tw", 'ceb', 'haw', 'iw', 'hmn', 'jw', 'ma']
 
 		// eslint-disable
@@ -36,21 +36,21 @@ export class GoogleTranslator extends Translator {
 		// eslint-enable
 	}
 
-	lengthLimit() {
+	getLengthLimit() {
 		return 4000;
 	}
 
-	throttleTime() {
+	getRequestsTimeout() {
 		return 300;
 	}
 
 	checkLimitExceeding(text: string | string[]) {
 		if (Array.isArray(text)) {
 			const encodedText = this.encodeForBatch(text).join('');
-			const extra = encodedText.length - this.lengthLimit();
+			const extra = encodedText.length - this.getLengthLimit();
 			return extra > 0 ? extra : 0;
 		} else {
-			const extra = text.length - this.lengthLimit();
+			const extra = text.length - this.getLengthLimit();
 			return extra > 0 ? extra : 0;
 		}
 	}

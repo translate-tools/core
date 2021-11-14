@@ -6,13 +6,13 @@ import { fetchResponseToJson } from '../../lib/fetchResponseToJson';
  * This module did not test too ago
  */
 export class ReversoTranslator extends Translator {
-	static readonly moduleName = 'ReversoTranslator (public)';
+	static readonly translatorName = 'ReversoTranslator (public)';
 
-	isSupportAutodetect() {
+	isSupportedAutoFrom() {
 		return false;
 	}
 
-	supportedLanguages(): langCode[] {
+	getSupportedLanguages(): langCode[] {
 		// eslint-disable
 		// prettier-ignore
 		return [
@@ -22,11 +22,11 @@ export class ReversoTranslator extends Translator {
 		// eslint-enable
 	}
 
-	lengthLimit() {
+	getLengthLimit() {
 		return 5000;
 	}
 
-	throttleTime() {
+	getRequestsTimeout() {
 		return 1000;
 	}
 
@@ -35,10 +35,10 @@ export class ReversoTranslator extends Translator {
 			const encodedText = this.mtp.encode(
 				text.map((text, id) => ({ text, id: '' + id })),
 			);
-			const extra = encodedText.length - this.lengthLimit();
+			const extra = encodedText.length - this.getLengthLimit();
 			return extra > 0 ? extra : 0;
 		} else {
-			const extra = text.length - this.lengthLimit();
+			const extra = text.length - this.getLengthLimit();
 			return extra > 0 ? extra : 0;
 		}
 	}
