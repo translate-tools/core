@@ -1,51 +1,48 @@
-import { ITranslator, Translator, langCode, langCodeWithAuto } from '../types/Translator';
+import { Translator, langCode, langCodeWithAuto } from '../types/Translator';
 
 /**
  * Fake translator for use in tests and debug
  */
-export class FakeTranslator extends Translator implements ITranslator {
+export class FakeTranslator extends Translator<{
 	delay?: number | 'random';
+}> {
+	public static readonly translatorName = 'FakeTranslator';
 
-	constructor(delay?: number | 'random') {
-		super();
-		this.delay = delay;
-	}
-
-	isSupportAutodetect() {
+	public static isSupportedAutoFrom() {
 		return false;
 	}
 
-	supportedLanguages(): langCode[] {
+	public static getSupportedLanguages(): langCode[] {
 		return ['ru', 'en', 'de', 'ja'];
 	}
 
-	lengthLimit() {
+	public getLengthLimit() {
 		return 3000;
 	}
 
-	throttleTime() {
+	public getRequestsTimeout() {
 		return 10;
 	}
 
-	checkDirection(from: langCodeWithAuto, to: langCode) {
+	public checkDirection(from: langCodeWithAuto, to: langCode) {
 		return from == 'ru' && to == 'ja' ? false : true;
 	}
 
-	translate(text: string, from: langCodeWithAuto, to: langCode) {
+	public translate(text: string, from: langCodeWithAuto, to: langCode) {
 		const delay =
-			this.delay === undefined
+			this.options.delay === undefined
 				? 0
-				: this.delay === 'random'
+				: this.options.delay === 'random'
 					? Math.floor(Math.random() * 1000)
-					: this.delay;
+					: this.options.delay;
 		return new Promise<string>((resolve) => {
 			setTimeout(() => resolve(`*[${from}-${to}]` + text), delay);
 		});
 	}
 
-	translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
+	public translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
 		return Promise.all(
-			text.map((i) => this.translate(i, from, to).catch(() => undefined)),
+			text.map((i) => this.translate(i, from, to).catch(() => null)),
 		);
 	}
 }
@@ -54,7 +51,9 @@ export class FakeTranslator extends Translator implements ITranslator {
  * Fake translator which always throw error for use in tests and debug
  */
 export class ErrorFakeTranslator extends FakeTranslator {
-	async translate(
+	public static readonly translatorName = 'FakeTranslator';
+
+	public async translate(
 		_text: string,
 		_from: langCodeWithAuto,
 		_to: langCode,
@@ -62,7 +61,7 @@ export class ErrorFakeTranslator extends FakeTranslator {
 		throw new Error('Fake error for translate method');
 	}
 
-	async translateBatch(
+	public async translateBatch(
 		_text: string[],
 		_from: langCodeWithAuto,
 		_to: langCode,

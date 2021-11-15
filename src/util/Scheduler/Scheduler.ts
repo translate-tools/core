@@ -1,6 +1,6 @@
-import { ITranslateOptions, ITranslateScheduler } from './ITranslateScheduler';
-import { langCode, langCodeWithAuto, Translator } from '../types/Translator';
-import { QueueSemafor } from '../lib/QueueSemafor';
+import { ITranslateOptions, IScheduler } from './IScheduler';
+import { langCode, langCodeWithAuto, Translator } from '../../types/Translator';
+import { QueueSemafor } from '../../lib/QueueSemafor';
 
 interface Config {
 	/**
@@ -91,7 +91,7 @@ interface TaskContainer {
  * - You can group any requests by context
  * - It's configurable. You can set retry limit and edge for direct translate
  */
-export class TranslateScheduler implements ITranslateScheduler {
+export class Scheduler implements IScheduler {
 	private readonly semafor;
 	private readonly translator;
 	private readonly config: Required<Config> = {
@@ -111,7 +111,7 @@ export class TranslateScheduler implements ITranslateScheduler {
 			}
 		}
 
-		this.semafor = new QueueSemafor({ timeout: translator.throttleTime() });
+		this.semafor = new QueueSemafor({ timeout: translator.getRequestsTimeout() });
 	}
 
 	private contextCounter = 0;
@@ -253,7 +253,7 @@ export class TranslateScheduler implements ITranslateScheduler {
 			// Lightweight check to overflow
 			// NOTE: Do strict check here if you need comply a limit contract
 			if (
-				this.translator.lengthLimit() >=
+				this.translator.getLengthLimit() >=
 				taskContainer.length + task.text.length
 			) {
 				taskContainer.tasks.push(task);
@@ -286,16 +286,17 @@ export class TranslateScheduler implements ITranslateScheduler {
 	}
 
 	private readonly translateQueue = new Set<TaskContainer>();
-	private readonly timersMap = new Map<TaskContainer, number>();
+	private readonly timersMap = new Map<TaskContainer, number | NodeJS.Timeout>();
 	private updateDelayForAddToTranslateQueue(taskContainer: TaskContainer) {
 		// Flush timer
 		if (this.timersMap.has(taskContainer)) {
-			window.clearTimeout(this.timersMap.get(taskContainer));
+			// Due to expectation run on one platform, timer objects will same always
+			globalThis.clearTimeout(this.timersMap.get(taskContainer) as any);
 		}
 
 		this.timersMap.set(
 			taskContainer,
-			window.setTimeout(() => {
+			globalThis.setTimeout(() => {
 				this.addToTranslateQueue(taskContainer);
 			}, this.config.translatePoolDelay),
 		);
@@ -304,7 +305,8 @@ export class TranslateScheduler implements ITranslateScheduler {
 	private addToTranslateQueue(taskContainer: TaskContainer) {
 		// Flush timer
 		if (this.timersMap.has(taskContainer)) {
-			window.clearTimeout(this.timersMap.get(taskContainer));
+			// Due to expectation run on one platform, timer objects will same always
+			globalThis.clearTimeout(this.timersMap.get(taskContainer) as any);
 			this.timersMap.delete(taskContainer);
 		}
 
@@ -334,7 +336,7 @@ export class TranslateScheduler implements ITranslateScheduler {
 						const task = taskContainer.tasks[index];
 
 						const translatedText = result[index];
-						if (translatedText !== undefined) {
+						if (translatedText !== null) {
 							task.resolve(translatedText);
 						} else {
 							this.taskErrorHandler(

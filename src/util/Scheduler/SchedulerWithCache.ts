@@ -1,14 +1,14 @@
 import { langCode, langCodeWithAuto } from '../../types/Translator';
 import { ICache } from '../../types/Cache';
 
-import { ITranslateScheduler, ITranslateOptions } from '../ITranslateScheduler';
-import { TranslateScheduler } from '../TranslateScheduler';
+import { IScheduler, ITranslateOptions } from './IScheduler';
+import { Scheduler } from './Scheduler';
 
-export class TranslateSchedulerWithCache implements ITranslateScheduler {
-	private readonly scheduler: TranslateScheduler;
+export class SchedulerWithCache implements IScheduler {
+	private readonly scheduler: Scheduler;
 	private readonly cache: ICache;
 
-	constructor(scheduler: TranslateScheduler, cache: ICache) {
+	constructor(scheduler: Scheduler, cache: ICache) {
 		this.scheduler = scheduler;
 		this.cache = cache;
 	}

@@ -7,13 +7,13 @@ import { fetchResponseToJson } from '../../lib/fetchResponseToJson';
 import { getYandexSID } from './getYandexSID';
 
 export class YandexTranslator extends Translator {
-	static readonly moduleName = 'YandexTranslator';
+	public static readonly translatorName = 'YandexTranslator';
 
-	isSupportAutodetect() {
+	public static isSupportedAutoFrom() {
 		return true;
 	}
 
-	supportedLanguages(): langCode[] {
+	public static getSupportedLanguages(): langCode[] {
 		// Supported, but not valid languages ['mhr', 'pap', 'ceb', 'mrj', 'udm']
 
 		// eslint-disable
@@ -32,30 +32,30 @@ export class YandexTranslator extends Translator {
 		// eslint-enable
 	}
 
-	lengthLimit() {
+	public getLengthLimit() {
 		return 4000;
 	}
 
-	throttleTime() {
+	public getRequestsTimeout() {
 		return 500;
 	}
 
-	checkLimitExceeding(text: string | string[]) {
+	public checkLimitExceeding(text: string | string[]) {
 		if (Array.isArray(text)) {
 			const arrayLen = text.reduce((acc, text) => acc + text.length, 0);
-			const extra = arrayLen - this.lengthLimit();
+			const extra = arrayLen - this.getLengthLimit();
 			return extra > 0 ? extra : 0;
 		} else {
-			const extra = text.length - this.lengthLimit();
+			const extra = text.length - this.getLengthLimit();
 			return extra > 0 ? extra : 0;
 		}
 	}
 
-	async translate(text: string, from: langCodeWithAuto, to: langCode) {
+	public async translate(text: string, from: langCodeWithAuto, to: langCode) {
 		return this.translateBatch([text], from, to).then((resp) => resp[0]);
 	}
 
-	async translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
+	public async translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
 		const sid = await getYandexSID();
 		if (sid === null) {
 			throw new Error('Invalid SID');

@@ -6,13 +6,13 @@ import { fetchResponseToJson } from '../../lib/fetchResponseToJson';
  * This module did not test too ago
  */
 export class ReversoTranslator extends Translator {
-	static readonly moduleName = 'ReversoTranslator (public)';
+	public static readonly translatorName = 'ReversoTranslator (public)';
 
-	isSupportAutodetect() {
+	public static isSupportedAutoFrom() {
 		return false;
 	}
 
-	supportedLanguages(): langCode[] {
+	public static getSupportedLanguages(): langCode[] {
 		// eslint-disable
 		// prettier-ignore
 		return [
@@ -22,23 +22,23 @@ export class ReversoTranslator extends Translator {
 		// eslint-enable
 	}
 
-	lengthLimit() {
+	public getLengthLimit() {
 		return 5000;
 	}
 
-	throttleTime() {
+	public getRequestsTimeout() {
 		return 1000;
 	}
 
-	checkLimitExceeding(text: string | string[]) {
+	public checkLimitExceeding(text: string | string[]) {
 		if (Array.isArray(text)) {
 			const encodedText = this.mtp.encode(
 				text.map((text, id) => ({ text, id: '' + id })),
 			);
-			const extra = encodedText.length - this.lengthLimit();
+			const extra = encodedText.length - this.getLengthLimit();
 			return extra > 0 ? extra : 0;
 		} else {
-			const extra = text.length - this.lengthLimit();
+			const extra = text.length - this.getLengthLimit();
 			return extra > 0 ? extra : 0;
 		}
 	}
@@ -61,7 +61,7 @@ export class ReversoTranslator extends Translator {
 		ja: 'jpn',
 	};
 
-	translate(text: string, from: langCode, to: langCode) {
+	public translate(text: string, from: langCode, to: langCode) {
 		const localFrom = this.langMap[from];
 		const localTo = this.langMap[to];
 
@@ -104,13 +104,13 @@ export class ReversoTranslator extends Translator {
 	}
 
 	private readonly mtp = new Multiplexor({ tokenStart: '<', tokenEnd: '>' });
-	translateBatch(text: string[], langFrom: langCode, langTo: langCode) {
+	public translateBatch(text: string[], langFrom: langCode, langTo: langCode) {
 		const encodedText = this.mtp.encode(
 			text.map((text, id) => ({ text, id: '' + id })),
 		);
 
 		return this.translate(encodedText, langFrom, langTo).then((rawTranslate) => {
-			const result = Array<string | undefined>(text.length);
+			const result = Array<string | null>(text.length);
 
 			const decodedMap = this.mtp.decode(rawTranslate);
 			decodedMap.forEach(({ id, text }) => {
