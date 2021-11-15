@@ -286,16 +286,17 @@ export class Scheduler implements IScheduler {
 	}
 
 	private readonly translateQueue = new Set<TaskContainer>();
-	private readonly timersMap = new Map<TaskContainer, number>();
+	private readonly timersMap = new Map<TaskContainer, number | NodeJS.Timeout>();
 	private updateDelayForAddToTranslateQueue(taskContainer: TaskContainer) {
 		// Flush timer
 		if (this.timersMap.has(taskContainer)) {
-			window.clearTimeout(this.timersMap.get(taskContainer));
+			// Due to expectation run on one platform, timer objects will same always
+			globalThis.clearTimeout(this.timersMap.get(taskContainer) as any);
 		}
 
 		this.timersMap.set(
 			taskContainer,
-			window.setTimeout(() => {
+			globalThis.setTimeout(() => {
 				this.addToTranslateQueue(taskContainer);
 			}, this.config.translatePoolDelay),
 		);
@@ -304,7 +305,8 @@ export class Scheduler implements IScheduler {
 	private addToTranslateQueue(taskContainer: TaskContainer) {
 		// Flush timer
 		if (this.timersMap.has(taskContainer)) {
-			window.clearTimeout(this.timersMap.get(taskContainer));
+			// Due to expectation run on one platform, timer objects will same always
+			globalThis.clearTimeout(this.timersMap.get(taskContainer) as any);
 			this.timersMap.delete(taskContainer);
 		}
 
