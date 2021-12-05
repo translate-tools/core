@@ -1,9 +1,9 @@
-import { Translator, langCode, langCodeWithAuto } from '../types/Translator';
+import { BaseTranslator, langCode, langCodeWithAuto } from '../types/Translator';
 
 /**
  * Fake translator for use in tests and debug
  */
-export class FakeTranslator extends Translator<{
+export class FakeTranslator extends BaseTranslator<{
 	delay?: number | 'random';
 }> {
 	public static readonly translatorName = 'FakeTranslator';

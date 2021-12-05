@@ -31,10 +31,7 @@ export const langCodes = <const>[
 export type langCode = typeof langCodes[number];
 export type langCodeWithAuto = 'auto' | langCode;
 
-/**
- * Base translator instance
- */
-export interface TranslatorInstance {
+export interface TranslatorInstanceMembers {
 	/**
 	 * Translate text from string
 	 * @returns Translated string
@@ -84,12 +81,7 @@ export interface TranslatorInstance {
 	getRequestsTimeout: () => number;
 }
 
-/**
- * Base translator object contract
- */
-export interface TranslatorClass<C extends TranslatorInstance = TranslatorInstance> {
-	new (...args: any[]): C;
-
+export interface TranslatorStaticMembers {
 	/**
 	 * Public translator name to displaying
 	 */
@@ -110,6 +102,19 @@ export interface TranslatorClass<C extends TranslatorInstance = TranslatorInstan
 	 */
 	getSupportedLanguages(): langCode[];
 }
+
+/**
+ * Base translator object contract
+ */
+export interface TranslatorClass<
+	C extends TranslatorInstanceMembers = TranslatorInstanceMembers,
+> extends TranslatorStaticMembers {
+	new (...args: any[]): C;
+}
+
+export interface TranslatorInstance
+	extends TranslatorStaticMembers,
+		TranslatorInstanceMembers {}
 
 //
 // Base implementation
@@ -150,8 +155,8 @@ export interface TranslatorOptions {
 /**
  * Basic abstract class for translator
  */
-export abstract class Translator<C extends Record<any, any> = {}>
-implements TranslatorInstance
+export abstract class BaseTranslator<C extends Record<any, any> = {}>
+implements TranslatorInstanceMembers
 {
 	public static readonly translatorName: string = 'UnknownTranslator';
 

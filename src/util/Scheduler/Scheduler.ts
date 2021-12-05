@@ -1,5 +1,5 @@
 import { ITranslateOptions, IScheduler } from './IScheduler';
-import { langCode, langCodeWithAuto, Translator } from '../../types/Translator';
+import { langCode, langCodeWithAuto, TranslatorInstance } from '../../types/Translator';
 import { QueueSemafor } from '../../lib/QueueSemafor';
 
 interface Config {
@@ -91,7 +91,7 @@ interface TaskContainer {
  * - You can group any requests by context
  * - It's configurable. You can set retry limit and edge for direct translate
  */
-export class Scheduler<T extends Record<any, any> = {}> implements IScheduler {
+export class Scheduler implements IScheduler {
 	private readonly semafor;
 	private readonly translator;
 	private readonly config: Required<Config> = {
@@ -102,7 +102,7 @@ export class Scheduler<T extends Record<any, any> = {}> implements IScheduler {
 		chunkSizeForInstantTranslate: null,
 	};
 
-	constructor(translator: Translator<T>, config?: Config) {
+	constructor(translator: TranslatorInstance, config?: Config) {
 		this.translator = translator;
 
 		if (config !== undefined) {

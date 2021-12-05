@@ -1,11 +1,11 @@
-import { langCode, Translator } from '../../types/Translator';
+import { langCode, BaseTranslator } from '../../types/Translator';
 import { Multiplexor } from '../../lib/Multiplexor';
 import { fetchResponseToJson } from '../../lib/fetchResponseToJson';
 
 /**
  * This module did not test too ago
  */
-export class ReversoTranslator extends Translator {
+export class ReversoTranslator extends BaseTranslator {
 	public static readonly translatorName = 'ReversoTranslator (public)';
 
 	public static isSupportedAutoFrom() {

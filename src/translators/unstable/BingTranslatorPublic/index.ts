@@ -1,4 +1,4 @@
-import { langCode, langCodeWithAuto, Translator } from '../../../types/Translator';
+import { langCode, langCodeWithAuto, BaseTranslator } from '../../../types/Translator';
 import { Multiplexor } from '../../../lib/Multiplexor';
 import { fetchResponseToJson } from '../../../lib/fetchResponseToJson';
 
@@ -7,7 +7,7 @@ import { getConfig } from './getConfig';
 /**
  * This translator is very slow for translate page, but may use to translate user input
  */
-export class BingTranslatorPublic extends Translator {
+export class BingTranslatorPublic extends BaseTranslator {
 	public static readonly translatorName = 'BingTranslator (public)';
 
 	public static isSupportedAutoFrom() {
