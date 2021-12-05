@@ -27,6 +27,7 @@
 		"prettify": "prettier --write **/*.{ts,tsx,js} && eslint --fix **/*.{ts,tsx,js}",
 		"publish": "npm run build:full && cd ./dist && npm publish",
 		"publish:patch": "npm version patch && npm run publish",
+		"publish:minor": "npm version minor && npm run publish",
 		"prepare": "husky install",
 		"test": "jest"
 	},

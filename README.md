@@ -19,6 +19,10 @@ This package contains few translators and its have different status and support 
 
 Install package `npm install @translate-tools/core`
 
+> WARNING: this library is still under construction, so types is not obey semver and may be change unpredictable. To avoid problems with builds, fix a version of package on minor part.
+>
+> example: ~0.2.0
+
 Code example
 
 ```ts
