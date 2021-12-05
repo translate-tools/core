@@ -4,11 +4,11 @@ import { ICache } from '../../types/Cache';
 import { IScheduler, ITranslateOptions } from './IScheduler';
 import { Scheduler } from './Scheduler';
 
-export class SchedulerWithCache implements IScheduler {
+export class SchedulerWithCache<T extends Record<any, any> = {}> implements IScheduler {
 	private readonly scheduler: Scheduler;
 	private readonly cache: ICache;
 
-	constructor(scheduler: Scheduler, cache: ICache) {
+	constructor(scheduler: Scheduler<T>, cache: ICache) {
 		this.scheduler = scheduler;
 		this.cache = cache;
 	}

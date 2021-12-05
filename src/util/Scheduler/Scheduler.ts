@@ -91,7 +91,7 @@ interface TaskContainer {
  * - You can group any requests by context
  * - It's configurable. You can set retry limit and edge for direct translate
  */
-export class Scheduler implements IScheduler {
+export class Scheduler<T extends Record<any, any> = {}> implements IScheduler {
 	private readonly semafor;
 	private readonly translator;
 	private readonly config: Required<Config> = {
@@ -102,7 +102,7 @@ export class Scheduler implements IScheduler {
 		chunkSizeForInstantTranslate: null,
 	};
 
-	constructor(translator: Translator, config?: Config) {
+	constructor(translator: Translator<T>, config?: Config) {
 		this.translator = translator;
 
 		if (config !== undefined) {
