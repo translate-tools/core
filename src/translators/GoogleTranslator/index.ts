@@ -153,6 +153,7 @@ export class GoogleTranslator extends Translator {
 
 					const result: (string | null)[] = [];
 
+					// Handle chunks
 					resp.forEach((chunk) => {
 						let translatedText = '';
 
@@ -172,6 +173,7 @@ export class GoogleTranslator extends Translator {
 							translatedText = chunk;
 						}
 
+						// Handle one result
 						const simpleMatch = translatedText.match(
 							/^<pre><a i="\d+">([\w\W]+)<\/a><\/pre>$/,
 						);
@@ -180,27 +182,22 @@ export class GoogleTranslator extends Translator {
 							return;
 						}
 
-						// TODO: Rewrite it with no use `DOMParser` and `querySelectorAll` for use not only in browser environment
 						const doc = this.parser.parseFromString(
 							translatedText,
 							'text/html',
 						);
 
 						let translationResult = '';
-						Array.from(doc.querySelectorAll('a')).forEach((tag) => {
-							// Skip original text nodes
-							if (
-								tag.parentElement === null ||
-								tag.parentElement.localName === 'i'
-							)
-								return;
 
-							// Fill accumulator
-							translationResult += tag.innerHTML;
+						// Collect translations
+						Array.from(doc.querySelectorAll('b a')).forEach((tag, i) => {
+							// Insert space prefix for all items except first
+							const prefix = i > 0 ? ' ' : '';
+							translationResult += prefix + tag.innerHTML;
 						});
 
 						if (translationResult.length === 0) {
-							// I don't sure why it here. I think it for keep right length of result array
+							// We don't have translation, so insert null instead of result
 							result.push(null);
 						} else {
 							result.push(translationResult);
