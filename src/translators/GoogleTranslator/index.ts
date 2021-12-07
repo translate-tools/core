@@ -58,7 +58,7 @@ export class GoogleTranslator extends BaseTranslator {
 	private readonly langReplacements: Record<string, string> = {
 		zh: 'zh-cn',
 	};
-	private fixLang(lang: langCodeWithAuto) {
+	protected fixLang(lang: langCodeWithAuto) {
 		return lang in this.langReplacements ? this.langReplacements[lang] : lang;
 	}
 
@@ -217,5 +217,90 @@ export class GoogleTranslator extends BaseTranslator {
 
 	private encodeForBatch(textList: string[]) {
 		return textList.map((text, i) => `<pre><a i="${i}">${text}</a></pre>`);
+	}
+}
+
+const deepExploreArray = (obj: unknown, depth: number) => {
+	let currentDepth = 0;
+	let currentObj = obj;
+	while (depth > currentDepth) {
+		if (!Array.isArray(currentObj)) {
+			throw new TypeError('Error while explore array on depth #' + currentDepth);
+		}
+
+		currentObj = currentObj[0];
+		currentDepth++;
+	}
+
+	return currentObj;
+};
+
+export class GoogleTranslatorFree extends GoogleTranslator {
+	public translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
+		const apiPath = 'https://translate.googleapis.com/translate_a/t';
+
+		const data = {
+			client: 'dict-chrome-ex',
+			sl: this.fixLang(from),
+			tl: this.fixLang(to),
+			q: text,
+		};
+
+		const url = apiPath + '?' + stringify(data);
+
+		return axios({
+			url: this.wrapUrlToCorsProxy(url),
+			method: 'GET',
+			withCredentials: false,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				...this.options.headers,
+			},
+		})
+			.then((rsp) => rsp.data)
+			.then((rawResp) => {
+				if (Array.isArray(rawResp)) {
+					// Handle many texts
+					const innerArray = rawResp[0];
+					if (!Array.isArray(innerArray) || innerArray.length !== text.length) {
+						throw new TypeError('Invalid response');
+					}
+
+					return innerArray.map((item) => {
+						const obj = deepExploreArray(item, 3);
+						if (typeof obj !== 'string') {
+							throw new TypeError('Invalid item type');
+						}
+
+						return obj;
+					});
+				} else if (
+					text.length === 1 &&
+					typeof rawResp === 'object' &&
+					rawResp !== null &&
+					'sentences' in rawResp
+				) {
+					// Handle one text
+					const sentences = (rawResp as any).sentences as unknown;
+					if (!Array.isArray(sentences)) {
+						throw new TypeError('Invalid response');
+					}
+
+					const translatedText = sentences
+						.slice(0, -1)
+						.map((sentence) => {
+							if (typeof sentence !== 'object' || !('trans' in sentence)) {
+								throw new TypeError('Invalid response');
+							}
+
+							return sentence.trans;
+						})
+						.join('');
+
+					return [translatedText];
+				} else {
+					throw new TypeError('Invalid response');
+				}
+			});
 	}
 }
