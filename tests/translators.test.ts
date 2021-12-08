@@ -1,11 +1,12 @@
 import { TranslatorClass } from '../src/types/Translator';
 
-import { GoogleTranslator } from '../src/translators/GoogleTranslator';
+import {
+	GoogleTranslator,
+	GoogleTranslatorTokenFree,
+} from '../src/translators/GoogleTranslator';
 import { YandexTranslator } from '../src/translators/YandexTranslator';
 import { BingTranslatorPublic } from '../src/translators/unstable/BingTranslatorPublic';
 import { ReversoTranslator } from '../src/translators/unstable/ReversoTranslator';
-
-// TODO: write tests for other translators
 
 const commonTranslatorOptions = {
 	headers: {
@@ -18,38 +19,46 @@ const commonTranslatorOptions = {
 // Verify types
 const translators: TranslatorClass[] = [
 	GoogleTranslator,
+	GoogleTranslatorTokenFree,
+
+	// TODO: make it work in node and test it all
 	YandexTranslator,
 	BingTranslatorPublic,
 	ReversoTranslator,
-];
+].slice(0, 2);
 
-const translatorClass: TranslatorClass = translators[0];
+// TODO: use `こんにちは` > `hello`
+describe('Test translators', () => {
+	translators.forEach((translatorClass) => {
+		const translatorName = translatorClass.translatorName;
 
-test('test `translate` method', (done) => {
-	const translator = new translatorClass(commonTranslatorOptions);
-	translator
-		.translate('Hello world', 'en', 'ru')
-		.then((translation) => {
-			expect(typeof translation).toBe('string');
-			expect(translation).toContain('мир');
+		test(`${translatorName}: test "translate" method`, (done) => {
+			const translator = new translatorClass(commonTranslatorOptions);
+			translator
+				.translate('Hello world', 'en', 'ru')
+				.then((translation) => {
+					expect(typeof translation).toBe('string');
+					expect(translation).toContain('мир');
 
-			done();
-		})
-		.catch(done);
-});
+					done();
+				})
+				.catch(done);
+		});
 
-test('test `translateBatch` method', (done) => {
-	const translator = new translatorClass(commonTranslatorOptions);
-	translator
-		.translateBatch(['Hello world', 'my name is Jeff'], 'en', 'ru')
-		.then((translation) => {
-			expect(Array.isArray(translation)).toBe(true);
-			expect(translation.length).toBe(2);
+		test(`${translatorName}: test "translateBatch" method`, (done) => {
+			const translator = new translatorClass(commonTranslatorOptions);
+			translator
+				.translateBatch(['Hello world', 'my name is Jeff'], 'en', 'ru')
+				.then((translation) => {
+					expect(Array.isArray(translation)).toBe(true);
+					expect(translation.length).toBe(2);
 
-			expect(translation[0]).toContain('мир');
-			expect(translation[1]).toContain('Джефф');
+					expect(translation[0]).toContain('мир');
+					expect(translation[1]).toContain('Джефф');
 
-			done();
-		})
-		.catch(done);
+					done();
+				})
+				.catch(done);
+		});
+	});
 });
