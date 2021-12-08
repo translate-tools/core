@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { stringify } from 'query-string';
-import { JSDOM } from 'jsdom';
+import xpath from 'xpath';
+import { DOMParser } from 'xmldom';
 
 import { langCode, langCodeWithAuto, BaseTranslator } from '../../types/Translator';
 import { getToken } from './token';
@@ -115,13 +116,9 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 	}
 
 	private getDocFromText = (text: string) => {
-		if (globalThis.DOMParser) {
-			const parser = new DOMParser();
-			return parser.parseFromString(text, 'text/html');
-		}
-
-		const doc = new JSDOM(text);
-		return doc.window.document;
+		const doc = new DOMParser().parseFromString(text);
+		const nodes = xpath.select('//pre/*[not(self::i)]//text()', doc);
+		return nodes.map((node) => node.toString()).join('');
 	};
 
 	public translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
@@ -189,16 +186,9 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 						}
 
 						let translationResult = '';
-
-						// Collect translations
-						const doc = this.getDocFromText(translatedText);
-						Array.from(doc.querySelectorAll('b a, pre > a')).forEach(
-							(tag, i) => {
-								// Insert space prefix for all items except first
-								const prefix = i > 0 ? ' ' : '';
-								translationResult += prefix + tag.innerHTML;
-							},
-						);
+						try {
+							translationResult = this.getDocFromText(translatedText);
+						} catch (error) {}
 
 						if (translationResult.length === 0) {
 							// We don't have translation, so insert null instead of result
