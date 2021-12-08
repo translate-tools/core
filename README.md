@@ -36,7 +36,9 @@ translator
 	.then((translate) => console.log('Translate result', translate));
 ```
 
-For use with nodejs you should specify user agent in most cases
+> NOTE: For use with nodejs you should specify user agent
+>
+> In most cases for nodejs, translator will work incorrectly without User-Agent
 
 ```ts
 import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTranslator';
