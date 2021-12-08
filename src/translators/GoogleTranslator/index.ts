@@ -115,10 +115,10 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 		});
 	}
 
-	private getDocFromText = (text: string) => {
+	private parseXMLResponse = (text: string) => {
 		const doc = new DOMParser().parseFromString(text);
 		const nodes = xpath.select('//pre/*[not(self::i)]//text()', doc);
-		return nodes.map((node) => node.toString()).join('');
+		return nodes.map((node) => node.toString()).join(' ');
 	};
 
 	public translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
@@ -185,12 +185,17 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 							translatedText = chunk;
 						}
 
-						let translationResult = '';
+						// Try to parse XML
+						let translationResult: null | string = null;
 						try {
-							translationResult = this.getDocFromText(translatedText);
+							translationResult = this.parseXMLResponse(translatedText);
 						} catch (error) {}
 
-						if (translationResult.length === 0) {
+						// Push item
+						if (
+							translationResult === null ||
+							translationResult.length === 0
+						) {
 							// We don't have translation, so insert null instead of result
 							result.push(null);
 						} else {
