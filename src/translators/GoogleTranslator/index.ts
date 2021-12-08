@@ -1,14 +1,10 @@
-import { stringify } from 'query-string';
-import { unescape } from 'lodash';
-
-import { DOMParser as DOMParserPonyfil } from '@xmldom/xmldom';
 import axios from 'axios';
+import { stringify } from 'query-string';
+import { JSDOM } from 'jsdom';
 
 import { langCode, langCodeWithAuto, BaseTranslator } from '../../types/Translator';
 import { getToken } from './token';
 import { deepExploreArray } from './utils';
-
-const DOMParser = globalThis.DOMParser || DOMParserPonyfil;
 
 /**
  * Common class for google translator implementations
@@ -118,7 +114,16 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 		});
 	}
 
-	private parser = new DOMParser();
+	private getDocFromText = (text: string) => {
+		if (globalThis.DOMParser) {
+			const parser = new DOMParser();
+			return parser.parseFromString(text, 'text/html');
+		}
+
+		const doc = new JSDOM(text);
+		return doc.window.document;
+	};
+
 	public translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
 		const preparedText = this.encodeForBatch(text);
 		return getToken(preparedText.join('')).then(({ value: tk }) => {
@@ -183,23 +188,10 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 							translatedText = chunk;
 						}
 
-						// Handle one result
-						const simpleMatch = translatedText.match(
-							/^<pre><a i="\d+">([\w\W]+)<\/a><\/pre>$/,
-						);
-						if (simpleMatch !== null) {
-							result.push(unescape(simpleMatch[1]));
-							return;
-						}
-
-						const doc = this.parser.parseFromString(
-							translatedText,
-							'text/html',
-						);
-
 						let translationResult = '';
 
 						// Collect translations
+						const doc = this.getDocFromText(translatedText);
 						Array.from(doc.querySelectorAll('b a, pre > a')).forEach(
 							(tag, i) => {
 								// Insert space prefix for all items except first
