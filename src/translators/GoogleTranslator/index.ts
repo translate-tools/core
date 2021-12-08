@@ -200,11 +200,13 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 						let translationResult = '';
 
 						// Collect translations
-						Array.from(doc.querySelectorAll('b a')).forEach((tag, i) => {
-							// Insert space prefix for all items except first
-							const prefix = i > 0 ? ' ' : '';
-							translationResult += prefix + tag.innerHTML;
-						});
+						Array.from(doc.querySelectorAll('b a, pre > a')).forEach(
+							(tag, i) => {
+								// Insert space prefix for all items except first
+								const prefix = i > 0 ? ' ' : '';
+								translationResult += prefix + tag.innerHTML;
+							},
+						);
 
 						if (translationResult.length === 0) {
 							// We don't have translation, so insert null instead of result
