@@ -6,12 +6,14 @@ import axios from 'axios';
 
 import { langCode, langCodeWithAuto, BaseTranslator } from '../../types/Translator';
 import { getToken } from './token';
+import { deepExploreArray } from './utils';
 
 const DOMParser = globalThis.DOMParser || DOMParserPonyfil;
 
-export class GoogleTranslator extends BaseTranslator {
-	public static readonly translatorName = 'GoogleTranslator';
-
+/**
+ * Common class for google translator implementations
+ */
+export abstract class AbstractGoogleTranslator extends BaseTranslator {
 	public static isSupportedAutoFrom() {
 		return true;
 	}
@@ -44,6 +46,21 @@ export class GoogleTranslator extends BaseTranslator {
 		return 300;
 	}
 
+	protected readonly langReplacements: Record<string, string> = {
+		zh: 'zh-cn',
+	};
+
+	protected fixLang(lang: langCodeWithAuto) {
+		return lang in this.langReplacements ? this.langReplacements[lang] : lang;
+	}
+}
+
+/**
+ * Translator implementation which use Google API with token from https://translate.google.com
+ */
+export class GoogleTranslator extends AbstractGoogleTranslator {
+	public static readonly translatorName = 'GoogleTranslator';
+
 	public checkLimitExceeding(text: string | string[]) {
 		if (Array.isArray(text)) {
 			const encodedText = this.encodeForBatch(text).join('');
@@ -53,13 +70,6 @@ export class GoogleTranslator extends BaseTranslator {
 			const extra = text.length - this.getLengthLimit();
 			return extra > 0 ? extra : 0;
 		}
-	}
-
-	private readonly langReplacements: Record<string, string> = {
-		zh: 'zh-cn',
-	};
-	protected fixLang(lang: langCodeWithAuto) {
-		return lang in this.langReplacements ? this.langReplacements[lang] : lang;
 	}
 
 	public translate(text: string, from: langCodeWithAuto, to: langCode) {
@@ -220,22 +230,17 @@ export class GoogleTranslator extends BaseTranslator {
 	}
 }
 
-const deepExploreArray = (obj: unknown, depth: number) => {
-	let currentDepth = 0;
-	let currentObj = obj;
-	while (depth > currentDepth) {
-		if (!Array.isArray(currentObj)) {
-			throw new TypeError('Error while explore array on depth #' + currentDepth);
-		}
+/**
+ * Translator implementation which use Google API without token
+ */
+export class GoogleTranslatorTokenFree extends AbstractGoogleTranslator {
+	public static readonly translatorName = 'GoogleTranslatorTokenFree';
 
-		currentObj = currentObj[0];
-		currentDepth++;
-	}
+	public translate = async (text: string, from: langCodeWithAuto, to: langCode) => {
+		const [translation] = await this.translateBatch([text], from, to);
+		return translation;
+	};
 
-	return currentObj;
-};
-
-export class GoogleTranslatorFree extends GoogleTranslator {
 	public translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
 		const apiPath = 'https://translate.googleapis.com/translate_a/t';
 
@@ -259,7 +264,7 @@ export class GoogleTranslatorFree extends GoogleTranslator {
 		})
 			.then((rsp) => rsp.data)
 			.then((rawResp) => {
-				if (Array.isArray(rawResp)) {
+				if (text.length > 0 && Array.isArray(rawResp)) {
 					// Handle many texts
 					const innerArray = rawResp[0];
 					if (!Array.isArray(innerArray) || innerArray.length !== text.length) {
@@ -298,9 +303,9 @@ export class GoogleTranslatorFree extends GoogleTranslator {
 						.join('');
 
 					return [translatedText];
-				} else {
-					throw new TypeError('Invalid response');
 				}
+
+				throw new TypeError('Invalid response');
 			});
 	}
 }
