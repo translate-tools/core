@@ -42,6 +42,8 @@ interface TaskConstructor {
 	 * For combine tasks by unique key
 	 */
 	context?: string;
+
+	priority: number;
 }
 
 interface TaskConstructorInternal extends TaskConstructor {
@@ -73,6 +75,8 @@ interface TaskContainer {
 	 * For combine tasks by unique key
 	 */
 	context: string;
+
+	priority: number;
 
 	from: langCodeWithAuto;
 	to: langCode;
@@ -121,8 +125,11 @@ export class Scheduler implements IScheduler {
 		to: langCode,
 		options?: ITranslateOptions,
 	) {
-		const { context = '', directTranslate: directTranslateForThisRequest = false } =
-			options !== undefined ? options : {};
+		const {
+			context = '',
+			priority = 0,
+			directTranslate: directTranslateForThisRequest = false,
+		} = options !== undefined ? options : {};
 
 		if (this.translator.checkLimitExceeding(text) <= 0) {
 			// Direct translate
@@ -133,11 +140,11 @@ export class Scheduler implements IScheduler {
 			) {
 				return this.directTranslate(text, from, to);
 			} else {
-				return this.makeTask({ text: text, from, to, context });
+				return this.makeTask({ text: text, from, to, context, priority });
 			}
 		} else {
 			// Split text by words and translate
-			return this.splitAndTranslate(text, from, to, context);
+			return this.splitAndTranslate(text, from, to, context, priority);
 		}
 	}
 
@@ -150,7 +157,8 @@ export class Scheduler implements IScheduler {
 		text: string,
 		from: langCodeWithAuto,
 		to: langCode,
-		context: string = '',
+		context: string,
+		priority: number,
 	) {
 		const splittedText: string[] = [];
 		const charsetIndexes: number[] = [];
@@ -205,18 +213,20 @@ export class Scheduler implements IScheduler {
 						from,
 						to,
 						context: ctxPrefix + `text#${this.contextCounter++}`,
+						priority,
 					  }),
 			),
 		).then((translatedParts) => translatedParts.join(''));
 	}
 
-	private makeTask({ text, from, to, context = '' }: TaskConstructor) {
+	private makeTask({ text, from, to, priority, context = '' }: TaskConstructor) {
 		return new Promise<string>((resolve, reject) => {
 			this.addToTaskContainer({
 				text,
 				from,
 				to,
 				context,
+				priority,
 				resolve,
 				reject,
 			});
@@ -224,15 +234,18 @@ export class Scheduler implements IScheduler {
 	}
 
 	private readonly taskContainersStorage = new Set<TaskContainer>();
-	private addToTaskContainer({
-		text,
-		from,
-		to,
-		attempt = 0,
-		context = '',
-		resolve,
-		reject,
-	}: TaskConstructorInternal) {
+	private addToTaskContainer(params: TaskConstructorInternal) {
+		const {
+			text,
+			from,
+			to,
+			attempt = 0,
+			context = '',
+			priority,
+			resolve,
+			reject,
+		} = params;
+
 		// create task
 		const task: Task = {
 			text,
@@ -247,8 +260,13 @@ export class Scheduler implements IScheduler {
 
 		// try add to exists container
 		for (const taskContainer of this.taskContainersStorage) {
-			if (taskContainer.from !== from || taskContainer.to !== to) continue;
-			if (taskContainer.context !== context) continue;
+			// Skip containers with not equal parameters
+			if (
+				['from', 'to', 'context', 'priority'].some(
+					(key) => (params as any)[key] !== (taskContainer as any)[key],
+				)
+			)
+				continue;
 
 			// Lightweight check to overflow
 			// NOTE: Do strict check here if you need comply a limit contract
@@ -266,6 +284,7 @@ export class Scheduler implements IScheduler {
 		if (container === null) {
 			const newTaskContainer: TaskContainer = {
 				context,
+				priority,
 				from,
 				to,
 				tasks: [task],
@@ -322,6 +341,8 @@ export class Scheduler implements IScheduler {
 	private async runWorker() {
 		this.workerState = true;
 
+		// TODO: iterate by priority each step
+		// Do it simple at first time and then optimize
 		for (const taskContainer of this.translateQueue) {
 			this.translateQueue.delete(taskContainer);
 
@@ -343,6 +364,7 @@ export class Scheduler implements IScheduler {
 								task,
 								new Error("Translator module can't translate this"),
 								taskContainer.context,
+								taskContainer.priority,
 							);
 						}
 					}
@@ -351,7 +373,12 @@ export class Scheduler implements IScheduler {
 					console.error(reason);
 
 					for (const task of taskContainer.tasks) {
-						this.taskErrorHandler(task, reason, taskContainer.context);
+						this.taskErrorHandler(
+							task,
+							reason,
+							taskContainer.context,
+							taskContainer.priority,
+						);
 					}
 				})
 				.finally(free);
@@ -360,7 +387,7 @@ export class Scheduler implements IScheduler {
 		this.workerState = false;
 	}
 
-	private taskErrorHandler(task: Task, error: any, context: string) {
+	private taskErrorHandler(task: Task, error: any, context: string, priority: number) {
 		if (task.attempt >= this.config.translateRetryAttemptLimit) {
 			if (this.config.isAllowDirectTranslateBadChunks) {
 				const { text, from, to, resolve, reject } = task;
@@ -373,6 +400,7 @@ export class Scheduler implements IScheduler {
 				...task,
 				attempt: task.attempt + 1,
 				context,
+				priority,
 			});
 		}
 	}
