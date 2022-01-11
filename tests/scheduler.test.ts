@@ -22,6 +22,7 @@ test('test `FakeTranslator`', (done) => {
 		.catch(done);
 });
 
+// TODO: add test for queue priority
 test('test `Scheduler`', (done) => {
 	const translator = new FakeTranslator();
 	const scheduler = new Scheduler(translator);

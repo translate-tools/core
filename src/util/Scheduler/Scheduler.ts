@@ -88,6 +88,11 @@ interface TaskContainer {
 	length: number;
 }
 
+type IteratorStep<T> = {
+	done: boolean;
+	value: T | null;
+};
+
 /**
  * Module for scheduling and optimization of translate a text streams
  *
@@ -304,7 +309,6 @@ export class Scheduler implements IScheduler {
 		}
 	}
 
-	private readonly translateQueue = new Set<TaskContainer>();
 	private readonly timersMap = new Map<TaskContainer, number | NodeJS.Timeout>();
 	private updateDelayForAddToTranslateQueue(taskContainer: TaskContainer) {
 		// Flush timer
@@ -321,6 +325,11 @@ export class Scheduler implements IScheduler {
 		);
 	}
 
+	/**
+	 * Tasks queue with items sorted by priority
+	 * It must be handled from end to start
+	 */
+	private translateQueue: TaskContainer[] = [];
 	private addToTranslateQueue(taskContainer: TaskContainer) {
 		// Flush timer
 		if (this.timersMap.has(taskContainer)) {
@@ -330,26 +339,43 @@ export class Scheduler implements IScheduler {
 		}
 
 		this.taskContainersStorage.delete(taskContainer);
-		this.translateQueue.add(taskContainer);
+
+		// Resort queue by priority each time to keep consistency
+		this.translateQueue = this.translateQueue
+			.concat(taskContainer)
+			.sort((a, b) => a.priority - b.priority);
 
 		if (!this.workerState) {
 			this.runWorker();
 		}
 	}
 
+	/**
+	 * Return first item from queue and delete it from queue
+	 * Items is sorted by priority
+	 */
+	private getItemFromTranslateQueue = (): IteratorStep<TaskContainer> => {
+		return {
+			done: this.translateQueue.length === 0,
+			value: this.translateQueue.pop() ?? null,
+		};
+	};
+
 	private workerState = false;
 	private async runWorker() {
 		this.workerState = true;
 
-		// TODO: iterate by priority each step
-		// Do it simple at first time and then optimize
-		for (const taskContainer of this.translateQueue) {
-			this.translateQueue.delete(taskContainer);
+		while (true) {
+			const iterate = this.getItemFromTranslateQueue();
 
-			const textArray = taskContainer.tasks.map((i) => i.text);
+			// Skip when queue empty
+			if (iterate.done || iterate.value === null) break;
+
+			const taskContainer = iterate.value;
 
 			const free = await this.semafor.take();
 
+			const textArray = taskContainer.tasks.map((i) => i.text);
 			await this.translator
 				.translateBatch(textArray, taskContainer.from, taskContainer.to)
 				.then((result) => {
