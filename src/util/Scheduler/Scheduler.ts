@@ -31,6 +31,17 @@ interface Config {
 	 * null for disable the condition
 	 */
 	chunkSizeForInstantTranslate?: number | null;
+
+	/**
+	 * Pause between handle task batches
+	 *
+	 * It may be useful to await accumulating a task batches in queue to consider priority better and don't translate first task batch immediately
+	 *
+	 * WARNING: this option must be used only for consider priority better! Set small value always (10-50ms)
+	 *
+	 * When this option is disabled (by default) and you call translate method for texts with priority 1 and then immediately for text with priority 2, first request will have less delay for translate and will translate first, even with lower priority, because worker will translate first task immediately after delay defined by option `translatePoolDelay`
+	 */
+	taskBatchHandleDelay?: null | number;
 }
 
 interface TaskConstructor {
@@ -109,6 +120,7 @@ export class Scheduler implements IScheduler {
 		directTranslateLength: null,
 		translatePoolDelay: 300,
 		chunkSizeForInstantTranslate: null,
+		taskBatchHandleDelay: null,
 	};
 
 	constructor(translator: BaseTranslator, config?: Config) {
@@ -365,7 +377,16 @@ export class Scheduler implements IScheduler {
 	private async runWorker() {
 		this.workerState = true;
 
+		let firstIteration = true;
 		while (true) {
+			// Delay first iteration to await fill the queue, to consider priority better
+			const workerHandleDelay = this.config.taskBatchHandleDelay;
+			if (workerHandleDelay && firstIteration) {
+				await new Promise((res) => setTimeout(res, workerHandleDelay));
+			}
+
+			firstIteration = false;
+
 			const iterate = this.getItemFromTranslateQueue();
 
 			// Skip when queue empty
