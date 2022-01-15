@@ -50,10 +50,13 @@ interface TaskConstructor {
 	to: langCode;
 
 	/**
-	 * For combine tasks by unique key
+	 * To combine tasks by unique key
 	 */
 	context?: string;
 
+	/**
+	 * To combine and sort tasks by priority
+	 */
 	priority: number;
 }
 
