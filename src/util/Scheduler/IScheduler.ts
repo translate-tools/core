@@ -2,9 +2,14 @@ import { langCodeWithAuto, langCode } from '../../types/Translator';
 
 export interface ITranslateOptions {
 	/**
-	 * Context for grouping requests
+	 * Identifier to grouping requests
 	 */
 	context?: string;
+
+	/**
+	 * Priority index for translate queue
+	 */
+	priority?: number;
 
 	/**
 	 * Use direct translate for this request if it possible
