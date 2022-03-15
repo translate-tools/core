@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { stringify } from 'query-string';
 import xpath from 'xpath';
-import { DOMParser } from 'xmldom';
+import { DOMParser } from '@xmldom/xmldom';
 
 import { langCode, langCodeWithAuto, BaseTranslator } from '../../types/Translator';
 import { getToken } from './token';
