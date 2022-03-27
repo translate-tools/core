@@ -25,7 +25,7 @@ const translators: TranslatorClass[] = [
 	YandexTranslator,
 	BingTranslatorPublic,
 	ReversoTranslator,
-].slice(0, 1);
+].slice(0, 2);
 
 // TODO: use `こんにちは` > `hello`
 describe('Test translators', () => {

@@ -270,18 +270,29 @@ export class GoogleTranslatorTokenFree extends AbstractGoogleTranslator {
 				if (text.length > 0 && Array.isArray(rawResp)) {
 					// Handle many texts
 					const innerArray = rawResp[0];
-					if (!Array.isArray(innerArray) || innerArray.length !== text.length) {
-						throw new TypeError('Invalid response');
+					if (Array.isArray(innerArray) && innerArray.length === text.length) {
+						return innerArray.map((item) => {
+							const obj = deepExploreArray(item, 3);
+							if (typeof obj !== 'string') {
+								console.warn('Translator response', rawResp);
+								throw new TypeError('Invalid item type');
+							}
+
+							return obj;
+						});
+					} else if (Array.isArray(rawResp) && rawResp.length === text.length) {
+						rawResp.forEach((item) => {
+							if (typeof item !== 'string') {
+								console.warn('Translator response', rawResp);
+								throw new TypeError('Invalid item type');
+							}
+						});
+
+						return rawResp;
 					}
 
-					return innerArray.map((item) => {
-						const obj = deepExploreArray(item, 3);
-						if (typeof obj !== 'string') {
-							throw new TypeError('Invalid item type');
-						}
-
-						return obj;
-					});
+					console.warn('Translator response', rawResp);
+					throw new TypeError('Invalid response');
 				} else if (
 					text.length === 1 &&
 					typeof rawResp === 'object' &&
@@ -298,6 +309,7 @@ export class GoogleTranslatorTokenFree extends AbstractGoogleTranslator {
 						.slice(0, -1)
 						.map((sentence) => {
 							if (typeof sentence !== 'object' || !('trans' in sentence)) {
+								console.warn('Translator response', rawResp);
 								throw new TypeError('Invalid response');
 							}
 
@@ -308,6 +320,7 @@ export class GoogleTranslatorTokenFree extends AbstractGoogleTranslator {
 					return [translatedText];
 				}
 
+				console.warn('Translator response', rawResp);
 				throw new TypeError('Invalid response');
 			});
 	}
