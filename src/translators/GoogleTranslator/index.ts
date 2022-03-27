@@ -160,6 +160,7 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 					}
 
 					if (!Array.isArray(resp)) {
+						console.warn('Translator response', rawResp);
 						throw new Error('Unexpected response');
 					}
 
@@ -171,18 +172,31 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 
 						if (from === 'auto') {
 							// Structure: [translate: string, detectedLanguage: string]
-							if (!Array.isArray(chunk) || typeof chunk[0] !== 'string') {
+							if (
+								text.length === 1 &&
+								Array.isArray(chunk) &&
+								typeof chunk[0] === 'string'
+							) {
+								translatedText = chunk[0];
+							} else if (text.length > 1 && typeof chunk === 'string') {
+								translatedText = chunk;
+							} else {
+								console.warn('Translator response', rawResp);
 								throw new Error('Unexpected response');
 							}
-
-							translatedText = chunk[0];
 						} else {
 							// Structure: translate: string
-							if (typeof chunk !== 'string') {
+							if (typeof chunk === 'string') {
+								translatedText = chunk;
+							} else if (
+								Array.isArray(chunk) &&
+								typeof chunk[0] === 'string'
+							) {
+								translatedText = chunk[0];
+							} else {
+								console.warn('Translator response', rawResp);
 								throw new Error('Unexpected response');
 							}
-
-							translatedText = chunk;
 						}
 
 						// Try to parse XML
