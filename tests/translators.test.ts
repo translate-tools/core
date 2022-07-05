@@ -30,6 +30,8 @@ const translators: TranslatorClass[] = [
 	ReversoTranslator,
 ].slice(0, 2);
 
+const isStringStartFromLetter = (text: string) => Boolean(text.match(/^\p{Letter}/u));
+
 const currentDir = path.dirname(__filename);
 const longTextForTest = readFileSync(
 	path.resolve(currentDir, 'resources/text-long.txt'),
@@ -47,6 +49,7 @@ describe('Test translators', () => {
 				.then((translation) => {
 					expect(typeof translation).toBe('string');
 					expect(translation).toContain('мир');
+					expect(isStringStartFromLetter(translation)).toBeTruthy();
 
 					done();
 				})
@@ -62,6 +65,9 @@ describe('Test translators', () => {
 					expect(translation.length).toBe(1);
 
 					expect(translation[0]).toContain('мир');
+					expect(
+						isStringStartFromLetter(translation[0] as string),
+					).toBeTruthy();
 
 					done();
 				})
@@ -79,6 +85,13 @@ describe('Test translators', () => {
 					expect(translation[0]).toContain('мир');
 					expect(translation[1]).toContain('Джефф');
 
+					translation.every((translation) => {
+						expect(typeof translation).toBe('string');
+						expect(
+							isStringStartFromLetter(translation as string),
+						).toBeTruthy();
+					});
+
 					done();
 				})
 				.catch(done);
@@ -94,6 +107,8 @@ describe('Test translators', () => {
 
 					const expectedMinimalLength = longTextForTest.length * 0.7;
 					expect(translation.length >= expectedMinimalLength).toBeTruthy();
+
+					expect(isStringStartFromLetter(translation)).toBeTruthy();
 
 					done();
 				})
@@ -112,6 +127,8 @@ describe('Test translators', () => {
 						(translation as string).length >= expectedMinimalLength,
 					).toBeTruthy();
 
+					expect(isStringStartFromLetter(translation as string)).toBeTruthy();
+
 					done();
 				})
 				.catch(done);
@@ -127,6 +144,8 @@ describe('Test translators', () => {
 						expect(typeof translation).toBe('string');
 						expect(translation).toContain('мир');
 
+						expect(isStringStartFromLetter(translation)).toBeTruthy();
+
 						done();
 					})
 					.catch(done);
@@ -140,7 +159,13 @@ describe('Test translators', () => {
 						expect(Array.isArray(translation)).toBe(true);
 						expect(translation.length).toBe(1);
 
+						expect(typeof translation[0]).toBe('string');
+
 						expect(translation[0]).toContain('мир');
+
+						expect(
+							isStringStartFromLetter(translation[0] as string),
+						).toBeTruthy();
 
 						done();
 					})
@@ -155,8 +180,19 @@ describe('Test translators', () => {
 						expect(Array.isArray(translation)).toBe(true);
 						expect(translation.length).toBe(2);
 
+						expect(typeof translation[0]).toBe('string');
+						expect(typeof translation[1]).toBe('string');
+
 						expect(translation[0]).toContain('мир');
 						expect(translation[1]).toContain('Джефф');
+
+						console.log('translation[0]', translation[0]);
+						expect(
+							isStringStartFromLetter(translation[0] as string),
+						).toBeTruthy();
+						expect(
+							isStringStartFromLetter(translation[1] as string),
+						).toBeTruthy();
 
 						done();
 					})
