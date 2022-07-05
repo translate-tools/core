@@ -1,3 +1,6 @@
+import { readFileSync } from 'fs';
+import path from 'path';
+
 import { TranslatorClass } from '../src/types/Translator';
 
 import {
@@ -26,6 +29,11 @@ const translators: TranslatorClass[] = [
 	BingTranslatorPublic,
 	ReversoTranslator,
 ].slice(0, 2);
+
+const currentDir = path.dirname(__filename);
+const longTextForTest = readFileSync(
+	path.resolve(currentDir, 'resources/text-long.txt'),
+).toString('utf8');
 
 // TODO: use `こんにちは` > `hello`
 describe('Test translators', () => {
@@ -70,6 +78,39 @@ describe('Test translators', () => {
 
 					expect(translation[0]).toContain('мир');
 					expect(translation[1]).toContain('Джефф');
+
+					done();
+				})
+				.catch(done);
+		});
+
+		// Test long text
+		test(`${translatorName}: test long text for "translate" method`, (done) => {
+			const translator = new translatorClass(commonTranslatorOptions);
+			translator
+				.translate(longTextForTest, 'en', 'ru')
+				.then((translation) => {
+					expect(typeof translation).toBe('string');
+
+					const expectedMinimalLength = longTextForTest.length * 0.7;
+					expect(translation.length >= expectedMinimalLength).toBeTruthy();
+
+					done();
+				})
+				.catch(done);
+		});
+
+		test(`${translatorName}: test long text for "translateBatch" method`, (done) => {
+			const translator = new translatorClass(commonTranslatorOptions);
+			translator
+				.translateBatch([longTextForTest], 'en', 'ru')
+				.then(([translation]) => {
+					expect(typeof translation).toBe('string');
+
+					const expectedMinimalLength = longTextForTest.length * 0.7;
+					expect(
+						(translation as string).length >= expectedMinimalLength,
+					).toBeTruthy();
 
 					done();
 				})
