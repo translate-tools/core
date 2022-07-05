@@ -15,6 +15,8 @@ This package contains few translators and its have different status and support 
 | BingTranslatorPublic | browser         | not required | unstable, ready to use for translate short text with low frequency |
 | ReversoTranslator    | browser         | not required | unstable                                                           |
 
+> WARNING: sometimes services are changes API response structure and translators stop works. In this cases we will fix it and update version, so you have to update version too or use another translator for this time. If you are first who found error, please [make issue](https://github.com/translate-tools/core/issues/new) to get fix asap
+
 # Usage
 
 Install package `npm install @translate-tools/core`
