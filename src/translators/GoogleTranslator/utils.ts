@@ -12,3 +12,16 @@ export function deepExploreArray(obj: unknown, depth: number) {
 
 	return currentObj;
 }
+
+/**
+ * Visit each item in array recursively
+ */
+export const visitArrayItems = (arr: any[], visitor: (obj: unknown) => void) => {
+	arr.forEach((obj) => {
+		if (Array.isArray(obj)) {
+			visitArrayItems(obj, visitor);
+		} else {
+			visitor(obj);
+		}
+	});
+};

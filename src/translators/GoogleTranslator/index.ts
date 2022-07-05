@@ -5,20 +5,7 @@ import { DOMParser } from '@xmldom/xmldom';
 
 import { langCode, langCodeWithAuto, BaseTranslator } from '../../types/Translator';
 import { getToken } from './token';
-import { deepExploreArray } from './utils';
-
-/**
- * Visit each item in array recursively
- */
-const visitArrayItems = (arr: any[], visitor: (obj: unknown) => void) => {
-	arr.forEach((obj) => {
-		if (Array.isArray(obj)) {
-			visitArrayItems(obj, visitor);
-		} else {
-			visitor(obj);
-		}
-	});
-};
+import { visitArrayItems } from './utils';
 
 /**
  * Common class for google translator implementations
@@ -249,61 +236,51 @@ export class GoogleTranslatorTokenFree extends AbstractGoogleTranslator {
 		})
 			.then((rsp) => rsp.data)
 			.then((rawResp) => {
-				if (text.length > 0 && Array.isArray(rawResp)) {
-					// Handle many texts
-					const innerArray = rawResp[0];
-					if (Array.isArray(innerArray) && innerArray.length === text.length) {
-						return innerArray.map((item) => {
-							const obj = deepExploreArray(item, 3);
-							if (typeof obj !== 'string') {
-								console.warn('Translator response', rawResp);
-								throw new TypeError('Invalid item type');
-							}
-
-							return obj;
-						});
-					} else if (Array.isArray(rawResp) && rawResp.length === text.length) {
-						rawResp.forEach((item) => {
-							if (typeof item !== 'string') {
-								console.warn('Translator response', rawResp);
-								throw new TypeError('Invalid item type');
-							}
-						});
-
-						return rawResp;
+				try {
+					if (!Array.isArray(rawResp)) {
+						throw new Error('Unexpected response');
 					}
 
-					console.warn('Translator response', rawResp);
-					throw new TypeError('Invalid response');
-				} else if (
-					text.length === 1 &&
-					typeof rawResp === 'object' &&
-					rawResp !== null &&
-					'sentences' in rawResp
-				) {
-					// Handle one text
-					const sentences = (rawResp as any).sentences as unknown;
-					if (!Array.isArray(sentences)) {
-						throw new TypeError('Invalid response');
+					const intermediateTextsArray: string[] = [];
+					visitArrayItems(rawResp, (obj) => {
+						if (typeof obj === 'string') {
+							intermediateTextsArray.push(obj);
+						}
+					});
+
+					const result: string[] = [];
+
+					const isSingleResponseMode = text.length === 1;
+					const isOneToOneMappingMode =
+						intermediateTextsArray.length === text.length;
+					for (const idx in intermediateTextsArray) {
+						const text = intermediateTextsArray[idx];
+
+						if (isSingleResponseMode) {
+							result.push(text);
+							break;
+						}
+
+						// Each second text it's not translation if not 1-1 mapping
+						const isTranslation =
+							isOneToOneMappingMode || Number(idx) % 2 === 0;
+						if (isTranslation) {
+							result.push(text);
+						}
 					}
 
-					const translatedText = sentences
-						.slice(0, -1)
-						.map((sentence) => {
-							if (typeof sentence !== 'object' || !('trans' in sentence)) {
-								console.warn('Translator response', rawResp);
-								throw new TypeError('Invalid response');
-							}
+					if (result.length !== text.length) {
+						console.warn('Translation result', result);
+						throw new Error(
+							'Mismatching a lengths of original and translated arrays',
+						);
+					}
 
-							return sentence.trans;
-						})
-						.join('');
-
-					return [translatedText];
+					return result as string[];
+				} catch (err) {
+					console.warn('Got response', rawResp);
+					throw err;
 				}
-
-				console.warn('Translator response', rawResp);
-				throw new TypeError('Invalid response');
 			});
 	}
 }
