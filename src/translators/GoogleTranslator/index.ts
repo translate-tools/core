@@ -8,6 +8,19 @@ import { getToken } from './token';
 import { deepExploreArray } from './utils';
 
 /**
+ * Visit each item in array recursively
+ */
+const visitArrayItems = (arr: any[], visitor: (obj: unknown) => void) => {
+	arr.forEach((obj) => {
+		if (Array.isArray(obj)) {
+			visitArrayItems(obj, visitor);
+		} else {
+			visitor(obj);
+		}
+	});
+};
+
+/**
  * Common class for google translator implementations
  */
 export abstract class AbstractGoogleTranslator extends BaseTranslator {
@@ -116,9 +129,15 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 	}
 
 	private parseXMLResponse = (text: string) => {
-		const doc = new DOMParser().parseFromString(text);
-		const nodes = xpath.select('//pre/*[not(self::i)]//text()', doc);
-		return nodes.map((node) => node.toString()).join(' ');
+		try {
+			const doc = new DOMParser().parseFromString(text);
+			const nodes = xpath.select('//pre/*[not(self::i)]//text()', doc);
+			return nodes.length === 0
+				? null
+				: nodes.map((node) => node.toString()).join(' ');
+		} catch (err) {
+			return null;
+		}
 	};
 
 	public translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
@@ -153,77 +172,40 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 			})
 				.then((rsp) => rsp.data)
 				.then((rawResp) => {
-					let resp = rawResp;
-					if (text.length == 1) {
-						// (string | string[])[]
-						resp = [rawResp];
-					}
-
-					if (!Array.isArray(resp)) {
-						console.warn('Translator response', rawResp);
-						throw new Error('Unexpected response');
-					}
-
-					const result: (string | null)[] = [];
-
-					// Handle chunks
-					resp.forEach((chunk) => {
-						let translatedText = '';
-
-						if (from === 'auto') {
-							// Structure: [translate: string, detectedLanguage: string]
-							if (
-								text.length === 1 &&
-								Array.isArray(chunk) &&
-								typeof chunk[0] === 'string'
-							) {
-								translatedText = chunk[0];
-							} else if (text.length > 1 && typeof chunk === 'string') {
-								translatedText = chunk;
-							} else {
-								console.warn('Translator response', rawResp);
-								throw new Error('Unexpected response');
-							}
-						} else {
-							// Structure: translate: string
-							if (typeof chunk === 'string') {
-								translatedText = chunk;
-							} else if (
-								Array.isArray(chunk) &&
-								typeof chunk[0] === 'string'
-							) {
-								translatedText = chunk[0];
-							} else {
-								console.warn('Translator response', rawResp);
-								throw new Error('Unexpected response');
-							}
+					try {
+						if (!Array.isArray(rawResp)) {
+							throw new Error('Unexpected response');
 						}
 
-						// Try to parse XML
-						let translationResult: null | string = null;
-						try {
-							translationResult = this.parseXMLResponse(translatedText);
-						} catch (error) {}
+						const isSingleResponseMode = text.length === 1;
 
-						// Push item
-						if (
-							translationResult === null ||
-							translationResult.length === 0
-						) {
-							// We don't have translation, so insert null instead of result
-							result.push(null);
-						} else {
-							result.push(translationResult);
+						const result: string[] = [];
+						visitArrayItems(rawResp, (obj) => {
+							if (isSingleResponseMode && result.length === 1) return;
+
+							if (typeof obj !== 'string') return;
+
+							if (isSingleResponseMode) {
+								result.push(obj);
+							} else {
+								const parsedText = this.parseXMLResponse(obj);
+								if (parsedText !== null) {
+									result.push(parsedText);
+								}
+							}
+						});
+
+						if (result.length !== text.length) {
+							throw new Error(
+								'Mismatching a lengths of original and translated arrays',
+							);
 						}
-					});
 
-					if (result.length !== text.length) {
-						throw new Error(
-							'Mismatching a lengths of original and translated arrays',
-						);
+						return result as string[];
+					} catch (err) {
+						console.warn('Got response', rawResp);
+						throw err;
 					}
-
-					return result;
 				});
 		});
 	}
