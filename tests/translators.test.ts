@@ -186,7 +186,6 @@ describe('Test translators', () => {
 						expect(translation[0]).toContain('мир');
 						expect(translation[1]).toContain('Джефф');
 
-						console.log('translation[0]', translation[0]);
 						expect(
 							isStringStartFromLetter(translation[0] as string),
 						).toBeTruthy();
