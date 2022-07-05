@@ -173,7 +173,8 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 							if (typeof obj !== 'string') return;
 
 							if (isSingleResponseMode) {
-								result.push(obj);
+								const parsedText = this.parseXMLResponse(obj);
+								result.push(parsedText || obj);
 							} else {
 								const parsedText = this.parseXMLResponse(obj);
 								if (parsedText !== null) {
