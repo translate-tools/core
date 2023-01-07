@@ -1,5 +1,9 @@
 import { ITranslateOptions, IScheduler } from './IScheduler';
-import { langCode, langCodeWithAuto, BaseTranslator } from '../../types/Translator';
+import {
+	langCode,
+	langCodeWithAuto,
+	TranslatorInstanceMembers,
+} from '../../types/Translator';
 import { QueueSemafor } from '../../lib/QueueSemafor';
 
 interface Config {
@@ -126,7 +130,7 @@ export class Scheduler implements IScheduler {
 		taskBatchHandleDelay: null,
 	};
 
-	constructor(translator: BaseTranslator, config?: Config) {
+	constructor(translator: TranslatorInstanceMembers, config?: Config) {
 		this.translator = translator;
 
 		if (config !== undefined) {

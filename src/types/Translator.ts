@@ -152,6 +152,7 @@ export interface TranslatorOptions {
 	corsProxy?: CorsProxy;
 }
 
+// TODO: remove it and provide utils to implement translators
 /**
  * Basic abstract class for translator
  */
