@@ -1,7 +1,12 @@
-import { langCodes } from '../util/languages';
+/**
+ * @deprecated this type too strict, use `string` instead
+ */
+export type langCode = string;
 
-export type langCode = typeof langCodes[number];
-export type langCodeWithAuto = 'auto' | langCode;
+/**
+ * @deprecated this type too strict, use `string` instead
+ */
+export type langCodeWithAuto = string;
 
 export interface TranslatorInstanceMembers {
 	/**
