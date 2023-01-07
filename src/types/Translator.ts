@@ -5,7 +5,7 @@ export type langCodeWithAuto = 'auto' | langCode;
 
 export interface TranslatorInstanceMembers {
 	/**
-	 * Translate text from string
+	 * Translate text
 	 * @returns Translated string
 	 */
 	translate(
@@ -15,9 +15,9 @@ export interface TranslatorInstanceMembers {
 	): Promise<string>;
 
 	/**
-	 * Translate text from array of string
+	 * Translate texts array
 	 * @returns Array with translated strings and same length as input array
-	 * @returns Text which did not translated will replaced to `null`
+	 * @returns Texts that did not translated will replaced to `null`
 	 */
 	translateBatch(
 		text: string[],
@@ -26,7 +26,7 @@ export interface TranslatorInstanceMembers {
 	): Promise<Array<string | null>>;
 
 	/**
-	 * Check string or array of stings to exceeding of a limit
+	 * Check string or array of stings to exceeding a limit
 	 *
 	 * It need for modules with complexity logic of encoding a strings.
 	 * For example, when in `translateBatch` text merge to string
@@ -48,11 +48,14 @@ export interface TranslatorInstanceMembers {
 	getLengthLimit(): number;
 
 	/**
-	 * Recommended delay between requests
+	 * Delay between requests that required by translator to a correct work
 	 */
 	getRequestsTimeout: () => number;
 }
 
+/**
+ * Static members useful to choose most suitable translator in list by features
+ */
 export interface TranslatorStaticMembers {
 	/**
 	 * Public translator name to displaying
@@ -76,7 +79,9 @@ export interface TranslatorStaticMembers {
 }
 
 /**
- * Base translator object contract
+ * Translator class contract
+ *
+ * This type describe static members and members for instance both
  */
 export interface TranslatorClass<
 	InstanceProps extends TranslatorInstanceMembers = TranslatorInstanceMembers,
