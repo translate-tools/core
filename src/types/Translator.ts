@@ -112,10 +112,6 @@ export interface TranslatorClass<
 	new (...args: any[]): C;
 }
 
-export interface TranslatorInstance
-	extends TranslatorStaticMembers,
-		TranslatorInstanceMembers {}
-
 //
 // Base implementation
 //
