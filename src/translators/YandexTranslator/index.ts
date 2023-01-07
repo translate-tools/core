@@ -1,7 +1,8 @@
 import { stringify } from 'query-string';
 import { unescape } from 'lodash';
 
-import { langCode, langCodeWithAuto, BaseTranslator } from '../../types/Translator';
+import { langCode, langCodeWithAuto } from '../../types/Translator';
+import { BaseTranslator } from '../../util/BaseTranslator';
 import { fetchResponseToJson } from '../../lib/fetchResponseToJson';
 
 import { getYandexSID } from './getYandexSID';

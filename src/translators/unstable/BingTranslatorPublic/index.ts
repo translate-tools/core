@@ -1,4 +1,5 @@
-import { langCode, langCodeWithAuto, BaseTranslator } from '../../../types/Translator';
+import { langCode, langCodeWithAuto } from '../../../types/Translator';
+import { BaseTranslator } from '../../../util/BaseTranslator';
 import { Multiplexor } from '../../../lib/Multiplexor';
 import { fetchResponseToJson } from '../../../lib/fetchResponseToJson';
 

@@ -1,4 +1,5 @@
-import { BaseTranslator, langCode, langCodeWithAuto } from '../types/Translator';
+import { langCode, langCodeWithAuto } from '../types/Translator';
+import { BaseTranslator } from '../util/BaseTranslator';
 
 /**
  * Fake translator for use in tests and debug
