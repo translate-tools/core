@@ -25,6 +25,7 @@
 		"removeComments": false,
 		"sourceMap": true,
 		"lib": ["es2020", "dom"],
+		"skipLibCheck": true,
 		"rootDir": ".",
 		"jsx": "react",
 		"allowJs": true,
