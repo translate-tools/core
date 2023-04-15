@@ -48,3 +48,21 @@ export const isLanguageCodeISO639v2 = (language: string) => {
 
 	return language in langCodesMap;
 };
+
+/**
+ * Receive languages array and return extracted 639-2 lang codes
+ */
+export const getLanguageCodesISO639v2 = (languages: string[]) => {
+	return languages
+		.map((lang) => {
+			// Remove suffix
+			return lang.split('-')[0];
+		})
+		.filter((language, index, languages) => {
+			// Remove non standard codes
+			if (!isLanguageCodeISO639v2(language)) return false;
+
+			// Remove duplicates
+			return languages.indexOf(language) === index;
+		});
+};

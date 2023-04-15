@@ -7,7 +7,7 @@ import { langCode, langCodeWithAuto } from '../../types/Translator';
 import { BaseTranslator } from '../../util/BaseTranslator';
 import { getToken } from './token';
 import { visitArrayItems } from './utils';
-import { isLanguageCodeISO639v2 } from '../../util/languages';
+import { getLanguageCodesISO639v2 } from '../../util/languages';
 
 /**
  * Map with languages aliases.
@@ -58,21 +58,12 @@ export abstract class AbstractGoogleTranslator extends BaseTranslator {
 			Object.entries(fixedLanguagesMap).map(([key, val]) => [val, key]),
 		);
 
-		return supportedLanguages
-			.map((lang) => {
+		return getLanguageCodesISO639v2(
+			supportedLanguages.map((lang) => {
 				// Replace legacy language codes to actual
-				const fixedLanguage = reversedLanguagesMap[lang] ?? lang;
-
-				// Remove suffix
-				return fixedLanguage.split('-')[0];
-			})
-			.filter((language, index, languages) => {
-				// Remove duplicates
-				if (languages.indexOf(language) !== index) return false;
-
-				// Remove non standard codes
-				return isLanguageCodeISO639v2(language);
-			});
+				return reversedLanguagesMap[lang] ?? lang;
+			}),
+		);
 	}
 
 	public getLengthLimit() {
