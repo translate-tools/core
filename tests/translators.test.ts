@@ -2,6 +2,7 @@ import { readFileSync } from 'fs';
 import path from 'path';
 
 import { TranslatorClass } from '../src/types/Translator';
+import { getLanguageCodesISO639v2 } from '../src/util/languages';
 
 import {
 	GoogleTranslator,
@@ -37,6 +38,13 @@ describe('Test translators', () => {
 
 	translators.forEach((translatorClass) => {
 		const translatorName = translatorClass.translatorName;
+
+		test(`${translatorName}: method "getSupportedLanguages" return language codes`, () => {
+			const languages = translatorClass.getSupportedLanguages();
+
+			const validLangCodes = getLanguageCodesISO639v2(languages);
+			expect(validLangCodes.length).toBeGreaterThan(1);
+		});
 
 		test(`${translatorName}: test "translate" method`, (done) => {
 			const translator = new translatorClass(commonTranslatorOptions);

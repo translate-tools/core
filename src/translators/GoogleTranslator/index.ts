@@ -7,6 +7,43 @@ import { langCode, langCodeWithAuto } from '../../types/Translator';
 import { BaseTranslator } from '../../util/BaseTranslator';
 import { getToken } from './token';
 import { visitArrayItems } from './utils';
+import { getLanguageCodesISO639v2 } from '../../util/languages';
+
+/**
+ * Map with languages aliases.
+ *
+ * Google translator use legacy codes for some languages,
+ * this map useful to use actual language codes by aliases
+ *
+ * @link https://xml.coverpages.org/iso639a.html
+ */
+const fixedLanguagesMap: Record<string, string> = {
+	he: 'iw',
+	jv: 'jw',
+};
+
+/**
+ * Raw languages array
+ */
+// eslint-disable
+// prettier-ignore
+export const supportedLanguages = [
+	'af', 'ak', 'am', 'ar', 'as', 'ay', 'az', 'be', 'bg', 'bho',
+	'bm', 'bn', 'bs', 'ca', 'ceb', 'ckb', 'co', 'cs', 'cy', 'da',
+	'de', 'doi', 'dv', 'ee', 'el', 'en', 'eo', 'es', 'et', 'eu',
+	'fa', 'fi', 'fr', 'fy', 'ga', 'gd', 'gl', 'gn', 'gom', 'gu',
+	'ha', 'haw', 'hi', 'hmn', 'hr', 'ht', 'hu', 'hy', 'id', 'ig',
+	'ilo', 'is', 'it', 'iw', 'ja', 'jw', 'ka', 'kk', 'km', 'kn',
+	'ko', 'kri', 'ku', 'ky', 'la', 'lb', 'lg', 'ln', 'lo', 'lt',
+	'lus', 'lv', 'mai', 'mg', 'mi', 'mk', 'ml', 'mn', 'mni-Mtei', 'mr',
+	'ms', 'mt', 'my', 'ne', 'nl', 'no', 'nso', 'ny', 'om', 'or',
+	'pa', 'pl', 'ps', 'pt', 'qu', 'ro', 'ru', 'rw', 'sa', 'sd',
+	'si', 'sk', 'sl', 'sm', 'sn', 'so', 'sq', 'sr', 'st', 'su',
+	'sv', 'sw', 'ta', 'te', 'tg', 'th', 'ti', 'tk', 'tl', 'tr',
+	'ts', 'tt', 'ug', 'uk', 'ur', 'uz', 'vi', 'xh', 'yi', 'yo',
+	'zh-CN', 'zh-TW', 'zu'
+];
+// eslint-enable
 
 /**
  * Common class for google translator implementations
@@ -17,27 +54,16 @@ export abstract class AbstractGoogleTranslator extends BaseTranslator {
 	}
 
 	public static getSupportedLanguages(): langCode[] {
-		// Supported, but not valid languages ["zh-cn", "zh-tw", 'ceb', 'haw', 'iw', 'hmn', 'jw', 'ma']
+		const reversedLanguagesMap = Object.fromEntries(
+			Object.entries(fixedLanguagesMap).map(([key, val]) => [val, key]),
+		);
 
-		// eslint-disable
-		// prettier-ignore
-		return [
-			'af', 'ak', 'am', 'ar', 'as', 'ay', 'az', 'be', 'bg', 'bho',
-			'bm', 'bn', 'bs', 'ca', 'ceb', 'ckb', 'co', 'cs', 'cy', 'da',
-			'de', 'doi', 'dv', 'ee', 'el', 'en', 'eo', 'es', 'et', 'eu',
-			'fa', 'fi', 'fr', 'fy', 'ga', 'gd', 'gl', 'gn', 'gom', 'gu',
-			'ha', 'haw', 'hi', 'hmn', 'hr', 'ht', 'hu', 'hy', 'id', 'ig',
-			'ilo', 'is', 'it', 'iw', 'ja', 'jw', 'ka', 'kk', 'km', 'kn',
-			'ko', 'kri', 'ku', 'ky', 'la', 'lb', 'lg', 'ln', 'lo', 'lt',
-			'lus', 'lv', 'mai', 'mg', 'mi', 'mk', 'ml', 'mn', 'mni-Mtei', 'mr',
-			'ms', 'mt', 'my', 'ne', 'nl', 'no', 'nso', 'ny', 'om', 'or',
-			'pa', 'pl', 'ps', 'pt', 'qu', 'ro', 'ru', 'rw', 'sa', 'sd',
-			'si', 'sk', 'sl', 'sm', 'sn', 'so', 'sq', 'sr', 'st', 'su',
-			'sv', 'sw', 'ta', 'te', 'tg', 'th', 'ti', 'tk', 'tl', 'tr',
-			'ts', 'tt', 'ug', 'uk', 'ur', 'uz', 'vi', 'xh', 'yi', 'yo',
-			'zh-CN', 'zh-TW', 'zu'
-		];
-		// eslint-enable
+		return getLanguageCodesISO639v2(
+			supportedLanguages.map((lang) => {
+				// Replace legacy language codes to actual
+				return reversedLanguagesMap[lang] ?? lang;
+			}),
+		);
 	}
 
 	public getLengthLimit() {
@@ -48,12 +74,12 @@ export abstract class AbstractGoogleTranslator extends BaseTranslator {
 		return 300;
 	}
 
-	protected readonly langReplacements: Record<string, string> = {
-		zh: 'zh-cn',
-	};
-
-	protected fixLang(lang: langCodeWithAuto) {
-		return lang in this.langReplacements ? this.langReplacements[lang] : lang;
+	/**
+	 * Map ISO lang codes to google translator lang codes
+	 */
+	protected getFixedLanguage(lang: langCodeWithAuto) {
+		if (lang === 'zh') return 'zh-CN';
+		return fixedLanguagesMap[lang] ?? lang;
 	}
 }
 
@@ -80,9 +106,9 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 
 			const data = {
 				client: 't',
-				sl: this.fixLang(from),
-				tl: this.fixLang(to),
-				hl: this.fixLang(to),
+				sl: this.getFixedLanguage(from),
+				tl: this.getFixedLanguage(to),
+				hl: this.getFixedLanguage(to),
 				dt: ['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't'],
 				ie: 'UTF-8',
 				oe: 'UTF-8',
@@ -142,8 +168,8 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 				client: 'te',
 				v: '1.0',
 				format: 'html',
-				sl: this.fixLang(from),
-				tl: this.fixLang(to),
+				sl: this.getFixedLanguage(from),
+				tl: this.getFixedLanguage(to),
 				tk,
 			};
 
@@ -224,8 +250,8 @@ export class GoogleTranslatorTokenFree extends AbstractGoogleTranslator {
 
 		const data = {
 			client: 'dict-chrome-ex',
-			sl: this.fixLang(from),
-			tl: this.fixLang(to),
+			sl: this.getFixedLanguage(from),
+			tl: this.getFixedLanguage(to),
 			q: text,
 		};
 
