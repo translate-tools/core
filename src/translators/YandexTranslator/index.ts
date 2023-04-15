@@ -20,15 +20,16 @@ export class YandexTranslator extends BaseTranslator {
 		// eslint-disable
 		// prettier-ignore
 		return [
-			'az', 'ml', 'sq', 'mt', 'am', 'mk', 'en', 'mi', 'ar', 'mr',
-			'hy', 'af', 'mn', 'eu', 'de', 'ba', 'ne', 'be', 'no', 'bn',
-			'pa', 'my', 'bg', 'fa', 'bs', 'pl', 'cy', 'pt', 'hu', 'ro',
-			'vi', 'ru', 'ht', 'gl', 'sr', 'nl', 'si', 'sk', 'el', 'sl',
-			'ka', 'sw', 'gu', 'su', 'da', 'tg', 'he', 'th', 'yi', 'tl',
-			'id', 'ta', 'ga', 'tt', 'it', 'te', 'is', 'tr', 'es', 'kk',
-			'uz', 'kn', 'uk', 'ca', 'ur', 'ky', 'fi', 'zh', 'fr', 'ko',
-			'hi', 'xh', 'hr', 'km', 'cs', 'lo', 'sv', 'la', 'gd', 'lv',
-			'et', 'lt', 'eo', 'lb', 'jv', 'mg', 'ja', 'ms',
+			'af', 'am', 'ar', 'az', 'ba', 'be', 'bg', 'bn', 'bs', 'ca',
+			'ceb', 'cs', 'cv', 'cy', 'da', 'de', 'el', 'emj', 'en', 'eo',
+			'es', 'et', 'eu', 'fa', 'fi', 'fr', 'ga', 'gd', 'gl', 'gu',
+			'he', 'hi', 'hr', 'ht', 'hu', 'hy', 'id', 'is', 'it', 'ja',
+			'jv', 'ka', 'kazlat', 'kk', 'km', 'kn', 'ko', 'ky', 'la', 'lb',
+			'lo', 'lt', 'lv', 'mg', 'mhr', 'mi', 'mk', 'ml', 'mn', 'mr',
+			'mrj', 'ms', 'mt', 'my', 'ne', 'nl', 'no', 'pa', 'pap', 'pl',
+			'pt', 'ro', 'ru', 'sah', 'si', 'sjn', 'sk', 'sl', 'sq', 'sr',
+			'su', 'sv', 'sw', 'ta', 'te', 'tg', 'th', 'tl', 'tr', 'tt',
+			'udm', 'uk', 'ur', 'uz', 'uzbcyr', 'vi', 'xh', 'yi', 'zh', 'zu'
 		];
 		// eslint-enable
 	}
