@@ -37,8 +37,11 @@ describe('getLanguageCodesISO639v2', () => {
 			'qq-JA',
 			'en-GB',
 			'en-US',
+			'en_US',
+			'zh_CN',
+			'zh_TW',
 			'ja',
 		]);
-		expect(result).toEqual(['en', 'ja']);
+		expect(result).toEqual(['en', 'zh', 'ja']);
 	});
 });

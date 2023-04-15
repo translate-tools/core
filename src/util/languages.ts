@@ -56,7 +56,7 @@ export const getLanguageCodesISO639v2 = (languages: string[]) => {
 	return languages
 		.map((lang) => {
 			// Remove suffix
-			return lang.split('-')[0];
+			return lang.split(/[_-]/)[0];
 		})
 		.filter((language, index, languages) => {
 			// Remove non standard codes
