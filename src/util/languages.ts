@@ -26,3 +26,25 @@ export const langCodes = [
 	"yi", "yo", "za", "zu"
 ] as const;
 // eslint-enable
+
+let langCodesMap: Record<string, unknown> | null = null;
+
+/**
+ * Check is string are 639-2 lang code
+ *
+ * Values are case sensitive, if you need, you have to convert strings to lower case to check
+ *
+ * This function are creates object `Record<string, unknown>` with hundreds entries in RAM,
+ * while first call to improve search performance. Keep in mind that this RAM never free.
+ */
+export const isLanguageCodeISO639v2 = (language: string) => {
+	// Create map to optimize search
+	if (langCodesMap === null) {
+		langCodesMap = {};
+		for (const lang of langCodes) {
+			langCodesMap[lang] = true;
+		}
+	}
+
+	return language in langCodesMap;
+};
