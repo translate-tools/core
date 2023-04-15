@@ -7,6 +7,20 @@ import { langCode, langCodeWithAuto } from '../../types/Translator';
 import { BaseTranslator } from '../../util/BaseTranslator';
 import { getToken } from './token';
 import { visitArrayItems } from './utils';
+import { isLanguageCodeISO639v2 } from '../../util/languages';
+
+/**
+ * Map with languages aliases.
+ *
+ * Google translator use legacy codes for some languages,
+ * this map useful to use actual language codes by aliases
+ *
+ * @link https://xml.coverpages.org/iso639a.html
+ */
+const languagesMap: Record<string, string> = {
+	he: 'iw',
+	jv: 'jw',
+};
 
 /**
  * Common class for google translator implementations
@@ -17,11 +31,9 @@ export abstract class AbstractGoogleTranslator extends BaseTranslator {
 	}
 
 	public static getSupportedLanguages(): langCode[] {
-		// Supported, but not valid languages ["zh-cn", "zh-tw", 'ceb', 'haw', 'iw', 'hmn', 'jw', 'ma']
-
 		// eslint-disable
 		// prettier-ignore
-		return [
+		const supportedLanguages = [
 			'af', 'ak', 'am', 'ar', 'as', 'ay', 'az', 'be', 'bg', 'bho',
 			'bm', 'bn', 'bs', 'ca', 'ceb', 'ckb', 'co', 'cs', 'cy', 'da',
 			'de', 'doi', 'dv', 'ee', 'el', 'en', 'eo', 'es', 'et', 'eu',
@@ -38,6 +50,25 @@ export abstract class AbstractGoogleTranslator extends BaseTranslator {
 			'zh-CN', 'zh-TW', 'zu'
 		];
 		// eslint-enable
+
+		const reversedLanguagesMap = Object.fromEntries(
+			Object.entries(languagesMap).map(([key, val]) => [val, key]),
+		);
+		return supportedLanguages
+			.map((lang) => {
+				// Replace legacy language codes to actual
+				const fixedLanguage = reversedLanguagesMap[lang] ?? lang;
+
+				// Remove suffix
+				return fixedLanguage.split('-')[0];
+			})
+			.filter((language, index, languages) => {
+				// Remove duplicates
+				if (languages.indexOf(language) !== index) return false;
+
+				// Remove non not standard codes
+				return isLanguageCodeISO639v2(language);
+			});
 	}
 
 	public getLengthLimit() {
@@ -48,12 +79,9 @@ export abstract class AbstractGoogleTranslator extends BaseTranslator {
 		return 300;
 	}
 
-	protected readonly langReplacements: Record<string, string> = {
-		zh: 'zh-cn',
-	};
-
 	protected fixLang(lang: langCodeWithAuto) {
-		return lang in this.langReplacements ? this.langReplacements[lang] : lang;
+		if (lang === 'zh') return 'zh-CN';
+		return languagesMap[lang] ?? lang;
 	}
 }
 
