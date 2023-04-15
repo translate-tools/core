@@ -33,6 +33,8 @@ const longTextForTest = readFileSync(
 
 // TODO: use `こんにちは` > `hello`
 describe('Test translators', () => {
+	jest.setTimeout(20000);
+
 	translators.forEach((translatorClass) => {
 		const translatorName = translatorClass.translatorName;
 
