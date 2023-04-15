@@ -14,7 +14,7 @@ function tsCompilerFactory(outPath, settings) {
 		const tsProject = ts.createProject('tsconfig.json', settings);
 
 		return gulp
-			.src(['src/**/*.{ts,tsx}'])
+			.src(['src/**/!(*.test).{ts,tsx}'])
 			.pipe(sourcemaps.init())
 			.pipe(tsProject())
 			.pipe(sourcemaps.write())
@@ -24,7 +24,7 @@ function tsCompilerFactory(outPath, settings) {
 
 function copyNotTranspilableSourcesFactory(outPath) {
 	return function copyNotTranspilableSources() {
-		return gulp.src([`src/**/*.{js,d.ts}`]).pipe(gulp.dest(outPath));
+		return gulp.src([`src/**/!(*.test).{js,d.ts}`]).pipe(gulp.dest(outPath));
 	};
 }
 
