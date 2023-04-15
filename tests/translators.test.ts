@@ -22,7 +22,7 @@ const translators: TranslatorClass[] = [
 	GoogleTranslator,
 	GoogleTranslatorTokenFree,
 	TartuNLPTranslator,
-].slice(0, 3);
+];
 
 const isStringStartFromLetter = (text: string) => Boolean(text.match(/^\p{Letter}/u));
 
