@@ -74,6 +74,9 @@ export abstract class AbstractGoogleTranslator extends BaseTranslator {
 		return 300;
 	}
 
+	/**
+	 * Map ISO lang codes to google translator lang codes
+	 */
 	protected getFixedLanguage(lang: langCodeWithAuto) {
 		if (lang === 'zh') return 'zh-CN';
 		return fixedLanguagesMap[lang] ?? lang;
