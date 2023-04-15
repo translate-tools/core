@@ -6,10 +6,13 @@ const fs = require('fs');
 function getPrettifiedLanguagesList(langs, langsPerLine = 10) {
 	const lines = [];
 
-	for (let offset = 0; offset < langs.length; offset += langsPerLine) {
-		const line = langs
+	const sortedLangs = langs;
+	sortedLangs.sort();
+
+	for (let offset = 0; offset < sortedLangs.length; offset += langsPerLine) {
+		const line = sortedLangs
 			.slice(offset, offset + langsPerLine)
-			.map((l) => `"${l}"`)
+			.map((l) => `'${l}'`)
 			.join(', ');
 		lines.push(line);
 	}
