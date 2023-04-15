@@ -7,9 +7,7 @@ import {
 	GoogleTranslator,
 	GoogleTranslatorTokenFree,
 } from '../src/translators/GoogleTranslator';
-import { YandexTranslator } from '../src/translators/YandexTranslator';
-import { BingTranslatorPublic } from '../src/translators/unstable/BingTranslatorPublic';
-import { ReversoTranslator } from '../src/translators/unstable/ReversoTranslator';
+import { TartuNLPTranslator } from '../src/translators/TartuNLPTranslator';
 
 const commonTranslatorOptions = {
 	headers: {
@@ -23,12 +21,8 @@ const commonTranslatorOptions = {
 const translators: TranslatorClass[] = [
 	GoogleTranslator,
 	GoogleTranslatorTokenFree,
-
-	// TODO: make it work in node and test it all
-	YandexTranslator,
-	BingTranslatorPublic,
-	ReversoTranslator,
-].slice(0, 2);
+	TartuNLPTranslator,
+];
 
 const isStringStartFromLetter = (text: string) => Boolean(text.match(/^\p{Letter}/u));
 
@@ -39,6 +33,8 @@ const longTextForTest = readFileSync(
 
 // TODO: use `こんにちは` > `hello`
 describe('Test translators', () => {
+	jest.setTimeout(20000);
+
 	translators.forEach((translatorClass) => {
 		const translatorName = translatorClass.translatorName;
 
