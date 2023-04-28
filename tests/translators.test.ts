@@ -8,6 +8,7 @@ import {
 	GoogleTranslator,
 	GoogleTranslatorTokenFree,
 } from '../src/translators/GoogleTranslator';
+import { YandexTranslator } from '../src/translators/YandexTranslator';
 import { TartuNLPTranslator } from '../src/translators/TartuNLPTranslator';
 
 const commonTranslatorOptions = {
@@ -22,6 +23,7 @@ const commonTranslatorOptions = {
 const translators: TranslatorClass[] = [
 	GoogleTranslator,
 	GoogleTranslatorTokenFree,
+	YandexTranslator,
 	TartuNLPTranslator,
 ];
 
