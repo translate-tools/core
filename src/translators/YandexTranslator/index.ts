@@ -1,9 +1,9 @@
+import axios from 'axios';
 import { stringify } from 'query-string';
 import { unescape } from 'lodash';
 
 import { langCode, langCodeWithAuto } from '../../types/Translator';
 import { BaseTranslator } from '../../util/BaseTranslator';
-import { fetchResponseToJson } from '../../lib/fetchResponseToJson';
 
 import { getYandexSID } from './getYandexSID';
 
@@ -79,32 +79,29 @@ export class YandexTranslator extends BaseTranslator {
 			'https://translate.yandex.net/api/v1/tr.json/translate?srv=tr-url-widget&id=' +
 			sid +
 			'-0-0&';
-		return fetch(this.wrapUrlToCorsProxy(urlWithSid + body), {
+		return axios(this.wrapUrlToCorsProxy(urlWithSid + body), {
 			method: 'GET',
-			credentials: 'omit',
-			referrerPolicy: 'no-referrer',
+			withCredentials: false,
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
 				...this.options.headers,
 			},
-		})
-			.then(fetchResponseToJson)
-			.then((resp) => {
-				if (
-					!(resp instanceof Object) ||
-					!Array.isArray(resp.text) ||
-					resp.text.length !== text.length
-				) {
-					throw new Error('Unexpected response');
+		}).then(({ data: resp }) => {
+			if (
+				!(resp instanceof Object) ||
+				!Array.isArray((resp as any).text) ||
+				(resp as any).text.length !== text.length
+			) {
+				throw new Error('Unexpected response');
+			}
+
+			return (resp as any).text.map((text: unknown) => {
+				if (typeof text !== 'string') {
+					throw new Error('Unexpected response type');
 				}
 
-				return resp.text.map((text: any) => {
-					if (typeof text !== 'string') {
-						throw new Error('Unexpected response type');
-					}
-
-					return unescape(text);
-				});
+				return unescape(text);
 			});
+		});
 	}
 }
