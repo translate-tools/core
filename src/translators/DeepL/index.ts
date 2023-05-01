@@ -1,9 +1,13 @@
 import axios from 'axios';
 
 import { langCode, langCodeWithAuto } from '../../types/Translator';
-import { BaseTranslator } from '../../util/BaseTranslator';
+import { BaseTranslator, TranslatorOptions } from '../../util/BaseTranslator';
 
-export class DeepLTranslator extends BaseTranslator<{ accessKey: string }> {
+export type DeepLTranslatorOptions = {
+	apiKey: string;
+};
+
+export class DeepLTranslator extends BaseTranslator<DeepLTranslatorOptions> {
 	public static readonly translatorName = 'DeepLTranslator';
 
 	public static isRequiredKey = () => true;
@@ -19,6 +23,21 @@ export class DeepLTranslator extends BaseTranslator<{ accessKey: string }> {
 			'pt', 'ro', 'ru', 'sk', 'sl', 'sv', 'tr', 'uk', 'zh'
 		];
 		// eslint-enable
+	}
+
+	private readonly apiEndpoint: string;
+	constructor(options: TranslatorOptions<DeepLTranslatorOptions>) {
+		super(options);
+
+		// DeepL API Free authentication keys can be identified easily by the suffix ":fx"
+		// Docs: https://www.deepl.com/docs-api/api-access/
+
+		const isApiKeyFreeVersion = options.apiKey.endsWith(':fx');
+		const apiHost = isApiKeyFreeVersion
+			? 'https://api-free.deepl.com'
+			: 'https://api.deepl.com';
+
+		this.apiEndpoint = apiHost + '/v2/translate';
 	}
 
 	public getLengthLimit() {
@@ -62,10 +81,10 @@ export class DeepLTranslator extends BaseTranslator<{ accessKey: string }> {
 			.join('&');
 
 		return axios
-			.post('https://api-free.deepl.com/v2/translate', stringifiedBody, {
+			.post(this.apiEndpoint, stringifiedBody, {
 				withCredentials: false,
 				headers: {
-					Authorization: `DeepL-Auth-Key ${this.options.accessKey}`,
+					Authorization: `DeepL-Auth-Key ${this.options.apiKey}`,
 					'Content-Type': 'application/x-www-form-urlencoded',
 					...this.options.headers,
 				},

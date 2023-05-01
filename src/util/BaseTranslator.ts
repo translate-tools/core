@@ -6,7 +6,7 @@ import {
 
 export type CorsProxy = string | ((url: string) => string);
 
-export interface TranslatorOptions {
+export type TranslatorOptions<O extends Record<any, any> = {}> = O & {
 	/**
 	 * Access key for requests to translator API
 	 */
@@ -34,7 +34,7 @@ export interface TranslatorOptions {
 	 * All requests will send through this proxy server and this server will modify headers
 	 */
 	corsProxy?: CorsProxy;
-}
+};
 
 // TODO: remove it and provide utils to implement translators
 /**
@@ -56,8 +56,8 @@ implements TranslatorInstanceMembers
 
 	public abstract getRequestsTimeout(): number;
 
-	protected readonly options: TranslatorOptions & C = {} as any;
-	constructor(options?: TranslatorOptions & C) {
+	protected readonly options = {} as TranslatorOptions<C>;
+	constructor(options?: TranslatorOptions<C>) {
 		if (options !== undefined) {
 			this.options = options;
 		}
