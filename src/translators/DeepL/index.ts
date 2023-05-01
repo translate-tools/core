@@ -3,7 +3,7 @@ import axios from 'axios';
 import { langCode, langCodeWithAuto } from '../../types/Translator';
 import { BaseTranslator } from '../../util/BaseTranslator';
 
-export class DeepLTranslator extends BaseTranslator<{ AccessKey: string }> {
+export class DeepLTranslator extends BaseTranslator<{ accessKey: string }> {
 	public static readonly translatorName = 'DeepLTranslator';
 
 	public static isRequiredKey = () => true;
@@ -65,7 +65,7 @@ export class DeepLTranslator extends BaseTranslator<{ AccessKey: string }> {
 			.post('https://api-free.deepl.com/v2/translate', stringifiedBody, {
 				withCredentials: false,
 				headers: {
-					Authorization: `DeepL-Auth-Key ${this.options.AccessKey}`,
+					Authorization: `DeepL-Auth-Key ${this.options.accessKey}`,
 					'Content-Type': 'application/x-www-form-urlencoded',
 					...this.options.headers,
 				},

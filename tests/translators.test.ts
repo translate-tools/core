@@ -35,7 +35,7 @@ type TranslatorWithOptions = {
 const translatorsWithOptions: TranslatorWithOptions[] = [
 	{
 		translator: DeepLTranslator,
-		options: { AccessKey: process.env.DEEPL_KEY_FREE },
+		options: { accessKey: process.env.DEEPL_KEY_FREE },
 	},
 ];
 
@@ -59,7 +59,7 @@ describe('Test translators', () => {
 		const translatorName = translatorClass.translatorName;
 
 		const isKeyRequiredButNotSpecified =
-			translatorClass.isRequiredKey() && !options['AccessKey'];
+			translatorClass.isRequiredKey() && !options['accessKey'];
 		if (isKeyRequiredButNotSpecified) {
 			console.warn(
 				`Skip tests for translator "${translatorName}", because access key is not specified`,
