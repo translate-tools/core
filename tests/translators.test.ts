@@ -10,6 +10,7 @@ import {
 } from '../src/translators/GoogleTranslator';
 import { YandexTranslator } from '../src/translators/YandexTranslator';
 import { TartuNLPTranslator } from '../src/translators/TartuNLPTranslator';
+import { DeepLTranslator } from '../src/translators/DeepL';
 
 const commonTranslatorOptions = {
 	headers: {
@@ -27,6 +28,17 @@ const translators: TranslatorClass[] = [
 	TartuNLPTranslator,
 ];
 
+type TranslatorWithOptions = {
+	translator: TranslatorClass;
+	options: Record<string, any>;
+};
+const translatorsWithOptions: TranslatorWithOptions[] = [
+	{
+		translator: DeepLTranslator,
+		options: { AccessKey: process.env.DEEPL_KEY_FREE },
+	},
+];
+
 const isStringStartFromLetter = (text: string) => Boolean(text.match(/^\p{Letter}/u));
 
 const currentDir = path.dirname(__filename);
@@ -38,8 +50,24 @@ const longTextForTest = readFileSync(
 describe('Test translators', () => {
 	jest.setTimeout(20000);
 
-	translators.forEach((translatorClass) => {
+	const translatorsForTest: TranslatorWithOptions[] = [
+		...translatorsWithOptions,
+		...translators.map((translator) => ({ translator, options: {} })),
+	];
+
+	translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 		const translatorName = translatorClass.translatorName;
+
+		const isKeyRequiredButNotSpecified =
+			translatorClass.isRequiredKey() && !options['AccessKey'];
+		if (isKeyRequiredButNotSpecified) {
+			console.warn(
+				`Skip tests for translator "${translatorName}", because access key is not specified`,
+			);
+			return;
+		}
+
+		const translatorOptions = { ...commonTranslatorOptions, ...options };
 
 		test(`${translatorName}: method "getSupportedLanguages" return language codes`, () => {
 			const languages = translatorClass.getSupportedLanguages();
@@ -49,7 +77,7 @@ describe('Test translators', () => {
 		});
 
 		test(`${translatorName}: test "translate" method`, (done) => {
-			const translator = new translatorClass(commonTranslatorOptions);
+			const translator = new translatorClass(translatorOptions);
 			translator
 				.translate('Hello world', 'en', 'ru')
 				.then((translation) => {
@@ -63,7 +91,7 @@ describe('Test translators', () => {
 		});
 
 		test(`${translatorName}: test "translateBatch" method with 1 text`, (done) => {
-			const translator = new translatorClass(commonTranslatorOptions);
+			const translator = new translatorClass(translatorOptions);
 			translator
 				.translateBatch(['Hello world'], 'en', 'ru')
 				.then((translation) => {
@@ -81,7 +109,7 @@ describe('Test translators', () => {
 		});
 
 		test(`${translatorName}: test "translateBatch" method with 2 texts`, (done) => {
-			const translator = new translatorClass(commonTranslatorOptions);
+			const translator = new translatorClass(translatorOptions);
 			translator
 				.translateBatch(['Hello world', 'my name is Jeff'], 'en', 'ru')
 				.then((translation) => {
@@ -105,7 +133,7 @@ describe('Test translators', () => {
 
 		// Test long text
 		test(`${translatorName}: test long text for "translate" method`, (done) => {
-			const translator = new translatorClass(commonTranslatorOptions);
+			const translator = new translatorClass(translatorOptions);
 			translator
 				.translate(longTextForTest, 'en', 'ru')
 				.then((translation) => {
@@ -122,7 +150,7 @@ describe('Test translators', () => {
 		});
 
 		test(`${translatorName}: test long text for "translateBatch" method`, (done) => {
-			const translator = new translatorClass(commonTranslatorOptions);
+			const translator = new translatorClass(translatorOptions);
 			translator
 				.translateBatch([longTextForTest], 'en', 'ru')
 				.then(([translation]) => {
@@ -143,7 +171,7 @@ describe('Test translators', () => {
 		// Test direction auto
 		if (translatorClass.isSupportedAutoFrom()) {
 			test(`${translatorName}: test "translate" method and language auto detection`, (done) => {
-				const translator = new translatorClass(commonTranslatorOptions);
+				const translator = new translatorClass(translatorOptions);
 				translator
 					.translate('Hello world', 'auto', 'ru')
 					.then((translation) => {
@@ -158,7 +186,7 @@ describe('Test translators', () => {
 			});
 
 			test(`${translatorName}: test "translateBatch" method with 1 text and language auto detection`, (done) => {
-				const translator = new translatorClass(commonTranslatorOptions);
+				const translator = new translatorClass(translatorOptions);
 				translator
 					.translateBatch(['Hello world'], 'auto', 'ru')
 					.then((translation) => {
@@ -179,7 +207,7 @@ describe('Test translators', () => {
 			});
 
 			test(`${translatorName}: test "translateBatch" method with 2 texts and language auto detection`, (done) => {
-				const translator = new translatorClass(commonTranslatorOptions);
+				const translator = new translatorClass(translatorOptions);
 				translator
 					.translateBatch(['Hello world', 'my name is Jeff'], 'auto', 'ru')
 					.then((translation) => {
