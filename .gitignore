@@ -1,3 +1,5 @@
+.env
+
 # NPM
 node_modules
 .npmrc
