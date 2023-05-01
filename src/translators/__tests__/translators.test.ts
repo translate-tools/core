@@ -8,6 +8,7 @@ import { GoogleTranslator, GoogleTranslatorTokenFree } from '../GoogleTranslator
 import { YandexTranslator } from '../YandexTranslator';
 import { TartuNLPTranslator } from '../TartuNLPTranslator';
 import { DeepLTranslator } from '../DeepL';
+import { LibreTranslateTranslator } from '../LibreTranslateTranslator';
 
 const commonTranslatorOptions = {
 	headers: {
@@ -23,6 +24,7 @@ const translators: TranslatorClass[] = [
 	GoogleTranslatorTokenFree,
 	YandexTranslator,
 	TartuNLPTranslator,
+	LibreTranslateTranslator,
 ];
 
 type TranslatorWithOptions = {
@@ -45,7 +47,7 @@ const longTextForTest = readFileSync(
 
 // TODO: use `こんにちは` > `hello`
 describe('Test translators', () => {
-	jest.setTimeout(20000);
+	jest.setTimeout(60000);
 
 	const translatorsForTest: TranslatorWithOptions[] = [
 		...translatorsWithOptions,
