@@ -1,4 +1,4 @@
-import { FakeTranslator } from '../src/translators/FakeTranslator';
+import { FakeTranslator } from '../FakeTranslator';
 
 // Test a test utilities
 

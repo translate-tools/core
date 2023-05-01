@@ -1,16 +1,13 @@
 import { readFileSync } from 'fs';
 import path from 'path';
 
-import { TranslatorClass } from '../src/types/Translator';
-import { getLanguageCodesISO639v2 } from '../src/util/languages';
+import { TranslatorClass } from '../../types/Translator';
+import { getLanguageCodesISO639v2 } from '../../util/languages';
 
-import {
-	GoogleTranslator,
-	GoogleTranslatorTokenFree,
-} from '../src/translators/GoogleTranslator';
-import { YandexTranslator } from '../src/translators/YandexTranslator';
-import { TartuNLPTranslator } from '../src/translators/TartuNLPTranslator';
-import { DeepLTranslator } from '../src/translators/DeepL';
+import { GoogleTranslator, GoogleTranslatorTokenFree } from '../GoogleTranslator';
+import { YandexTranslator } from '../YandexTranslator';
+import { TartuNLPTranslator } from '../TartuNLPTranslator';
+import { DeepLTranslator } from '../DeepL';
 
 const commonTranslatorOptions = {
 	headers: {
