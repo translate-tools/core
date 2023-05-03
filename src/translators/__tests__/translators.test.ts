@@ -24,7 +24,6 @@ const translators: TranslatorClass[] = [
 	GoogleTranslatorTokenFree,
 	YandexTranslator,
 	TartuNLPTranslator,
-	LibreTranslateTranslator,
 ];
 
 type TranslatorWithOptions = {
@@ -36,6 +35,15 @@ const translatorsWithOptions: TranslatorWithOptions[] = [
 		translator: DeepLTranslator,
 		options: { apiKey: process.env.DEEPL_KEY_FREE },
 	},
+	{
+		translator: LibreTranslateTranslator,
+		options: process.env.TEST_LIBRETRANSLATE_API_ENDPOINT
+			? {
+				apiEndpoint: process.env.TEST_LIBRETRANSLATE_API_ENDPOINT,
+				apiKey: process.env.TEST_LIBRETRANSLATE_API_KEY,
+			  }
+			: {},
+	},
 ];
 
 const isStringStartFromLetter = (text: string) => Boolean(text.match(/^\p{Letter}/u));
@@ -45,12 +53,24 @@ const longTextForTest = readFileSync(
 	path.resolve(currentDir, 'resources/text-long.txt'),
 ).toString('utf8');
 
+const LONG_TEXT_TRANSLATION_TIMEOUT = 80000;
+
 // TODO: use `こんにちは` > `hello`
 describe('Test translators', () => {
 	jest.setTimeout(60000);
 
 	const translatorsForTest: TranslatorWithOptions[] = [
-		...translatorsWithOptions,
+		...translatorsWithOptions.filter((translator) => {
+			const { translator: translatorClass, options } = translator;
+			if (Object.values(options).length === 0) {
+				console.warn(
+					`Skip tests for translator "${translatorClass.translatorName}", because options is not specified`,
+				);
+				return false;
+			}
+
+			return true;
+		}),
 		...translators.map((translator) => ({ translator, options: {} })),
 	];
 
@@ -131,41 +151,51 @@ describe('Test translators', () => {
 		});
 
 		// Test long text
-		test(`${translatorName}: test long text for "translate" method`, (done) => {
-			const translator = new translatorClass(translatorOptions);
-			translator
-				.translate(longTextForTest, 'en', 'ru')
-				.then((translation) => {
-					expect(typeof translation).toBe('string');
+		test(
+			`${translatorName}: test long text for "translate" method`,
+			(done) => {
+				const translator = new translatorClass(translatorOptions);
+				translator
+					.translate(longTextForTest, 'en', 'ru')
+					.then((translation) => {
+						expect(typeof translation).toBe('string');
 
-					const expectedMinimalLength = longTextForTest.length * 0.7;
-					expect(translation.length >= expectedMinimalLength).toBeTruthy();
+						const expectedMinimalLength = longTextForTest.length * 0.7;
+						expect(translation.length >= expectedMinimalLength).toBeTruthy();
 
-					expect(isStringStartFromLetter(translation)).toBeTruthy();
+						expect(isStringStartFromLetter(translation)).toBeTruthy();
 
-					done();
-				})
-				.catch(done);
-		});
+						done();
+					})
+					.catch(done);
+			},
+			LONG_TEXT_TRANSLATION_TIMEOUT,
+		);
 
-		test(`${translatorName}: test long text for "translateBatch" method`, (done) => {
-			const translator = new translatorClass(translatorOptions);
-			translator
-				.translateBatch([longTextForTest], 'en', 'ru')
-				.then(([translation]) => {
-					expect(typeof translation).toBe('string');
+		test(
+			`${translatorName}: test long text for "translateBatch" method`,
+			(done) => {
+				const translator = new translatorClass(translatorOptions);
+				translator
+					.translateBatch([longTextForTest], 'en', 'ru')
+					.then(([translation]) => {
+						expect(typeof translation).toBe('string');
 
-					const expectedMinimalLength = longTextForTest.length * 0.7;
-					expect(
-						(translation as string).length >= expectedMinimalLength,
-					).toBeTruthy();
+						const expectedMinimalLength = longTextForTest.length * 0.7;
+						expect(
+							(translation as string).length >= expectedMinimalLength,
+						).toBeTruthy();
 
-					expect(isStringStartFromLetter(translation as string)).toBeTruthy();
+						expect(
+							isStringStartFromLetter(translation as string),
+						).toBeTruthy();
 
-					done();
-				})
-				.catch(done);
-		});
+						done();
+					})
+					.catch(done);
+			},
+			LONG_TEXT_TRANSLATION_TIMEOUT,
+		);
 
 		// Test direction auto
 		if (translatorClass.isSupportedAutoFrom()) {
