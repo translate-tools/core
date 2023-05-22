@@ -68,9 +68,9 @@ function makeCJSFromESM() {
 function copyMetaFiles() {
 	return mergeStream(
 		// Clean package.json
-		gulp.src(['./package.json']).pipe(cleanPackageJson()),
+		gulp.src(['package.json']).pipe(cleanPackageJson()),
 		// Copy other
-		gulp.src(['./README.md']),
+		gulp.src(['README.md', 'LICENSE']),
 	).pipe(gulp.dest(buildDir));
 }
 
