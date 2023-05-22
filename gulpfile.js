@@ -4,7 +4,7 @@ const mergeStream = require('merge-stream');
 const babel = require('gulp-babel');
 const sourcemaps = require('gulp-sourcemaps');
 
-const cleanPackageJson = require('./scripts/gulp/cleanPackageJson');
+const cleanPackageJson = require('gulp-clean-package');
 
 const buildDir = 'dist';
 
