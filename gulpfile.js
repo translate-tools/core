@@ -4,7 +4,7 @@ const mergeStream = require('merge-stream');
 const babel = require('gulp-babel');
 const sourcemaps = require('gulp-sourcemaps');
 
-const cleanPackageJson = require('./scripts/gulp/cleanPackageJson');
+const cleanPackageJson = require('gulp-clean-package');
 
 const buildDir = 'dist';
 
@@ -68,9 +68,9 @@ function makeCJSFromESM() {
 function copyMetaFiles() {
 	return mergeStream(
 		// Clean package.json
-		gulp.src(['./package.json']).pipe(cleanPackageJson()),
+		gulp.src(['package.json']).pipe(cleanPackageJson()),
 		// Copy other
-		gulp.src(['./README.md']),
+		gulp.src(['README.md', 'LICENSE']),
 	).pipe(gulp.dest(buildDir));
 }
 
