@@ -150,6 +150,26 @@ describe('Test translators', () => {
 				.catch(done);
 		});
 
+		test(`${translatorName}: test "translateBatch" method with few texts`, async () => {
+			const textsToTranslate = [
+				'View source',
+				'View history',
+				'that',
+				'athletics',
+				'The',
+				'province contracted to',
+			];
+
+			const translator = new translatorClass(translatorOptions);
+			const translation = await translator.translateBatch(
+				textsToTranslate,
+				'en',
+				'ru',
+			);
+			expect(typeof translation).toBe('object');
+			expect(translation.length).toBe(textsToTranslate.length);
+		});
+
 		// Test long text
 		test(
 			`${translatorName}: test long text for "translate" method`,
