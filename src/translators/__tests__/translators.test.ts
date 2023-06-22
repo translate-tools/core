@@ -168,6 +168,8 @@ describe('Test translators', () => {
 			);
 			expect(typeof translation).toBe('object');
 			expect(translation.length).toBe(textsToTranslate.length);
+			expect(typeof translation[4]).toBe('string');
+			expect(typeof translation[2]).toBe('string');
 		});
 
 		// Test long text
