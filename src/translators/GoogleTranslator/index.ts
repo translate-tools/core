@@ -149,11 +149,22 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 	private parseXMLResponse = (text: string) => {
 		try {
 			const doc = new DOMParser().parseFromString(text);
-			const nodes = xpath.select('//pre/*[not(self::i)]//text()', doc);
-			return nodes.length === 0
+			const nodesWithTranslation = xpath.select('//pre/*[not(self::i)]', doc);
+			return nodesWithTranslation.length === 0
 				? null
-				: nodes.map((node) => node.toString()).join(' ');
+				: nodesWithTranslation
+					.map((node) => {
+						const textNodes = xpath.select('//text()', node as Node);
+						if (textNodes.length === 0) {
+							console.debug('More than one text node found');
+							return '';
+						}
+
+						return textNodes.join(' ');
+					})
+					.join(' ');
 		} catch (err) {
+			console.error(err);
 			return null;
 		}
 	};
