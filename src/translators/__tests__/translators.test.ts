@@ -96,23 +96,18 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 			expect(validLangCodes.length).toBeGreaterThan(1);
 		});
 
-		test(`Translate one text with method "translate"`, (done) => {
+		test(`Translate one text with method "translate"`, async () => {
 			const translator = new translatorClass(translatorOptions);
-			translator
-				.translate('Hello world', 'en', 'ru')
-				.then((translation) => {
-					expect(typeof translation).toBe('string');
-					expect(translation).toContain('мир');
-					expect(isStringStartFromLetter(translation)).toBeTruthy();
-
-					done();
-				})
-				.catch(done);
+			await translator.translate('Hello world', 'en', 'ru').then((translation) => {
+				expect(typeof translation).toBe('string');
+				expect(translation).toContain('мир');
+				expect(isStringStartFromLetter(translation)).toBeTruthy();
+			});
 		});
 
-		test(`Translate 1 text with "translateBatch" method`, (done) => {
+		test(`Translate 1 text with "translateBatch" method`, async () => {
 			const translator = new translatorClass(translatorOptions);
-			translator
+			await translator
 				.translateBatch(['Hello world'], 'en', 'ru')
 				.then((translation) => {
 					expect(Array.isArray(translation)).toBe(true);
@@ -122,15 +117,12 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 					expect(
 						isStringStartFromLetter(translation[0] as string),
 					).toBeTruthy();
-
-					done();
-				})
-				.catch(done);
+				});
 		});
 
-		test(`Translate 2 texts with "translateBatch" method`, (done) => {
+		test(`Translate 2 texts with "translateBatch" method`, async () => {
 			const translator = new translatorClass(translatorOptions);
-			translator
+			await translator
 				.translateBatch(['Hello world', 'my name is Jeff'], 'en', 'ru')
 				.then((translation) => {
 					expect(Array.isArray(translation)).toBe(true);
@@ -145,10 +137,7 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 							isStringStartFromLetter(translation as string),
 						).toBeTruthy();
 					});
-
-					done();
-				})
-				.catch(done);
+				});
 		});
 
 		test(`Translate many texts with "translateBatch" method`, async () => {
@@ -176,9 +165,9 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 		// Test long text
 		test(
 			`Translate long text with "translate" method`,
-			(done) => {
+			async () => {
 				const translator = new translatorClass(translatorOptions);
-				translator
+				await translator
 					.translate(longTextForTest, 'en', 'ru')
 					.then((translation) => {
 						expect(typeof translation).toBe('string');
@@ -187,19 +176,16 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 						expect(translation.length >= expectedMinimalLength).toBeTruthy();
 
 						expect(isStringStartFromLetter(translation)).toBeTruthy();
-
-						done();
-					})
-					.catch(done);
+					});
 			},
 			LONG_TEXT_TRANSLATION_TIMEOUT,
 		);
 
 		test(
 			`Translate long text with "translateBatch" method`,
-			(done) => {
+			async () => {
 				const translator = new translatorClass(translatorOptions);
-				translator
+				await translator
 					.translateBatch([longTextForTest], 'en', 'ru')
 					.then(([translation]) => {
 						expect(typeof translation).toBe('string');
@@ -212,32 +198,26 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 						expect(
 							isStringStartFromLetter(translation as string),
 						).toBeTruthy();
-
-						done();
-					})
-					.catch(done);
+					});
 			},
 			LONG_TEXT_TRANSLATION_TIMEOUT,
 		);
 
 		if (translatorClass.isSupportedAutoFrom()) {
 			describe('Direction "auto"', () => {
-				test(`Translate one text with method "translate"`, (done) => {
+				test(`Translate one text with method "translate"`, async () => {
 					const translator = new translatorClass(translatorOptions);
-					translator
+					await translator
 						.translate('Hello world', 'auto', 'ru')
 						.then((translation) => {
 							expect(typeof translation).toBe('string');
 							expect(translation).toContain('мир');
 
 							expect(isStringStartFromLetter(translation)).toBeTruthy();
-
-							done();
-						})
-						.catch(done);
+						});
 				});
 
-				test(`Translate 1 text with "translateBatch" method`, (done) => {
+				test(`Translate 1 text with "translateBatch" method`, async () => {
 					const translator = new translatorClass(translatorOptions);
 					translator
 						.translateBatch(['Hello world'], 'auto', 'ru')
@@ -252,15 +232,12 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 							expect(
 								isStringStartFromLetter(translation[0] as string),
 							).toBeTruthy();
-
-							done();
-						})
-						.catch(done);
+						});
 				});
 
-				test(`Translate 2 texts with "translateBatch" method`, (done) => {
+				test(`Translate 2 texts with "translateBatch" method`, async () => {
 					const translator = new translatorClass(translatorOptions);
-					translator
+					await translator
 						.translateBatch(['Hello world', 'my name is Jeff'], 'auto', 'ru')
 						.then((translation) => {
 							expect(Array.isArray(translation)).toBe(true);
@@ -278,10 +255,7 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 							expect(
 								isStringStartFromLetter(translation[1] as string),
 							).toBeTruthy();
-
-							done();
-						})
-						.catch(done);
+						});
 				});
 			});
 		}
