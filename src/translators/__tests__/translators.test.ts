@@ -56,46 +56,47 @@ const longTextForTest = readFileSync(
 const LONG_TEXT_TRANSLATION_TIMEOUT = 80000;
 
 // TODO: use `こんにちは` > `hello`
-describe('Test translators', () => {
-	jest.setTimeout(60000);
 
-	const translatorsForTest: TranslatorWithOptions[] = [
-		...translatorsWithOptions.filter((translator) => {
-			const { translator: translatorClass, options } = translator;
-			if (Object.values(options).length === 0) {
-				console.warn(
-					`Skip tests for translator "${translatorClass.translatorName}", because options is not specified`,
-				);
-				return false;
-			}
-
-			return true;
-		}),
-		...translators.map((translator) => ({ translator, options: {} })),
-	];
-
-	translatorsForTest.forEach(({ translator: translatorClass, options }) => {
-		const translatorName = translatorClass.translatorName;
-
-		const isKeyRequiredButNotSpecified =
-			translatorClass.isRequiredKey() && !options.apiKey;
-		if (isKeyRequiredButNotSpecified) {
+const translatorsForTest: TranslatorWithOptions[] = [
+	...translatorsWithOptions.filter((translator) => {
+		const { translator: translatorClass, options } = translator;
+		if (Object.values(options).length === 0) {
 			console.warn(
-				`Skip tests for translator "${translatorName}", because access key is not specified`,
+				`Skip tests for translator "${translatorClass.translatorName}", because options is not specified`,
 			);
-			return;
+			return false;
 		}
 
-		const translatorOptions = { ...commonTranslatorOptions, ...options };
+		return true;
+	}),
+	...translators.map((translator) => ({ translator, options: {} })),
+];
 
-		test(`${translatorName}: method "getSupportedLanguages" return language codes`, () => {
+translatorsForTest.forEach(({ translator: translatorClass, options }) => {
+	const translatorName = translatorClass.translatorName;
+
+	const isKeyRequiredButNotSpecified =
+		translatorClass.isRequiredKey() && !options.apiKey;
+	if (isKeyRequiredButNotSpecified) {
+		console.warn(
+			`Skip tests for translator "${translatorName}", because access key is not specified`,
+		);
+		return;
+	}
+
+	const translatorOptions = { ...commonTranslatorOptions, ...options };
+
+	describe(`Translator ${translatorName}`, () => {
+		jest.setTimeout(60000);
+
+		test(`Method "getSupportedLanguages" return language codes`, () => {
 			const languages = translatorClass.getSupportedLanguages();
 
 			const validLangCodes = getLanguageCodesISO639v2(languages);
 			expect(validLangCodes.length).toBeGreaterThan(1);
 		});
 
-		test(`${translatorName}: test "translate" method`, (done) => {
+		test(`Translate one text with method "translate"`, (done) => {
 			const translator = new translatorClass(translatorOptions);
 			translator
 				.translate('Hello world', 'en', 'ru')
@@ -109,7 +110,7 @@ describe('Test translators', () => {
 				.catch(done);
 		});
 
-		test(`${translatorName}: test "translateBatch" method with 1 text`, (done) => {
+		test(`Translate 1 text with "translateBatch" method`, (done) => {
 			const translator = new translatorClass(translatorOptions);
 			translator
 				.translateBatch(['Hello world'], 'en', 'ru')
@@ -127,7 +128,7 @@ describe('Test translators', () => {
 				.catch(done);
 		});
 
-		test(`${translatorName}: test "translateBatch" method with 2 texts`, (done) => {
+		test(`Translate 2 texts with "translateBatch" method`, (done) => {
 			const translator = new translatorClass(translatorOptions);
 			translator
 				.translateBatch(['Hello world', 'my name is Jeff'], 'en', 'ru')
@@ -150,7 +151,7 @@ describe('Test translators', () => {
 				.catch(done);
 		});
 
-		test(`${translatorName}: test "translateBatch" method with few texts`, async () => {
+		test(`Translate many texts with "translateBatch" method`, async () => {
 			const textsToTranslate = [
 				'View source',
 				'View history',
@@ -174,7 +175,7 @@ describe('Test translators', () => {
 
 		// Test long text
 		test(
-			`${translatorName}: test long text for "translate" method`,
+			`Translate long text with "translate" method`,
 			(done) => {
 				const translator = new translatorClass(translatorOptions);
 				translator
@@ -195,7 +196,7 @@ describe('Test translators', () => {
 		);
 
 		test(
-			`${translatorName}: test long text for "translateBatch" method`,
+			`Translate long text with "translateBatch" method`,
 			(done) => {
 				const translator = new translatorClass(translatorOptions);
 				translator
@@ -219,68 +220,69 @@ describe('Test translators', () => {
 			LONG_TEXT_TRANSLATION_TIMEOUT,
 		);
 
-		// Test direction auto
 		if (translatorClass.isSupportedAutoFrom()) {
-			test(`${translatorName}: test "translate" method and language auto detection`, (done) => {
-				const translator = new translatorClass(translatorOptions);
-				translator
-					.translate('Hello world', 'auto', 'ru')
-					.then((translation) => {
-						expect(typeof translation).toBe('string');
-						expect(translation).toContain('мир');
+			describe('Direction "auto"', () => {
+				test(`Translate one text with method "translate"`, (done) => {
+					const translator = new translatorClass(translatorOptions);
+					translator
+						.translate('Hello world', 'auto', 'ru')
+						.then((translation) => {
+							expect(typeof translation).toBe('string');
+							expect(translation).toContain('мир');
 
-						expect(isStringStartFromLetter(translation)).toBeTruthy();
+							expect(isStringStartFromLetter(translation)).toBeTruthy();
 
-						done();
-					})
-					.catch(done);
-			});
+							done();
+						})
+						.catch(done);
+				});
 
-			test(`${translatorName}: test "translateBatch" method with 1 text and language auto detection`, (done) => {
-				const translator = new translatorClass(translatorOptions);
-				translator
-					.translateBatch(['Hello world'], 'auto', 'ru')
-					.then((translation) => {
-						expect(Array.isArray(translation)).toBe(true);
-						expect(translation.length).toBe(1);
+				test(`Translate 1 text with "translateBatch" method`, (done) => {
+					const translator = new translatorClass(translatorOptions);
+					translator
+						.translateBatch(['Hello world'], 'auto', 'ru')
+						.then((translation) => {
+							expect(Array.isArray(translation)).toBe(true);
+							expect(translation.length).toBe(1);
 
-						expect(typeof translation[0]).toBe('string');
+							expect(typeof translation[0]).toBe('string');
 
-						expect(translation[0]).toContain('мир');
+							expect(translation[0]).toContain('мир');
 
-						expect(
-							isStringStartFromLetter(translation[0] as string),
-						).toBeTruthy();
+							expect(
+								isStringStartFromLetter(translation[0] as string),
+							).toBeTruthy();
 
-						done();
-					})
-					.catch(done);
-			});
+							done();
+						})
+						.catch(done);
+				});
 
-			test(`${translatorName}: test "translateBatch" method with 2 texts and language auto detection`, (done) => {
-				const translator = new translatorClass(translatorOptions);
-				translator
-					.translateBatch(['Hello world', 'my name is Jeff'], 'auto', 'ru')
-					.then((translation) => {
-						expect(Array.isArray(translation)).toBe(true);
-						expect(translation.length).toBe(2);
+				test(`Translate 2 texts with "translateBatch" method`, (done) => {
+					const translator = new translatorClass(translatorOptions);
+					translator
+						.translateBatch(['Hello world', 'my name is Jeff'], 'auto', 'ru')
+						.then((translation) => {
+							expect(Array.isArray(translation)).toBe(true);
+							expect(translation.length).toBe(2);
 
-						expect(typeof translation[0]).toBe('string');
-						expect(typeof translation[1]).toBe('string');
+							expect(typeof translation[0]).toBe('string');
+							expect(typeof translation[1]).toBe('string');
 
-						expect(translation[0]).toContain('мир');
-						expect(translation[1]).toContain('Джефф');
+							expect(translation[0]).toContain('мир');
+							expect(translation[1]).toContain('Джефф');
 
-						expect(
-							isStringStartFromLetter(translation[0] as string),
-						).toBeTruthy();
-						expect(
-							isStringStartFromLetter(translation[1] as string),
-						).toBeTruthy();
+							expect(
+								isStringStartFromLetter(translation[0] as string),
+							).toBeTruthy();
+							expect(
+								isStringStartFromLetter(translation[1] as string),
+							).toBeTruthy();
 
-						done();
-					})
-					.catch(done);
+							done();
+						})
+						.catch(done);
+				});
 			});
 		}
 	});
