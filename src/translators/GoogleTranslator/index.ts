@@ -45,6 +45,30 @@ export const supportedLanguages = [
 ];
 // eslint-enable
 
+const parseXMLResponse = (text: string) => {
+	let doc: Document;
+	try {
+		doc = new DOMParser().parseFromString(text);
+	} catch (err) {
+		console.error(err);
+		return null;
+	}
+
+	const nodesWithTranslation = xpath.select('//pre/*[not(self::i)]', doc);
+
+	if (nodesWithTranslation.length === 0) return null;
+	return nodesWithTranslation
+		.map((node) => {
+			const textNodes = xpath.select('//text()', node as Node);
+			if (textNodes.length > 1) {
+				console.debug('More than one text node found');
+			}
+
+			return textNodes.length === 0 ? '' : textNodes.join(' ');
+		})
+		.join(' ');
+};
+
 /**
  * Common class for google translator implementations
  */
@@ -146,18 +170,6 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 		});
 	}
 
-	private parseXMLResponse = (text: string) => {
-		try {
-			const doc = new DOMParser().parseFromString(text);
-			const nodes = xpath.select('//pre/*[not(self::i)]//text()', doc);
-			return nodes.length === 0
-				? null
-				: nodes.map((node) => node.toString()).join(' ');
-		} catch (err) {
-			return null;
-		}
-	};
-
 	public translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
 		const preparedText = this.encodeForBatch(text);
 		return getToken(preparedText.join('')).then(({ value: tk }) => {
@@ -204,10 +216,10 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 							if (typeof obj !== 'string') return;
 
 							if (isSingleResponseMode) {
-								const parsedText = this.parseXMLResponse(obj);
+								const parsedText = parseXMLResponse(obj);
 								result.push(parsedText || obj);
 							} else {
-								const parsedText = this.parseXMLResponse(obj);
+								const parsedText = parseXMLResponse(obj);
 								if (parsedText !== null) {
 									result.push(parsedText);
 								}
