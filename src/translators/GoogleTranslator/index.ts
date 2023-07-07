@@ -57,9 +57,11 @@ const parseXMLResponse = (text: string) => {
 	const nodesWithTranslation = xpath.select('//pre/*[not(self::i)]', doc);
 
 	if (nodesWithTranslation.length === 0) return null;
+	// console.log('Selected nodes', nodesWithTranslation.map((node) => (node as Node).toString()));
 	return nodesWithTranslation
 		.map((node) => {
-			const textNodes = xpath.select('//text()', node as Node);
+			// Select text in child nodes or in self
+			const textNodes = xpath.select('descendant-or-self::*/text()', node as Node);
 			if (textNodes.length > 1) {
 				console.debug('More than one text node found');
 			}
