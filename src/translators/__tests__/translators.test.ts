@@ -52,6 +52,9 @@ const currentDir = path.dirname(__filename);
 const longTextForTest = readFileSync(
 	path.resolve(currentDir, 'resources/text-long.txt'),
 ).toString('utf8');
+const midTextForTest = readFileSync(
+	path.resolve(currentDir, 'resources/text-middle.txt'),
+).toString('utf8');
 
 const LONG_TEXT_TRANSLATION_TIMEOUT = 80000;
 
@@ -102,6 +105,38 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 				expect(typeof translation).toBe('string');
 				expect(translation).toContain('мир');
 				expect(isStringStartFromLetter(translation)).toBeTruthy();
+			});
+		});
+
+		describe('Translate results are correct', () => {
+			const singleTexts = midTextForTest.split('\n').filter(Boolean);
+
+			test(`Batch translator call with single text, returns text that does not contains original text`, async () => {
+				const translator = new translatorClass(translatorOptions);
+				await translator
+					.translateBatch([midTextForTest], 'en', 'ru')
+					.then((translations) => {
+						translations.forEach((translation) => {
+							expect(typeof translation).toBe('string');
+							singleTexts.forEach((singleText) =>
+								expect(translation).not.toContain(singleText),
+							);
+						});
+					});
+			});
+
+			test(`Batch translator call with multiple texts, returns texts that does not contains original text`, async () => {
+				const translator = new translatorClass(translatorOptions);
+				await translator
+					.translateBatch([midTextForTest, midTextForTest], 'en', 'ru')
+					.then((translations) => {
+						translations.forEach((translation) => {
+							expect(typeof translation).toBe('string');
+							singleTexts.forEach((singleText) =>
+								expect(translation).not.toContain(singleText),
+							);
+						});
+					});
 			});
 		});
 

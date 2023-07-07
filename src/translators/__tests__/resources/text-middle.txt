@@ -1,0 +1,8 @@
+Linguist is a powerful browser extension that is ready to replace your favorite translation service.
+
+Translate web pages, highlighted text, Netflix subtitles, private messages, speak the translated text, and save important translations to your personal dictionary to learn words in 130 languages.
+Why Linguist?
+
+Unlike other browser extensions, Linguist is not just a wrapper over the Google Translator Widget; it's a full-featured and independent translation system. This is why with Linguist you can be private and translate texts offline on your device and use any translation service, even your own like ChatGPT. See a custom translators list to find bindings for the most popular translation services.
+
+Linguist is free, open-source, respects your privacy, and does not collect your personal data.
