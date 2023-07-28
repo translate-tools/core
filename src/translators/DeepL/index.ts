@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-import { langCode, langCodeWithAuto } from '../../types/Translator';
-import { BaseTranslator, TranslatorOptions } from '../../util/BaseTranslator';
+import { langCode, langCodeWithAuto } from '../Translator';
+import { BaseTranslator, TranslatorOptions } from '../BaseTranslator';
 
 export type DeepLTranslatorOptions = {
 	apiKey: string;

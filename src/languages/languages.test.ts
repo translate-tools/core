@@ -1,4 +1,4 @@
-import { getLanguageCodesISO639v2, isLanguageCodeISO639v2, langCodes } from './languages';
+import { getLanguageCodesISO639v2, isLanguageCodeISO639v2, langCodes } from '.';
 
 describe('isLanguageCodeISO639v2', () => {
 	test('langCodes are valid langs', () => {

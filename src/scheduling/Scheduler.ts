@@ -1,12 +1,12 @@
-import { ITranslateOptions, IScheduler } from './IScheduler';
+import { ISchedulerTranslateOptions, IScheduler } from '.';
 import {
 	langCode,
 	langCodeWithAuto,
 	TranslatorInstanceMembers,
-} from '../../types/Translator';
-import { QueueSemafor } from '../../lib/QueueSemafor';
+} from '../translators/Translator';
+import { Semaphore } from '../utils/Semaphore';
 
-interface Config {
+interface SchedulerConfig {
 	/**
 	 * Number of attempts for retry request
 	 */
@@ -121,7 +121,7 @@ type IteratorStep<T> = {
 export class Scheduler implements IScheduler {
 	private readonly semafor;
 	private readonly translator;
-	private readonly config: Required<Config> = {
+	private readonly config: Required<SchedulerConfig> = {
 		translateRetryAttemptLimit: 2,
 		isAllowDirectTranslateBadChunks: true,
 		directTranslateLength: null,
@@ -130,7 +130,7 @@ export class Scheduler implements IScheduler {
 		taskBatchHandleDelay: null,
 	};
 
-	constructor(translator: TranslatorInstanceMembers, config?: Config) {
+	constructor(translator: TranslatorInstanceMembers, config?: SchedulerConfig) {
 		this.translator = translator;
 
 		if (config !== undefined) {
@@ -139,7 +139,7 @@ export class Scheduler implements IScheduler {
 			}
 		}
 
-		this.semafor = new QueueSemafor({ timeout: translator.getRequestsTimeout() });
+		this.semafor = new Semaphore({ timeout: translator.getRequestsTimeout() });
 	}
 
 	private contextCounter = 0;
@@ -147,7 +147,7 @@ export class Scheduler implements IScheduler {
 		text: string,
 		from: langCodeWithAuto,
 		to: langCode,
-		options?: ITranslateOptions,
+		options?: ISchedulerTranslateOptions,
 	) {
 		const {
 			context = '',

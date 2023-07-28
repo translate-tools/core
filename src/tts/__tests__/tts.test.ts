@@ -1,13 +1,16 @@
 const mp3Parser = require('mp3-parser');
 
-import { langCodes } from '../util/languages';
-import { GoogleTTS } from './GoogleTTS';
-import { LingvaTTS } from './LingvaTTS';
+import { TTSProvider } from '..';
+import { langCodes } from '../../languages';
+import { GoogleTTS } from '../GoogleTTS';
+import { LingvaTTS } from '../LingvaTTS';
 
-([GoogleTTS, LingvaTTS] as const).map((translatorClass) => {
-	describe(`methods of TTS class "${translatorClass.name}"`, () => {
+const ttsConstructor: TTSProvider[] = [GoogleTTS, LingvaTTS];
+
+ttsConstructor.map((ttsConstructor) => {
+	describe(`methods of TTS class "${ttsConstructor.name}"`, () => {
 		test(`getAudioBuffer returns audio buffer`, async () => {
-			const tts = new translatorClass();
+			const tts = new ttsConstructor();
 			const audioBuffer = await tts.getAudioBuffer(
 				'Hello world. This is a demo text from TTS module',
 				'en',
@@ -26,7 +29,7 @@ import { LingvaTTS } from './LingvaTTS';
 		});
 
 		test(`getSupportedLanguages returns array of supported languages`, async () => {
-			const supportedLanguages = translatorClass.getSupportedLanguages();
+			const supportedLanguages = ttsConstructor.getSupportedLanguages();
 
 			// Languages array are not empty
 			expect(Array.isArray(supportedLanguages)).toBeTruthy();

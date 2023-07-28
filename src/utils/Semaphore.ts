@@ -3,8 +3,12 @@ interface Options {
 	hijackPrevention?: boolean;
 }
 
+export interface ISemaphore {
+	take(): Promise<() => void>;
+}
+
 /**
- * Semafor for the flow control in queues
+ * Semaphore for the flow control in queues
  *
  * @example
  * const semafor = QueueSemafor({ timeout: 100 });
@@ -14,7 +18,7 @@ interface Options {
  * 	free();
  * })
  */
-export class QueueSemafor {
+export class Semaphore implements ISemaphore {
 	private readonly timeout: number = 0;
 	private readonly hijackPrevention: boolean = true;
 

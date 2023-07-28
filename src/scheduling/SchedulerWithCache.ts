@@ -1,7 +1,7 @@
-import { langCode, langCodeWithAuto } from '../../types/Translator';
-import { ICache } from '../../types/Cache';
+import { langCode, langCodeWithAuto } from '../translators/Translator';
+import { ICache } from '../utils/Cache';
 
-import { IScheduler, ITranslateOptions } from './IScheduler';
+import { IScheduler, ISchedulerTranslateOptions } from '.';
 import { Scheduler } from './Scheduler';
 
 export class SchedulerWithCache implements IScheduler {
@@ -17,7 +17,7 @@ export class SchedulerWithCache implements IScheduler {
 		text: string,
 		from: langCodeWithAuto,
 		to: langCode,
-		options?: ITranslateOptions,
+		options?: ISchedulerTranslateOptions,
 	) {
 		// Immediately return text without letters
 		if (text.replace(this.notLetterRegExp, '').length === 0) {

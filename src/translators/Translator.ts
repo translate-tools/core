@@ -88,7 +88,7 @@ export interface TranslatorStaticMembers {
  *
  * This type describe static members and members for instance both
  */
-export interface TranslatorClass<
+export interface TranslatorConstructor<
 	InstanceProps extends TranslatorInstanceMembers = TranslatorInstanceMembers,
 > extends TranslatorStaticMembers {
 	new (...args: any[]): InstanceProps;

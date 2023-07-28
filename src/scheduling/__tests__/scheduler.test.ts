@@ -1,5 +1,5 @@
-import { Scheduler } from '../src/util/Scheduler';
-import { FakeTranslator } from '../src/translators/FakeTranslator';
+import { Scheduler } from '../Scheduler';
+import { FakeTranslator } from '../../translators/FakeTranslator';
 
 const from = 'en';
 const to = 'de';

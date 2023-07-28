@@ -1,6 +1,9 @@
-import { langCodeWithAuto, langCode } from '../../types/Translator';
+export { Scheduler } from './Scheduler';
+export { SchedulerWithCache } from './SchedulerWithCache';
 
-export interface ITranslateOptions {
+import { langCodeWithAuto, langCode } from '../translators/Translator';
+
+export interface ISchedulerTranslateOptions {
 	/**
 	 * Identifier to grouping requests
 	 */
@@ -22,6 +25,6 @@ export interface IScheduler {
 		text: string,
 		from: langCodeWithAuto,
 		to: langCode,
-		options?: ITranslateOptions,
+		options?: ISchedulerTranslateOptions,
 	): Promise<string>;
 }
