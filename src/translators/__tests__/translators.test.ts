@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import path from 'path';
 
-import { TranslatorClass } from '../Translator';
+import { TranslatorConstructor } from '../Translator';
 import { getLanguageCodesISO639v2 } from '../../util/languages';
 
 import { GoogleTranslator, GoogleTranslatorTokenFree } from '../GoogleTranslator';
@@ -19,7 +19,7 @@ const commonTranslatorOptions = {
 };
 
 // Verify types
-const translators: TranslatorClass[] = [
+const translators: TranslatorConstructor[] = [
 	GoogleTranslator,
 	GoogleTranslatorTokenFree,
 	YandexTranslator,
@@ -27,7 +27,7 @@ const translators: TranslatorClass[] = [
 ];
 
 type TranslatorWithOptions = {
-	translator: TranslatorClass;
+	translator: TranslatorConstructor;
 	options: Record<string, any>;
 };
 const translatorsWithOptions: TranslatorWithOptions[] = [
