@@ -3,8 +3,8 @@ import {
 	langCode,
 	langCodeWithAuto,
 	TranslatorInstanceMembers,
-} from '../../translators/Translator';
-import { QueueSemafor } from '../../lib/QueueSemafor';
+} from '../translators/Translator';
+import { QueueSemafor } from '../lib/QueueSemafor';
 
 interface Config {
 	/**
