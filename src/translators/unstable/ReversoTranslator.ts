@@ -1,7 +1,7 @@
 import { langCode } from '../Translator';
 import { BaseTranslator } from '../BaseTranslator';
-import { Multiplexor } from '../../lib/Multiplexor';
-import { fetchResponseToJson } from '../../lib/fetchResponseToJson';
+import { Multiplexor } from '../../utils/Multiplexor';
+import { fetchResponseToJson } from '../../utils/inner/fetchResponseToJson';
 
 /**
  * This module did not test too ago

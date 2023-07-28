@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { bufferToArrayBuffer } from '../../util/buffers';
+import { bufferToArrayBuffer } from '../../utils/buffers';
 import { TTSAudioBuffer, TTSProviderProps } from '..';
 
 export class GoogleTTS implements TTSProviderProps {

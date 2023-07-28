@@ -4,7 +4,7 @@ import {
 	langCodeWithAuto,
 	TranslatorInstanceMembers,
 } from '../translators/Translator';
-import { QueueSemafor } from '../lib/QueueSemafor';
+import { QueueSemafor } from '../utils/QueueSemafor';
 
 interface SchedulerConfig {
 	/**
