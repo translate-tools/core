@@ -1,7 +1,7 @@
 const mp3Parser = require('mp3-parser');
 
 import { TTSProvider } from '..';
-import { langCodes } from '../../util/languages';
+import { langCodes } from '../../languages';
 import { GoogleTTS } from '../GoogleTTS';
 import { LingvaTTS } from '../LingvaTTS';
 

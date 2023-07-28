@@ -7,7 +7,7 @@ import { langCode, langCodeWithAuto } from '../Translator';
 import { BaseTranslator } from '../BaseTranslator';
 import { getToken } from './token';
 import { visitArrayItems } from './utils';
-import { getLanguageCodesISO639v2 } from '../../util/languages';
+import { getLanguageCodesISO639v2 } from '../../languages';
 
 /**
  * Map with languages aliases.

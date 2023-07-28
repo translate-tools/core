@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 import path from 'path';
 
 import { TranslatorConstructor } from '../Translator';
-import { getLanguageCodesISO639v2 } from '../../util/languages';
+import { getLanguageCodesISO639v2 } from '../../languages';
 
 import { GoogleTranslator, GoogleTranslatorTokenFree } from '../GoogleTranslator';
 import { YandexTranslator } from '../YandexTranslator';
