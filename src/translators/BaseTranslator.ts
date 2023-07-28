@@ -1,8 +1,4 @@
-import {
-	TranslatorInstanceMembers,
-	langCode,
-	langCodeWithAuto,
-} from '../types/Translator';
+import { TranslatorInstanceMembers, langCode, langCodeWithAuto } from './Translator';
 
 export type CorsProxy = string | ((url: string) => string);
 

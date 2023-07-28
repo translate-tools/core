@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import path from 'path';
 
-import { TranslatorClass } from '../../types/Translator';
+import { TranslatorClass } from '../Translator';
 import { getLanguageCodesISO639v2 } from '../../util/languages';
 
 import { GoogleTranslator, GoogleTranslatorTokenFree } from '../GoogleTranslator';

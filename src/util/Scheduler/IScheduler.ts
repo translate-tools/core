@@ -1,4 +1,4 @@
-import { langCodeWithAuto, langCode } from '../../types/Translator';
+import { langCodeWithAuto, langCode } from '../../translators/Translator';
 
 export interface ITranslateOptions {
 	/**

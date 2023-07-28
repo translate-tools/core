@@ -2,8 +2,8 @@ import axios from 'axios';
 import { stringify } from 'query-string';
 import { unescape } from 'lodash';
 
-import { langCode, langCodeWithAuto } from '../../types/Translator';
-import { BaseTranslator } from '../../util/BaseTranslator';
+import { langCode, langCodeWithAuto } from '../Translator';
+import { BaseTranslator } from '../BaseTranslator';
 
 import { getYandexSID } from './getYandexSID';
 

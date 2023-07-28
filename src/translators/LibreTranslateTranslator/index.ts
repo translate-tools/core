@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { stringify } from 'query-string';
 
-import { langCode, langCodeWithAuto } from '../../types/Translator';
-import { BaseTranslator, TranslatorOptions } from '../../util/BaseTranslator';
+import { langCode, langCodeWithAuto } from '../Translator';
+import { BaseTranslator, TranslatorOptions } from '../BaseTranslator';
 
 export type LibreTranslateTranslatorOptions = {
 	apiEndpoint?: string;

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-import { langCode, langCodeWithAuto } from '../../types/Translator';
-import { BaseTranslator } from '../../util/BaseTranslator';
+import { langCode, langCodeWithAuto } from '../Translator';
+import { BaseTranslator } from '../BaseTranslator';
 
 export class TartuNLPTranslator extends BaseTranslator {
 	public static readonly translatorName = 'TartuNLPTranslator';

@@ -1,4 +1,4 @@
-import { langCode, langCodeWithAuto } from '../../types/Translator';
+import { langCode, langCodeWithAuto } from '../../translators/Translator';
 import { ICache } from '../../types/Cache';
 
 import { IScheduler, ITranslateOptions } from './IScheduler';

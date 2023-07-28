@@ -3,8 +3,8 @@ import { stringify } from 'query-string';
 import xpath from 'xpath';
 import { DOMParser } from '@xmldom/xmldom';
 
-import { langCode, langCodeWithAuto } from '../../types/Translator';
-import { BaseTranslator } from '../../util/BaseTranslator';
+import { langCode, langCodeWithAuto } from '../Translator';
+import { BaseTranslator } from '../BaseTranslator';
 import { getToken } from './token';
 import { visitArrayItems } from './utils';
 import { getLanguageCodesISO639v2 } from '../../util/languages';

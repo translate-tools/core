@@ -3,7 +3,7 @@ import {
 	langCode,
 	langCodeWithAuto,
 	TranslatorInstanceMembers,
-} from '../../types/Translator';
+} from '../../translators/Translator';
 import { QueueSemafor } from '../../lib/QueueSemafor';
 
 interface Config {
