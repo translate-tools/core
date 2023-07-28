@@ -1,7 +1,6 @@
+import axios from 'axios';
 import { langCode } from '../Translator';
 import { BaseTranslator } from '../BaseTranslator';
-import { Multiplexor } from '../../utils/Multiplexor';
-import { fetchResponseToJson } from '../../utils/inner/fetchResponseToJson';
 
 /**
  * This module did not test too ago
@@ -33,10 +32,8 @@ export class ReversoTranslator extends BaseTranslator {
 
 	public checkLimitExceeding(text: string | string[]) {
 		if (Array.isArray(text)) {
-			const encodedText = this.mtp.encode(
-				text.map((text, id) => ({ text, id: '' + id })),
-			);
-			const extra = encodedText.length - this.getLengthLimit();
+			const arrayLen = text.reduce((acc, text) => acc + text.length, 0);
+			const extra = arrayLen - this.getLengthLimit();
 			return extra > 0 ? extra : 0;
 		} else {
 			const extra = text.length - this.getLengthLimit();
@@ -72,26 +69,26 @@ export class ReversoTranslator extends BaseTranslator {
 			to: localTo,
 			format: 'text',
 			options: {
-				origin: 'reversodesktop',
+				origin: 'translation.web',
 				sentenceSplitter: true,
 				contextResults: true,
 				languageDetection: false,
 			},
 		};
 
-		return fetch(
-			this.wrapUrlToCorsProxy('https://api.reverso.net/translate/v1/translation'),
-			{
-				method: 'POST',
+		const apiEndpoint = this.wrapUrlToCorsProxy(
+			'https://api.reverso.net/translate/v1/translation',
+		);
+		return axios
+			.post(apiEndpoint, JSON.stringify(data), {
+				withCredentials: false,
 				headers: {
 					'Content-Type': 'application/json; charset=utf-8',
 					...this.options.headers,
 				},
-				body: JSON.stringify(data),
-			},
-		)
-			.then(fetchResponseToJson)
-			.then((response) => {
+			})
+			.then((rsp) => {
+				const response = rsp.data as any;
 				if (
 					!(response instanceof Object) ||
 					!(response.translation instanceof Array) ||
@@ -104,22 +101,7 @@ export class ReversoTranslator extends BaseTranslator {
 			});
 	}
 
-	private readonly mtp = new Multiplexor({ tokenStart: '<', tokenEnd: '>' });
 	public translateBatch(text: string[], langFrom: langCode, langTo: langCode) {
-		const encodedText = this.mtp.encode(
-			text.map((text, id) => ({ text, id: '' + id })),
-		);
-
-		return this.translate(encodedText, langFrom, langTo).then((rawTranslate) => {
-			const result = Array<string | null>(text.length);
-
-			const decodedMap = this.mtp.decode(rawTranslate);
-			decodedMap.forEach(({ id, text }) => {
-				const index = +id;
-				result[index] = text;
-			});
-
-			return result;
-		});
+		return Promise.all(text.map((text) => this.translate(text, langFrom, langTo)));
 	}
 }
