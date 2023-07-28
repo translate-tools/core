@@ -6,7 +6,7 @@ import {
 } from '../translators/Translator';
 import { QueueSemafor } from '../lib/QueueSemafor';
 
-interface Config {
+interface SchedulerConfig {
 	/**
 	 * Number of attempts for retry request
 	 */
@@ -121,7 +121,7 @@ type IteratorStep<T> = {
 export class Scheduler implements IScheduler {
 	private readonly semafor;
 	private readonly translator;
-	private readonly config: Required<Config> = {
+	private readonly config: Required<SchedulerConfig> = {
 		translateRetryAttemptLimit: 2,
 		isAllowDirectTranslateBadChunks: true,
 		directTranslateLength: null,
@@ -130,7 +130,7 @@ export class Scheduler implements IScheduler {
 		taskBatchHandleDelay: null,
 	};
 
-	constructor(translator: TranslatorInstanceMembers, config?: Config) {
+	constructor(translator: TranslatorInstanceMembers, config?: SchedulerConfig) {
 		this.translator = translator;
 
 		if (config !== undefined) {
