@@ -9,6 +9,7 @@ import { YandexTranslator } from '../YandexTranslator';
 import { TartuNLPTranslator } from '../TartuNLPTranslator';
 import { DeepLTranslator } from '../DeepL';
 import { LibreTranslateTranslator } from '../LibreTranslateTranslator';
+import { ReversoTranslator } from '../unstable/ReversoTranslator';
 
 const commonTranslatorOptions = {
 	headers: {
@@ -24,6 +25,7 @@ const translators: TranslatorConstructor[] = [
 	GoogleTranslatorTokenFree,
 	YandexTranslator,
 	TartuNLPTranslator,
+	ReversoTranslator,
 ];
 
 type TranslatorWithOptions = {
@@ -234,6 +236,29 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 							isStringStartFromLetter(translation as string),
 						).toBeTruthy();
 					});
+			},
+			LONG_TEXT_TRANSLATION_TIMEOUT,
+		);
+
+		test(
+			`Translate many texts - test concurrent requests for some translators`,
+			async () => {
+				const translator = new translatorClass(translatorOptions);
+
+				const texts = Array(100)
+					.fill(null)
+					.map((_, idx) => `Demo text for translation ${idx}`);
+				const translatedTexts = await translator.translateBatch(
+					texts,
+					'en',
+					'de',
+				);
+
+				expect(translatedTexts.length).toBe(texts.length);
+				translatedTexts.every((translation, idx) => {
+					expect(translation).not.toBeNull();
+					expect(translation?.includes(String(idx))).toBeTruthy();
+				});
 			},
 			LONG_TEXT_TRANSLATION_TIMEOUT,
 		);
