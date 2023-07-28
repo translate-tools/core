@@ -4,7 +4,7 @@ import {
 	langCodeWithAuto,
 	TranslatorInstanceMembers,
 } from '../translators/Translator';
-import { QueueSemafor } from '../utils/QueueSemafor';
+import { Semaphore } from '../utils/Semaphore';
 
 interface SchedulerConfig {
 	/**
@@ -139,7 +139,7 @@ export class Scheduler implements IScheduler {
 			}
 		}
 
-		this.semafor = new QueueSemafor({ timeout: translator.getRequestsTimeout() });
+		this.semafor = new Semaphore({ timeout: translator.getRequestsTimeout() });
 	}
 
 	private contextCounter = 0;
