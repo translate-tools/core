@@ -31,11 +31,5 @@
 		"allowJs": true,
 		"resolveJsonModule": true
 	},
-	"include": [
-		"src/scheduling/__tests__/*.ts",
-		"src/*.ts",
-		"src/*.tsx",
-		"src/**/*.ts",
-		"src/**/*.tsx"
-	]
+	"include": ["src/*.ts", "src/**/*.ts"]
 }
