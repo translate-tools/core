@@ -1,4 +1,4 @@
-import { ITranslateOptions, IScheduler } from './IScheduler';
+import { ISchedulerTranslateOptions, IScheduler } from '.';
 import {
 	langCode,
 	langCodeWithAuto,
@@ -147,7 +147,7 @@ export class Scheduler implements IScheduler {
 		text: string,
 		from: langCodeWithAuto,
 		to: langCode,
-		options?: ITranslateOptions,
+		options?: ISchedulerTranslateOptions,
 	) {
 		const {
 			context = '',
