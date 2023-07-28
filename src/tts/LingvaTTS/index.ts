@@ -3,7 +3,7 @@ import axios from 'axios';
 import { TTSAudioBuffer, TTSProviderProps } from '..';
 
 export class LingvaTTS implements TTSProviderProps {
-	private host = 'https://lingva.ml';
+	private host = 'https://translate.plausibility.cloud';
 
 	public async getAudioBuffer(text: string, language: string): Promise<TTSAudioBuffer> {
 		const url = `${this.host}/api/v1/audio/${encodeURIComponent(
