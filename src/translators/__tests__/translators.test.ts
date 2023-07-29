@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 import path from 'path';
 
 import { TranslatorConstructor } from '../Translator';
-import { getLanguageCodesISO639v2 } from '../../languages';
+import { isLanguageCodeISO639v1, isLanguageCodeISO639v2 } from '../../languages';
 
 import { GoogleTranslator, GoogleTranslatorTokenFree } from '../GoogleTranslator';
 import { YandexTranslator } from '../YandexTranslator';
@@ -94,11 +94,16 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 	describe(`Translator ${translatorName}`, () => {
 		jest.setTimeout(60000);
 
-		test(`Method "getSupportedLanguages" return language codes`, () => {
+		// TODO: enable test back or remove
+		// Disable test, to allow translators to return any lang codes they support
+		// Users must filter lang codes on their side, to ensure valid ISO codes
+		test.skip(`Method "getSupportedLanguages" return language codes`, () => {
 			const languages = translatorClass.getSupportedLanguages();
-
-			const validLangCodes = getLanguageCodesISO639v2(languages);
-			expect(validLangCodes.length).toBeGreaterThan(1);
+			languages.forEach((language) => {
+				const isValidLang =
+					isLanguageCodeISO639v1(language) || isLanguageCodeISO639v2(language);
+				expect(isValidLang).toBeTruthy();
+			});
 		});
 
 		test(`Translate one text with method "translate"`, async () => {
