@@ -134,14 +134,14 @@ Uses a free API of service https://www.reverso.net/text-translation
 
 **Unstable**: this translator are not stable and placed in `unstable` subdirectory. Keep in mind the not stable translators may be removed any time.
 
-#### DeepL
+#### DeepLTranslator
 
 Uses API of https://www.deepl.com/translator
 
 This translator requires to provide API key
 
 ```ts
-import { DeepLTranslator } from '@translate-tools/core/translators/DeepL';
+import { DeepLTranslator } from '@translate-tools/core/translators/DeepLTranslator';
 
 const translator = new DeepLTranslator({
 	apiKey: '820c5d18-365b-289c-e63b6fc7e1cb:fx',
