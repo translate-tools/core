@@ -1,31 +1,32 @@
-The translate tools core kit contains a interfaces and default implementations of basic translation entities.
+The translate tools core is a kit of translation primitives.
 
-This package is part of [translate tools project](https://github.com/translate-tools).
+The package contains translators, scheduler for translation tasks, tex-to-speech (TTS), some utils and standardized types for a build a large systems.
 
-Main purpose of core package it's standardization a translator entities.
+Use this package if you need default implementations of translation primitives. Use a types of this package, to implement your own entities and to make it compatible with a numerous utils implemented by other people.
 
-# Translators info
+Feel free to [open a new issue](https://github.com/translate-tools/core/issues) and request a primitives that needs in your project and will useful for other people.
 
-This package contains few translators and its have different status and support different platforms.
+# API
 
-| Translator name      | Platforms       | API key      | Status                                                             |
-| -------------------- | --------------- | ------------ | ------------------------------------------------------------------ |
-| GoogleTranslator     | browser, nodejs | not required | ready to use                                                       |
-| YandexTranslator     | browser         | not required | ready to use                                                       |
-| BingTranslatorPublic | browser         | not required | unstable, ready to use for translate short text with low frequency |
-| ReversoTranslator    | browser         | not required | unstable                                                           |
+This package provides CJS and ESM modules both. This docs contains CJS examples, that can be used for both NodeJS and Browser, but if you need to use ESM modules (to make tree-shaking are effective for example), you can add `/esm` prefix for any paths, after package name:
 
-> WARNING: sometimes services are changes API response structure and translators stop works. In this cases we will fix it and update version, so you have to update version too or use another translator for this time. If you are first who found error, please [make issue](https://github.com/translate-tools/core/issues/new) to get fix asap
+```js
+// Example with import a CommonJS module
+import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTranslator';
+```
 
-# Usage
+```js
+// Example with import a ECMAScript module
+import { GoogleTranslator } from '@translate-tools/core/esm/translators/GoogleTranslator';
+```
 
-Install package `npm install @translate-tools/core`
+## Translators
 
-> WARNING: this library is still under construction, so types is not obey semver and may be change unpredictable. To avoid problems with builds, fix a version of package on minor part.
->
-> example: ~0.2.0
+Directory `translators` contains a translators interfaces and default implementations.
 
-Code example
+### Translators usage
+
+Example with google translator
 
 ```ts
 import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTranslator';
@@ -36,14 +37,63 @@ const translator = new GoogleTranslator();
 translator
 	.translate('Hello world', 'en', 'de')
 	.then((translate) => console.log('Translate result', translate));
+
+// Translate multiple strings
+translator
+	.translateBatch(
+		['Hello world', 'Some another text to translate', 'Yet another text'],
+		'en',
+		'de',
+	)
+	.then((translatedTexts) => console.log('Translate result', translatedTexts));
 ```
 
-> NOTE: For use with nodejs you should specify user agent
->
-> In most cases for nodejs, translator will work incorrectly without User-Agent
+**For use with nodejs** you have to **specify user agent**. In most cases for nodejs, translator will work incorrectly with not set `User-Agent` header.
 
 ```ts
 import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTranslator';
+
+const translator = new GoogleTranslator({
+	headers: {
+		'User-Agent':
+			'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36',
+	},
+});
+```
+
+Some translators API is **not available in browser, due to CSP policy**, for this cases you can set [CORS proxy](https://rapidapi.com/guides/cors-proxy-apis) to fix the problem. With this option, translator will use proxy to send requests, keep in mind that those who own the proxy server you use, can see your requests content.
+
+```ts
+import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTranslator';
+
+// Use some CORS proxy service as prefix
+const translator = new GoogleTranslator({
+	corsProxy: 'https://corsproxy.io/',
+});
+
+// Or use your own transform function
+const translator = new GoogleTranslator({
+	corsProxy(url) {
+		return `https://my-cors-proxy/${url}/my-postfix`;
+	},
+});
+```
+
+### Translators list
+
+Package includes translators implementations for most popular services.
+
+#### GoogleTranslator
+
+Uses a free API version of service translate.google.com
+
+Exports 2 implementations `GoogleTranslator` and `GoogleTranslatorTokenFree`, that have the same features, but uses different API endpoints, so you can choose what implementation better for you.
+
+```ts
+import {
+	GoogleTranslator,
+	GoogleTranslatorTokenFree,
+} from '@translate-tools/core/translators/GoogleTranslator';
 
 const translator = new GoogleTranslator({
 	headers: {
@@ -55,148 +105,210 @@ const translator = new GoogleTranslator({
 translator
 	.translate('Hello world', 'en', 'de')
 	.then((translate) => console.log('Translate result', translate));
-```
 
-For use with browser you should specify CORS proxy in most cases when translator is not work
-
-```ts
-import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTranslator';
-
-// Use some CORS proxy service address as prefix
-const translator = new GoogleTranslator({
-	corsProxy: 'https://crossorigin.me/',
-});
-
-translator
-	.translate('Hello world', 'en', 'de')
-	.then((translate) => console.log('Translate result', translate));
-
-// Or use your own transform function
-const translator = new GoogleTranslator({
-	corsProxy(url) {
-		return `https://my-cors-proxy/${url}/some-postfix`;
+const translator2 = new GoogleTranslatorTokenFree({
+	headers: {
+		'User-Agent':
+			'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36',
 	},
 });
 
+translator2
+	.translate('Hello world', 'en', 'de')
+	.then((translate) => console.log('Translate result', translate));
+```
+
+#### YandexTranslator
+
+Uses a free API of service translate.yandex.ru
+
+#### TartuNLPTranslator
+
+Uses a free API https://github.com/TartuNLP/translation-api built with TartuNLP's public NMT engines
+API docs: https://api.tartunlp.ai/translation/docs
+Demo: https://translate.ut.ee/
+
+#### ReversoTranslator
+
+Uses a free API of service https://www.reverso.net/text-translation
+
+**Unstable**: this translator are not stable and placed in `unstable` subdirectory. Keep in mind the not stable translators may be removed any time.
+
+#### DeepL
+
+Uses API of https://www.deepl.com/translator
+
+This translator requires to provide API key
+
+```ts
+import { DeepLTranslator } from '@translate-tools/core/translators/DeepL';
+
+const translator = new DeepLTranslator({
+	apiKey: '820c5d18-365b-289c-e63b6fc7e1cb:fx',
+});
+
 translator
 	.translate('Hello world', 'en', 'de')
 	.then((translate) => console.log('Translate result', translate));
 ```
 
-# Package contents
+#### LibreTranslateTranslator
 
-## Translator
+Uses API of https://github.com/LibreTranslate/LibreTranslate
 
-Translator it's basic entity for translate text.
+This translator requires to provide API endpoint and API key for some not free API instances.
+See an [instances list](https://github.com/LibreTranslate/LibreTranslate#mirrors) to find a public instances.
 
-### Abstraction
+**Unstable**: this translator are not stable and placed in `unstable` subdirectory. Keep in mind the not stable translators may be removed any time.
 
-Namespace `types/Translator`
+**Options**
 
-- Interface `ITranslator` with basic structure of translator object
-- Abstract class `Translator` which implement `ITranslator` and define static members
-
-### Implementation
-
-Namespace `translators`
-
-Contains a translators which extends `Translator` and use API of popular translate services.
-
-- GoogleTranslator
-- YandexTranslator
-- BingTranslator
-
-Also contains `FakeTranslator` for mock and tests
-
-### Examples
+- `apiEndpoint` optional - url to API endpoint. Default: `https://translate.terraprint.co/translate`
+- `apiKey` optional - API key
 
 ```ts
-import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTranslator';
+import { LibreTranslateTranslator } from '@translate-tools/core/translators/unstable/LibreTranslateTranslator';
 
-const translator = new GoogleTranslator();
+const freeTranslator = new LibreTranslateTranslator({
+	apiEndpoint: 'https://translate.argosopentech.com/translate',
+});
 
-// Translate single string
-translator
-	.translate('Hello world', 'en', 'de')
-	.then((translate) => console.log('Single translate', translate));
+const localDeployedTranslator = new LibreTranslateTranslator({
+	apiEndpoint: 'http://localhost:9077/translate',
+});
 
-// Translate multiple string
-translator
-	.translateBatch(['Translator can translate few strings', 'at one time'], 'en', 'de')
-	.then((translate) => console.log('Batch translate', translate));
+const paidTranslator = new LibreTranslateTranslator({
+	apiEndpoint: 'https://libretranslate.com/translate',
+	apiKey: '76c1d41c-0a9a-5667-e9d169746e1e',
+});
 ```
 
-## Translate scheduler
+#### FakeTranslator
 
-Translate scheduler it's task manager which try fit many translate requests to one request to `Translator`.
+Fake translator for tests, that returns original string with added prefix.
 
-It's very useful for cases when you have many requests to translate short text but your `Translator` have limits for API requests.
+### Translator API
 
-### Abstraction
+Module `translators/Translator` contains translator interfaces.
 
-Namespace `util/Scheduler`
+#### TranslatorInstanceMembers
 
-Interface `ITranslateScheduler`
-
-### Implementation
-
-- `Scheduler`
-- `SchedulerWithCache`
-
-### Examples
+Interface describes instance members for a translator
 
 ```ts
-import { Scheduler } from '@translate-tools/core/util/Scheduler';
-import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTranslator';
+interface TranslatorInstanceMembers {
+	/**
+	 * Translate text
+	 * @returns Translated string
+	 */
+	translate(text: string, langFrom: langCodeWithAuto, langTo: langCode): Promise<string>;
 
-const translator = new GoogleTranslator();
-const scheduler = new Scheduler(translator);
+	/**
+	 * Translate texts array
+	 * @returns Array with translated strings and same length as input array
+	 * @returns Texts that did not translated will replaced to `null`
+	 */
+	translateBatch(
+		text: string[],
+		langFrom: langCodeWithAuto,
+		langTo: langCode,
+	): Promise<Array<string | null>>;
 
-// Scheduler will join this requests and execute it as one request
-// Scheduler may implement it any way, it may group requests by languages or other way,
-// it may call `translate` method or `translateBatch`, etc
+	/**
+	 * Check string or array of stings to exceeding a limit
+	 *
+	 * It need for modules with complexity logic of encoding a strings.
+	 * For example, when in `translateBatch` text merge to string
+	 * and split to chunks by tokens with ID: `<id1>Text 1</id1><id2>Text 2</id2>`
+	 *
+	 * Here checked result of encoding a input data
+	 * @returns number of extra chars
+	 */
+	checkLimitExceeding(text: string | string[]): number;
 
-scheduler
-	.translate('My first translation request', 'en', 'de')
-	.then((translate) => console.log('Request #1', translate));
+	/**
+	 * Check supporting of translate direction
+	 */
+	checkDirection?: (langFrom: langCodeWithAuto, langTo: langCode) => boolean;
 
-scheduler
-	.translate('My second translation request', 'en', 'de')
-	.then((translate) => console.log('Request #2', translate));
+	/**
+	 * Max length of string for `translate` or total length of strings from array for `translateBatch`
+	 */
+	getLengthLimit(): number;
+
+	/**
+	 * Delay between requests that required by translator to a correct work
+	 */
+	getRequestsTimeout: () => number;
+}
 ```
 
-# API
+#### TranslatorStaticMembers
 
-You can specify options in constructor for each `Translator` class.
+Interface describes static members, useful to choose most suitable translator in a list by features
 
-Not all modules is use all keys.
+```ts
+interface TranslatorStaticMembers {
+	/**
+	 * Public translator name to displaying
+	 */
+	readonly translatorName: string;
 
-## apiKey
+	/**
+	 * Is required API key for this module
+	 */
+	isRequiredKey(): boolean;
 
-type: `string`
+	/**
+	 * Is it supported value `auto` in `langFrom` argument of `translate` and `translateBatch` methods
+	 */
+	isSupportedAutoFrom(): boolean;
 
-Access key for requests to API
+	/**
+	 * Array of supported languages as ISO 639-1 codes
+	 */
+	getSupportedLanguages(): langCode[];
+}
+```
 
-## useMultiplexing
+#### TranslatorConstructor
 
-type: `boolean`
+Interface describes translator constructor, that have members of `TranslatorStaticMembers` and construct an object with type `TranslatorInstanceMembers`
 
-Union text array to 1 request (or more, but less than usually anyway).
+#### TranslatorOptions
 
-Option for reduce the number of requests, but it may generate artifacts in translated text.
+Interface describes default options for any translator constructor.
 
-## headers
+Some translators may ignore some options.
 
-type: `Record<string, string>`
+```ts
+type TranslatorOptions<O extends Record<any, any> = {}> = O & {
+	/**
+	 * Access key for requests to translator API
+	 */
+	apiKey?: string;
 
-Additional headers for requests
+	/**
+	 * Union text array to 1 request (or more, but less than usualy anyway).
+	 *
+	 * Option for reduce the number of requests, but it can make artefacts in translated text.
+	 *
+	 * Some modules may not support this feature.
+	 */
+	useMultiplexing?: boolean;
 
-## corsProxy
+	/**
+	 * Additional headers for requests
+	 */
+	headers?: Record<string, string>;
 
-type: `string | ((url: string) => string)`
-
-Proxy prefix or transform function which return url with CORS proxy
-
-CORS proxy useful to avoid CORS error in browser or to mask server requests as browser requests.
-
-All requests will send through this proxy server and this server will modify headers
+	/**
+	 * Proxy prefix or transform function which return url with CORS proxy
+	 *
+	 * CORS proxy useful to avoid CORS error in browser or to mask server requests as browser requests.
+	 *
+	 * All requests will send through this proxy server and this server will modify headers
+	 */
+	corsProxy?: CorsProxy;
+};
+```
