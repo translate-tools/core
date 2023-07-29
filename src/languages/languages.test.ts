@@ -1,47 +1,39 @@
-import { getLanguageCodesISO639v2, isLanguageCodeISO639v2, langCodes } from '.';
+import {
+	isLanguageCodeISO639v1,
+	isLanguageCodeISO639v2,
+	getLanguageCodesISO639,
+} from '.';
 
 describe('isLanguageCodeISO639v2', () => {
-	test('langCodes are valid langs', () => {
-		langCodes.every((lang) => {
-			const resutl = isLanguageCodeISO639v2(lang);
-			expect(resutl).toBe(true);
+	test('v1 langCodes are valid', () => {
+		getLanguageCodesISO639('v1').every((lang) => {
+			const result = isLanguageCodeISO639v1(lang);
+			expect(result).toBe(true);
+		});
+	});
+
+	test('v2 langCodes are valid', () => {
+		getLanguageCodesISO639('v2').every((lang) => {
+			const result = isLanguageCodeISO639v2(lang);
+			expect(result).toBe(true);
 		});
 	});
 
 	test('lang codes are case sensitive', () => {
-		langCodes.every((lang) => {
+		getLanguageCodesISO639('v1').every((lang) => {
 			const upperCaseLang = lang.toUpperCase();
-			const resutl = isLanguageCodeISO639v2(upperCaseLang);
-			expect(resutl).toBe(false);
+			const result = isLanguageCodeISO639v1(upperCaseLang);
+			expect(result).toBe(false);
 		});
 	});
 
 	test('random values are not valid langs', () => {
 		['00', 'unknown', 'en-JA'].every((lang) => {
-			const resutl = isLanguageCodeISO639v2(lang);
-			expect(resutl).toBe(false);
+			const resultV1 = isLanguageCodeISO639v1(lang);
+			expect(resultV1).toBe(false);
+
+			const resultV2 = isLanguageCodeISO639v2(lang);
+			expect(resultV2).toBe(false);
 		});
-	});
-});
-
-describe('getLanguageCodesISO639v2', () => {
-	test('invalid values are not picked', () => {
-		const result = getLanguageCodesISO639v2(['00', 'unknown', 'qq-JA']);
-		expect(result).toEqual([]);
-	});
-
-	test('no duplicates', () => {
-		const result = getLanguageCodesISO639v2([
-			'00',
-			'unknown',
-			'qq-JA',
-			'en-GB',
-			'en-US',
-			'en_US',
-			'zh_CN',
-			'zh_TW',
-			'ja',
-		]);
-		expect(result).toEqual(['en', 'zh', 'ja']);
 	});
 });
