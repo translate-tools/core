@@ -6,7 +6,7 @@ import languages from './ISO639LangCodesList';
  * Values are case sensitive, if you need, you have to convert strings to lower case to check
  */
 export const isLanguageCodeISO639v1 = (code: string) => {
-	return code && languages.some((lang) => code === lang.v1);
+	return Boolean(code && languages.some((lang) => code === lang.v1));
 };
 
 /**
@@ -15,11 +15,11 @@ export const isLanguageCodeISO639v1 = (code: string) => {
  * Values are case sensitive, if you need, you have to convert strings to lower case to check
  */
 export const isLanguageCodeISO639v2 = (code: string) => {
-	return (
+	return Boolean(
 		code &&
-		languages.some(
-			(lang) => code === lang.v2 || code === lang.v2B || code === lang.v2T,
-		)
+			languages.some(
+				(lang) => code === lang.v2 || code === lang.v2B || code === lang.v2T,
+			),
 	);
 };
 
