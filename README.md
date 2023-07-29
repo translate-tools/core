@@ -6,7 +6,9 @@ Use this package if you need default implementations of translation primitives. 
 
 Feel free to [open a new issue](https://github.com/translate-tools/core/issues) and request a primitives that needs in your project and will useful for other people.
 
-# API
+# Usage
+
+Install package `npm install @translate-tools/core`
 
 This package provides CJS and ESM modules both. This docs contains CJS examples, that can be used for both NodeJS and Browser, but if you need to use ESM modules (to make tree-shaking are effective for example), you can add `/esm` prefix for any paths, after package name:
 
