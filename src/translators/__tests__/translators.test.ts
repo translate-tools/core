@@ -96,7 +96,7 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 
 		// TODO: enable test back or remove
 		// Disable test, to allow translators to return any lang codes they support
-		// Translator users must filter lang codes on their side, to ensure valid ISO codes
+		// Users must filter lang codes on their side, to ensure valid ISO codes
 		test.skip(`Method "getSupportedLanguages" return language codes`, () => {
 			const languages = translatorClass.getSupportedLanguages();
 			languages.forEach((language) => {

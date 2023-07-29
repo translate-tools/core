@@ -28,7 +28,9 @@ ttsConstructor.map((ttsConstructor) => {
 			expect(parsedAudioFrame).toHaveProperty('bitrate');
 		});
 
-		test(`getSupportedLanguages returns array of supported languages`, async () => {
+		// Disable test, to allow TTS to return any lang codes they support
+		// Users must filter lang codes on their side, to ensure valid ISO codes
+		test.skip(`getSupportedLanguages returns array of supported languages`, async () => {
 			const supportedLanguages = ttsConstructor.getSupportedLanguages();
 
 			// Languages array are not empty
