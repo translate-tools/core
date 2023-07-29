@@ -7,7 +7,7 @@ import { getLanguageCodesISO639v2 } from '../../languages';
 import { GoogleTranslator, GoogleTranslatorTokenFree } from '../GoogleTranslator';
 import { YandexTranslator } from '../YandexTranslator';
 import { TartuNLPTranslator } from '../TartuNLPTranslator';
-import { DeepLTranslator } from '../DeepL';
+import { DeepLTranslator } from '../DeepLTranslator';
 import { LibreTranslateTranslator } from '../unstable/LibreTranslateTranslator';
 import { ReversoTranslator } from '../unstable/ReversoTranslator';
 
