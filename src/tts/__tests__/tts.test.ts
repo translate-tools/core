@@ -1,7 +1,7 @@
 const mp3Parser = require('mp3-parser');
 
 import { TTSProvider } from '..';
-import { langCodes } from '../../languages';
+import { isLanguageCodeISO639v1 } from '../../languages';
 import { GoogleTTS } from '../GoogleTTS';
 import { LingvaTTS } from '../LingvaTTS';
 
@@ -38,7 +38,7 @@ ttsConstructor.map((ttsConstructor) => {
 
 			// All language coded are correct
 			supportedLanguages.forEach((lang) => {
-				expect((langCodes as readonly string[]).includes(lang));
+				expect(isLanguageCodeISO639v1(lang)).toBeTruthy();
 			});
 		});
 	});
