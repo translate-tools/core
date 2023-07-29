@@ -20,11 +20,11 @@ import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTransl
 import { GoogleTranslator } from '@translate-tools/core/esm/translators/GoogleTranslator';
 ```
 
-## Translators
+# Translators
 
 Directory `translators` contains a translators interfaces and default implementations.
 
-### Translators usage
+## Translators usage
 
 Example with google translator
 
@@ -79,11 +79,11 @@ const translator = new GoogleTranslator({
 });
 ```
 
-### Translators list
+## Translators list
 
 Package includes translators implementations for most popular services.
 
-#### GoogleTranslator
+### GoogleTranslator
 
 Uses a free API version of service translate.google.com
 
@@ -118,23 +118,23 @@ translator2
 	.then((translate) => console.log('Translate result', translate));
 ```
 
-#### YandexTranslator
+### YandexTranslator
 
 Uses a free API of service translate.yandex.ru
 
-#### TartuNLPTranslator
+### TartuNLPTranslator
 
 Uses a free API https://github.com/TartuNLP/translation-api built with TartuNLP's public NMT engines
 API docs: https://api.tartunlp.ai/translation/docs
 Demo: https://translate.ut.ee/
 
-#### ReversoTranslator
+### ReversoTranslator
 
 Uses a free API of service https://www.reverso.net/text-translation
 
 **Unstable**: this translator are not stable and placed in `unstable` subdirectory. Keep in mind the not stable translators may be removed any time.
 
-#### DeepLTranslator
+### DeepLTranslator
 
 Uses API of https://www.deepl.com/translator
 
@@ -152,7 +152,7 @@ translator
 	.then((translate) => console.log('Translate result', translate));
 ```
 
-#### LibreTranslateTranslator
+### LibreTranslateTranslator
 
 Uses API of https://github.com/LibreTranslate/LibreTranslate
 
@@ -183,15 +183,15 @@ const paidTranslator = new LibreTranslateTranslator({
 });
 ```
 
-#### FakeTranslator
+### FakeTranslator
 
 Fake translator for tests, that returns original string with added prefix.
 
-### Translator API
+## Translator API
 
 Module `translators/Translator` contains translator interfaces.
 
-#### TranslatorInstanceMembers
+### TranslatorInstanceMembers
 
 Interface describes instance members for a translator
 
@@ -243,7 +243,7 @@ interface TranslatorInstanceMembers {
 }
 ```
 
-#### TranslatorStaticMembers
+### TranslatorStaticMembers
 
 Interface describes static members, useful to choose most suitable translator in a list by features
 
@@ -271,11 +271,11 @@ interface TranslatorStaticMembers {
 }
 ```
 
-#### TranslatorConstructor
+### TranslatorConstructor
 
 Interface describes translator constructor, that have members of `TranslatorStaticMembers` and construct an object with type `TranslatorInstanceMembers`
 
-#### TranslatorOptions
+### TranslatorOptions
 
 Interface describes default options for any translator constructor.
 
