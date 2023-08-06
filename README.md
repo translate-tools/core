@@ -315,6 +315,195 @@ type TranslatorOptions<O extends Record<any, any> = {}> = O & {
 };
 ```
 
+# Scheduling
+
+Directory `scheduling` contains primitives to schedule translation, that allow to batch few translation requests to one API request.
+
+Scheduler are extremely useful for cases when your code intensive calls translation methods, to avoid API rate limit errors and to collect few requests for short time to one request.
+
+## Scheduler API
+
+Scheduler have standard interface, to allow you implement your own scheduler for you use case
+
+```ts
+export interface ISchedulerTranslateOptions {
+	/**
+	 * Identifier to grouping requests
+	 */
+	context?: string;
+
+	/**
+	 * Priority index for translate queue
+	 */
+	priority?: number;
+
+	/**
+	 * Use direct translate for this request if it possible
+	 */
+	directTranslate?: boolean;
+}
+
+export interface IScheduler {
+	translate(
+		text: string,
+		from: langCodeWithAuto,
+		to: langCode,
+		options?: ISchedulerTranslateOptions,
+	): Promise<string>;
+}
+```
+
+Scheduler API looks like translator with one public method `translate`. User calls this method any times with any frequency, and scheduler executes requests by its own plan.
+
+## Basic scheduler
+
+Basic scheduler placed at `scheduling/Scheduler`;
+
+### Usage
+
+```ts
+import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTranslator';
+import { Scheduler } from '@translate-tools/core/scheduling/Scheduler';
+
+// We use google translator API for translate requests
+const translator = new GoogleTranslator();
+const scheduler = new Scheduler(translator, { translatePoolDelay: 100 });
+
+// This text will not translated immediately, instead it will be added to suit batch in queue,
+// and will translated after 100ms after last update this batch
+scheduler.translate('Some text for translate', 'en', 'de', { priority: 1 });
+
+// The same with this request, but this text will translated first, because have most high priority
+scheduler.translate('Text that must be translated ASAP', 'en', 'de', { priority: 10 });
+
+// Texts with same priority will be batched
+scheduler.translate('Some text for translate', 'en', 'de', { priority: 1 });
+```
+
+### API
+
+```ts
+interface Scheduler {
+	new (translator: TranslatorInstanceMembers, config?: SchedulerConfig): IScheduler;
+}
+
+interface SchedulerConfig {
+	/**
+	 * Number of attempts for retry request
+	 */
+	translateRetryAttemptLimit?: number;
+
+	/**
+	 * If true - rejected requests will use direct translate
+	 */
+	isAllowDirectTranslateBadChunks?: boolean;
+
+	/**
+	 * Length of string for direct translate.
+	 *
+	 * null for disable the condition
+	 */
+	directTranslateLength?: number | null;
+
+	/**
+	 * Delay for translate a chunk. The bigger the more requests will collect
+	 */
+	translatePoolDelay?: number;
+
+	/**
+	 * When chunk collect this size, it's will be instant add to a translate queue
+	 *
+	 * null for disable the condition
+	 */
+	chunkSizeForInstantTranslate?: number | null;
+
+	/**
+	 * Pause between handle task batches
+	 *
+	 * It may be useful to await accumulating a task batches in queue to consider priority better and don't translate first task batch immediately
+	 *
+	 * WARNING: this option must be used only for consider priority better! Set small value always (10-50ms)
+	 *
+	 * When this option is disabled (by default) and you call translate method for texts with priority 1 and then immediately for text with priority 2, first request will have less delay for translate and will translate first, even with lower priority, because worker will translate first task immediately after delay defined by option `translatePoolDelay`
+	 */
+	taskBatchHandleDelay?: null | number;
+}
+```
+
+## Scheduler with cache
+
+Scheduler with cache placed at `scheduling/SchedulerWithCache` and useful for cases when you needs to cache your translations.
+
+This class is just a decorator over `Scheduler` that allow you to use standard object `ICache` with scheduler.
+
+### Usage
+
+```ts
+import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTranslator';
+import { Scheduler } from '@translate-tools/core/scheduling/Scheduler';
+import { SchedulerWithCache } from '@translate-tools/core/scheduling/SchedulerWithCache';
+import { ICache } from '@translate-tools/core/utils/Cache';
+
+// Dummy implementation of cache
+class CacheInRam implements ICache {
+	private cache: Record<string, string> = {};
+	private buildKey(text: string, from: string, to: string) {
+		return [text, from, to].join('-');
+	}
+
+	async get(text: string, from: string, to: string) {
+		const cacheKey = this.buildKey(text, from, to);
+		return this.cache[cacheKey] ?? null;
+	}
+
+	async set(text: string, translate: string, from: string, to: string) {
+		const cacheKey = this.buildKey(text, from, to);
+		this.cache[cacheKey] = translate;
+	}
+
+	async clear() {
+		this.cache = {};
+	}
+}
+
+// We use google translator API for translate requests
+const translator = new GoogleTranslator();
+const scheduler = new Scheduler(translator, { translatePoolDelay: 100 });
+
+const cache = new CacheInRam();
+const schedulerWithCache = new SchedulerWithCache(scheduler, cache);
+
+schedulerWithCache.translate('Some text for translate', 'en', 'de');
+schedulerWithCache.translate('Some another text', 'en', 'de');
+```
+
+### API
+
+````ts
+interface SchedulerWithCache {
+	new (scheduler: Scheduler, cache: ICache): IScheduler;
+}
+
+/**
+ * Interface of cache
+ */
+export interface ICache {
+	/**
+	 * Get translation
+	 */
+	get: (text: string, from: string, to: string) => Promise<string | null>;
+
+	/**
+	 * Set translation
+	 */
+	set: (text: string, translate: string, from: string, to: string) => Promise<void>;
+
+	/**
+	 * Clear cache
+	 */
+	clear: () => Promise<void>;
+}
+
 # Text to speech (TTS)
 
 Directory `tts` contains text to speech modules, to make audio from a text.
@@ -332,7 +521,7 @@ const tts = new GoogleTTS();
 tts.getAudioBuffer('Some demo text to speak', 'en').then((ttsResult) => {
 	console.log('Audio buffer', ttsResult.buffer);
 });
-```
+````
 
 ## TTS list
 
