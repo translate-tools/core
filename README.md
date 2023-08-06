@@ -26,6 +26,12 @@ import { GoogleTranslator } from '@translate-tools/core/esm/translators/GoogleTr
 
 Directory `translators` contains a translators interfaces and default implementations.
 
+Translator purpose is translate text from one language to another.
+
+Translators in this package uses 2-letter [ISO 639-1 language codes](https://en.wikipedia.org/wiki/ISO_639-1), but in your translator implementation you can use [ISO 639-2 language codes](https://en.wikipedia.org/wiki/ISO_639-2) too.
+
+Translators have 2 public methods, `translate` for translate single text and `translateBatch` for translate a multiple texts per one request. Method `translateBatch` may have better translation quality for some use cases, because some translator implementations may not just translate every single string independently, but see a context of all strings.
+
 ## Translator usage
 
 Example with google translator
