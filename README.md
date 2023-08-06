@@ -535,9 +535,7 @@ Uses a free API version of service translate.google.com
 
 Uses API of https://github.com/thedaviddelta/lingva-translate
 
-This module supports option to provide API endpoint, see an [instances list](https://github.com/thedaviddelta/lingva-translate#instances) to find a public instances.
-
-<!-- TODO: implement option `apiEndpoint` -->
+This module supports option `apiHost` to provide API endpoint, see an [instances list](https://github.com/thedaviddelta/lingva-translate#instances) to find a public instances. Default API host: `https://translate.plausibility.cloud`.
 
 ## TTS API
 
