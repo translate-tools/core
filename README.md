@@ -513,14 +513,15 @@ TTS modules returns buffer with audio.
 
 ## TTS usage
 
-<!-- TODO: add example with convert buffer to audio -->
-
 ```ts
 import { GoogleTTS } from '@translate-tools/core/tts/GoogleTTS';
 
 const tts = new GoogleTTS();
-tts.getAudioBuffer('Some demo text to speak', 'en').then((ttsResult) => {
-	console.log('Audio buffer', ttsResult.buffer);
+tts.getAudioBuffer('Some demo text to speak', 'en').then(({ buffer, type }) => {
+	// Play audio from fetched `ArrayBuffer`
+	const audio = new Audio();
+	audio.src = URL.createObjectURL(new Blob([buffer], { type }));
+	audio.play();
 });
 ```
 
