@@ -314,3 +314,85 @@ type TranslatorOptions<O extends Record<any, any> = {}> = O & {
 	corsProxy?: CorsProxy;
 };
 ```
+
+# Text to speech (TTS)
+
+Directory `tts` contains text to speech modules, to make audio from a text.
+
+TTS modules returns buffer with audio.
+
+## TTS usage
+
+<!-- TODO: add example with convert buffer to audio -->
+
+```ts
+import { GoogleTTS } from '@translate-tools/core/tts/GoogleTTS';
+
+const tts = new GoogleTTS();
+tts.getAudioBuffer('Some demo text to speak', 'en').then((ttsResult) => {
+	console.log('Audio buffer', ttsResult.buffer);
+});
+```
+
+## TTS list
+
+### GoogleTTS
+
+Uses a free API version of service translate.google.com
+
+### LingvaTTS
+
+Uses API of https://github.com/thedaviddelta/lingva-translate
+
+This module supports option to provide API endpoint, see an [instances list](https://github.com/thedaviddelta/lingva-translate#instances) to find a public instances.
+
+<!-- TODO: implement option `apiEndpoint` -->
+
+## TTS API
+
+```ts
+/**
+ * Object with audio data
+ */
+export type TTSAudioBuffer = {
+	/**
+	 * Audio mimetype
+	 */
+	type: string;
+	/**
+	 * Buffer contains audio bytes
+	 */
+	buffer: ArrayBuffer;
+};
+
+/**
+ * TTS instance members
+ */
+export interface TTSProviderProps {
+	/**
+	 * Get blob with audio
+	 * @param text text to speak
+	 * @param language text language
+	 * @param options optional map with preferences to generate audio
+	 */
+	getAudioBuffer(
+		text: string,
+		language: string,
+		options?: Record<string, string>,
+	): Promise<TTSAudioBuffer>;
+}
+
+/**
+ * TTS constructor members
+ */
+export interface TTSProviderStaticProps {
+	getSupportedLanguages(): string[];
+}
+
+/**
+ * Text to speech module
+ */
+export type TTSProvider = TTSProviderStaticProps & {
+	new (...args: any[]): TTSProviderProps;
+};
+```
