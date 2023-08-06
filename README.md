@@ -586,3 +586,19 @@ export type TTSProvider = TTSProviderStaticProps & {
 	new (...args: any[]): TTSProviderProps;
 };
 ```
+
+# Languages
+
+Module `languages` contains utils to work with language codes.
+
+## isLanguageCodeISO639v1(code: `string`): `boolean`
+
+Predicate to check is language code are valid [ISO-639v1 code](https://en.wikipedia.org/wiki/ISO_639-1) or not
+
+## isLanguageCodeISO639v2(code: `string`): `boolean`
+
+Predicate to check is language code are valid [ISO-639v2 code](https://en.wikipedia.org/wiki/ISO_639-2) or not
+
+## getLanguageCodesISO639(set: `'v1' | 'v2'`): `string[]`
+
+Returns language codes for selected version of ISO-639
