@@ -4,6 +4,11 @@ export type CorsProxy = string | ((url: string) => string);
 
 export type TranslatorOptions<O extends Record<any, any> = {}> = O & {
 	/**
+	 * API endpoint URL
+	 */
+	apiHost?: string;
+
+	/**
 	 * Access key for requests to translator API
 	 */
 	apiKey?: string;

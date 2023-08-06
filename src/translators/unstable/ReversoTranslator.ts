@@ -76,11 +76,11 @@ export class ReversoTranslator extends BaseTranslator {
 			},
 		};
 
-		const apiEndpoint = this.wrapUrlToCorsProxy(
+		const apiHost = this.wrapUrlToCorsProxy(
 			'https://api.reverso.net/translate/v1/translation',
 		);
 		return axios
-			.post(apiEndpoint, JSON.stringify(data), {
+			.post(apiHost, JSON.stringify(data), {
 				withCredentials: false,
 				headers: {
 					'Content-Type': 'application/json; charset=utf-8',
