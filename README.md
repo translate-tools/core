@@ -26,7 +26,7 @@ import { GoogleTranslator } from '@translate-tools/core/esm/translators/GoogleTr
 
 Directory `translators` contains a translators interfaces and default implementations.
 
-## Translators usage
+## Translator usage
 
 Example with google translator
 
