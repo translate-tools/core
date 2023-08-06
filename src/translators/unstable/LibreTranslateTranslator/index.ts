@@ -4,11 +4,7 @@ import { stringify } from 'query-string';
 import { langCode, langCodeWithAuto } from '../../Translator';
 import { BaseTranslator, TranslatorOptions } from '../../BaseTranslator';
 
-export type LibreTranslateTranslatorOptions = {
-	apiEndpoint?: string;
-};
-
-export class LibreTranslateTranslator extends BaseTranslator<LibreTranslateTranslatorOptions> {
+export class LibreTranslateTranslator extends BaseTranslator {
 	public static readonly translatorName = 'LibreTranslateTranslator';
 
 	public static isRequiredKey = () => false;
@@ -31,14 +27,12 @@ export class LibreTranslateTranslator extends BaseTranslator<LibreTranslateTrans
 
 	// URL of your instance of LibreTranslate
 	// for local instance use URL "http://localhost/translate"
-	private readonly apiEndpoint: string = 'https://translate.terraprint.co/translate';
+	private readonly apiHost;
 
-	constructor(options: TranslatorOptions<LibreTranslateTranslatorOptions>) {
+	constructor(options: TranslatorOptions) {
 		super(options);
 
-		if (options.apiEndpoint) {
-			this.apiEndpoint = options.apiEndpoint;
-		}
+		this.apiHost = options.apiHost ?? 'https://translate.terraprint.co/translate';
 	}
 
 	public getLengthLimit() {
@@ -73,7 +67,7 @@ export class LibreTranslateTranslator extends BaseTranslator<LibreTranslateTrans
 		}
 
 		return axios
-			.post(this.apiEndpoint, stringify(requestData), {
+			.post(this.apiHost, stringify(requestData), {
 				headers: {
 					'User-Agent':
 						'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:99.0) Gecko/20100101 Firefox/99.0',

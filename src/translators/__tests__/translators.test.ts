@@ -41,7 +41,7 @@ const translatorsWithOptions: TranslatorWithOptions[] = [
 		translator: LibreTranslateTranslator,
 		options: process.env.TEST_LIBRETRANSLATE_API_ENDPOINT
 			? {
-				apiEndpoint: process.env.TEST_LIBRETRANSLATE_API_ENDPOINT,
+				apiHost: process.env.TEST_LIBRETRANSLATE_API_ENDPOINT,
 				apiKey: process.env.TEST_LIBRETRANSLATE_API_KEY,
 			  }
 			: {},

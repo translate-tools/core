@@ -165,22 +165,22 @@ See an [instances list](https://github.com/LibreTranslate/LibreTranslate#mirrors
 
 **Options**
 
-- `apiEndpoint` optional - url to API endpoint. Default: `https://translate.terraprint.co/translate`
+- `apiHost` optional - url to API endpoint. Default: `https://translate.terraprint.co/translate`
 - `apiKey` optional - API key
 
 ```ts
 import { LibreTranslateTranslator } from '@translate-tools/core/translators/unstable/LibreTranslateTranslator';
 
 const freeTranslator = new LibreTranslateTranslator({
-	apiEndpoint: 'https://translate.argosopentech.com/translate',
+	apiHost: 'https://translate.argosopentech.com/translate',
 });
 
 const localDeployedTranslator = new LibreTranslateTranslator({
-	apiEndpoint: 'http://localhost:9077/translate',
+	apiHost: 'http://localhost:9077/translate',
 });
 
 const paidTranslator = new LibreTranslateTranslator({
-	apiEndpoint: 'https://libretranslate.com/translate',
+	apiHost: 'https://libretranslate.com/translate',
 	apiKey: '76c1d41c-0a9a-5667-e9d169746e1e',
 });
 ```

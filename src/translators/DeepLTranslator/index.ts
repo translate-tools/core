@@ -25,7 +25,7 @@ export class DeepLTranslator extends BaseTranslator<DeepLTranslatorOptions> {
 		// eslint-enable
 	}
 
-	private readonly apiEndpoint: string;
+	private readonly apiHost: string;
 	constructor(options: TranslatorOptions<DeepLTranslatorOptions>) {
 		super(options);
 
@@ -37,7 +37,7 @@ export class DeepLTranslator extends BaseTranslator<DeepLTranslatorOptions> {
 			? 'https://api-free.deepl.com'
 			: 'https://api.deepl.com';
 
-		this.apiEndpoint = apiHost + '/v2/translate';
+		this.apiHost = apiHost + '/v2/translate';
 	}
 
 	public getLengthLimit() {
@@ -81,7 +81,7 @@ export class DeepLTranslator extends BaseTranslator<DeepLTranslatorOptions> {
 			.join('&');
 
 		return axios
-			.post(this.apiEndpoint, stringifiedBody, {
+			.post(this.apiHost, stringifiedBody, {
 				withCredentials: false,
 				headers: {
 					Authorization: `DeepL-Auth-Key ${this.options.apiKey}`,
