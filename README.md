@@ -479,7 +479,7 @@ schedulerWithCache.translate('Some another text', 'en', 'de');
 
 ### API
 
-````ts
+```ts
 interface SchedulerWithCache {
 	new (scheduler: Scheduler, cache: ICache): IScheduler;
 }
@@ -503,6 +503,7 @@ export interface ICache {
 	 */
 	clear: () => Promise<void>;
 }
+```
 
 # Text to speech (TTS)
 
@@ -521,7 +522,7 @@ const tts = new GoogleTTS();
 tts.getAudioBuffer('Some demo text to speak', 'en').then((ttsResult) => {
 	console.log('Audio buffer', ttsResult.buffer);
 });
-````
+```
 
 ## TTS list
 
