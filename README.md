@@ -76,7 +76,7 @@ import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTransl
 
 // Use some CORS proxy service as prefix
 const translator = new GoogleTranslator({
-	corsProxy: 'https://corsproxy.io/',
+	corsProxy: 'https://corsproxy.io/?',
 });
 
 // Or use your own transform function
