@@ -137,13 +137,14 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 			};
 
 			const url = apiPath + '?' + stringify(data);
-
-			return axios
-				.get(this.wrapUrlToCorsProxy(url), {
-					withCredentials: false,
-					headers: this.options.headers,
-				})
-				.then((rsp) => rsp.data)
+			/**
+			 * Using Fetch API
+			 */
+			return fetch(this.wrapUrlToCorsProxy(url), {
+				headers: this.options.headers,
+				credentials: 'omit',
+			})
+				.then((rsp) => rsp.json())
 				.then((rsp) => {
 					if (!(rsp instanceof Array) || !(rsp[0] instanceof Array)) {
 						throw new Error('Unexpected response');
@@ -159,6 +160,30 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 
 					return translatedText;
 				});
+			/**
+			 * Using Axios API
+			 */
+			// return axios
+			// 	.get(this.wrapUrlToCorsProxy(url), {
+			// 		withCredentials: false,
+			// 		headers: this.options.headers,
+			// 	})
+			// 	.then((rsp) => rsp.data)
+			// 	.then((rsp) => {
+			// 		if (!(rsp instanceof Array) || !(rsp[0] instanceof Array)) {
+			// 			throw new Error('Unexpected response');
+			// 		}
+
+			// 		const translatedText = rsp[0]
+			// 			.map((chunk) =>
+			// 				chunk instanceof Array && typeof chunk[0] === 'string'
+			// 					? chunk[0]
+			// 					: '',
+			// 			)
+			// 			.join('');
+
+			// 		return translatedText;
+			// 	});
 		});
 	}
 
@@ -181,18 +206,19 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 			const body = preparedText
 				.map((text) => `&q=${encodeURIComponent(text)}`)
 				.join('');
-
-			return axios({
-				url: this.wrapUrlToCorsProxy(url),
+			/**
+			 * Using Fetch API
+			 */
+			return fetch(this.wrapUrlToCorsProxy(url), {
 				method: 'POST',
-				withCredentials: false,
+				credentials: 'omit',
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded',
 					...this.options.headers,
 				},
-				data: body,
+				body,
 			})
-				.then((rsp) => rsp.data)
+				.then((rsp) => rsp.json())
 				.then((rawResp) => {
 					try {
 						if (!Array.isArray(rawResp)) {
@@ -230,6 +256,57 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 						throw err;
 					}
 				});
+			/**
+			 * Using Axios API
+			 */
+			// return axios({
+			// 	url: this.wrapUrlToCorsProxy(url),
+			// 	method: 'POST',
+			// 	withCredentials: false,
+			// 	headers: {
+			// 		'Content-Type': 'application/x-www-form-urlencoded',
+			// 		...this.options.headers,
+			// 	},
+			// 	data: body,
+			// })
+			// 	.then((rsp) => rsp.data)
+			// 	.then((rawResp) => {
+			// 		try {
+			// 			if (!Array.isArray(rawResp)) {
+			// 				throw new Error('Unexpected response');
+			// 			}
+
+			// 			const isSingleResponseMode = text.length === 1;
+
+			// 			const result: string[] = [];
+			// 			visitArrayItems(rawResp, (obj) => {
+			// 				if (isSingleResponseMode && result.length === 1) return;
+
+			// 				if (typeof obj !== 'string') return;
+
+			// 				if (isSingleResponseMode) {
+			// 					const parsedText = parseXMLResponse(obj);
+			// 					result.push(parsedText || obj);
+			// 				} else {
+			// 					const parsedText = parseXMLResponse(obj);
+			// 					if (parsedText !== null) {
+			// 						result.push(parsedText);
+			// 					}
+			// 				}
+			// 			});
+
+			// 			if (result.length !== text.length) {
+			// 				throw new Error(
+			// 					'Mismatching a lengths of original and translated arrays',
+			// 				);
+			// 			}
+
+			// 			return result as string[];
+			// 		} catch (err) {
+			// 			console.warn('Got response', rawResp);
+			// 			throw err;
+			// 		}
+			// 	});
 		});
 	}
 
@@ -260,7 +337,68 @@ export class GoogleTranslatorTokenFree extends AbstractGoogleTranslator {
 		};
 
 		const url = apiPath + '?' + stringify(data);
+		/**
+		 * Using Fetch API
+		 */
+		return fetch(this.wrapUrlToCorsProxy(url), {
+			method: 'GET',
+			credentials: 'omit',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				...this.options.headers,
+			},
+		})
+			.then((rsp) => rsp.json())
+			.then((rawResp) => {
+				try {
+					if (!Array.isArray(rawResp)) {
+						throw new Error('Unexpected response');
+					}
 
+					const intermediateTextsArray: string[] = [];
+					visitArrayItems(rawResp, (obj) => {
+						if (typeof obj === 'string') {
+							intermediateTextsArray.push(obj);
+						}
+					});
+
+					const result: string[] = [];
+
+					const isSingleResponseMode = text.length === 1;
+					const isOneToOneMappingMode =
+						intermediateTextsArray.length === text.length;
+					for (const idx in intermediateTextsArray) {
+						const text = intermediateTextsArray[idx];
+
+						if (isSingleResponseMode) {
+							result.push(text);
+							break;
+						}
+
+						// Each second text it's not translation if not 1-1 mapping
+						const isTranslation =
+							isOneToOneMappingMode || Number(idx) % 2 === 0;
+						if (isTranslation) {
+							result.push(text);
+						}
+					}
+
+					if (result.length !== text.length) {
+						console.warn('Translation result', result);
+						throw new Error(
+							'Mismatching a lengths of original and translated arrays',
+						);
+					}
+
+					return result as string[];
+				} catch (err) {
+					console.warn('Got response', rawResp);
+					throw err;
+				}
+			});
+		/**
+		 * Using Axios API
+		 */
 		return axios({
 			url: this.wrapUrlToCorsProxy(url),
 			method: 'GET',
