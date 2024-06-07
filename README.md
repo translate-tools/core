@@ -1,4 +1,4 @@
-![CodeQL](https://github.com/translate-tools/core/actions/workflows/codeql.yml/badge.svg?branch=master&event=push)
+[![CodeQL](https://github.com/translate-tools/core/actions/workflows/codeql.yml/badge.svg?branch=master&event=push)](https://github.com/translate-tools/core/actions/workflows/codeql.yml?branch=master&event=push)
 
 The translate tools core is a kit of translation primitives.
 
