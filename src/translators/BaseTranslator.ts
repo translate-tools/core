@@ -1,6 +1,6 @@
+import { Fetcher, FetcherOptions, FetcherRequestType } from '../utils/Fetcher';
+import { basicFetcher } from '../utils/Fetcher/basicFetcher';
 import { TranslatorInstanceMembers, langCode, langCodeWithAuto } from './Translator';
-
-export type CorsProxy = string | ((url: string) => string);
 
 export type TranslatorOptions<O extends Record<any, any> = {}> = O & {
 	/**
@@ -28,13 +28,9 @@ export type TranslatorOptions<O extends Record<any, any> = {}> = O & {
 	headers?: Record<string, string>;
 
 	/**
-	 * Proxy prefix or transform function which return url with CORS proxy
-	 *
-	 * CORS proxy useful to avoid CORS error in browser or to mask server requests as browser requests.
-	 *
-	 * All requests will send through this proxy server and this server will modify headers
+	 * Custom fetcher
 	 */
-	corsProxy?: CorsProxy;
+	fetcher?: Fetcher;
 };
 
 // TODO: remove it and provide utils to implement translators
@@ -97,5 +93,13 @@ implements TranslatorInstanceMembers
 		}
 
 		return url;
+	};
+
+	protected fetch: Fetcher = async <T extends FetcherRequestType>(
+		url: string,
+		options: FetcherOptions<T>,
+	) => {
+		const fetcher = this.options.fetcher ?? basicFetcher;
+		return fetcher(url, options);
 	};
 }

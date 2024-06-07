@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { stringify } from 'query-string';
 import { unescape } from 'lodash';
 
@@ -58,7 +57,7 @@ export class YandexTranslator extends BaseTranslator {
 	}
 
 	public async translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
-		const sid = await getYandexSID();
+		const sid = await getYandexSID(this.fetch);
 		if (sid === null) {
 			throw new Error('Invalid SID');
 		}
@@ -79,9 +78,9 @@ export class YandexTranslator extends BaseTranslator {
 			'https://translate.yandex.net/api/v1/tr.json/translate?srv=tr-url-widget&id=' +
 			sid +
 			'-0-0&';
-		return axios(this.wrapUrlToCorsProxy(urlWithSid + body), {
+		return this.fetch(this.wrapUrlToCorsProxy(urlWithSid + body), {
+			responseType: 'json',
 			method: 'GET',
-			withCredentials: false,
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
 				...this.options.headers,

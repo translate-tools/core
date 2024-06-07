@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 import { langCode, langCodeWithAuto } from '../Translator';
 import { BaseTranslator } from '../BaseTranslator';
 
@@ -44,28 +42,24 @@ export class TartuNLPTranslator extends BaseTranslator {
 	}
 
 	public async translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
-		return axios
-			.post(
-				'https://api.tartunlp.ai/translation/v2',
-				JSON.stringify({ text, src: from, tgt: to }),
-				{
-					withCredentials: false,
-					headers: {
-						'Content-Type': 'application/json',
-						...this.options.headers,
-					},
-				},
-			)
-			.then((rsp) => {
-				if (
-					typeof rsp.data !== 'object' ||
-					rsp.data === null ||
-					!Array.isArray((rsp.data as any).result)
-				) {
-					throw new TypeError('Unexpected data');
-				}
+		return this.fetch('https://api.tartunlp.ai/translation/v2', {
+			responseType: 'json',
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				...this.options.headers,
+			},
+			body: JSON.stringify({ text, src: from, tgt: to }),
+		}).then((rsp) => {
+			if (
+				typeof rsp.data !== 'object' ||
+				rsp.data === null ||
+				!Array.isArray((rsp.data as any).result)
+			) {
+				throw new TypeError('Unexpected data');
+			}
 
-				return (rsp.data as any).result as string[];
-			});
+			return (rsp.data as any).result as string[];
+		});
 	}
 }

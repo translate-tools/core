@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { langCode } from '../Translator';
 import { BaseTranslator } from '../BaseTranslator';
 
@@ -79,26 +78,26 @@ export class ReversoTranslator extends BaseTranslator {
 		const apiHost = this.wrapUrlToCorsProxy(
 			'https://api.reverso.net/translate/v1/translation',
 		);
-		return axios
-			.post(apiHost, JSON.stringify(data), {
-				withCredentials: false,
-				headers: {
-					'Content-Type': 'application/json; charset=utf-8',
-					...this.options.headers,
-				},
-			})
-			.then((rsp) => {
-				const response = rsp.data as any;
-				if (
-					!(response instanceof Object) ||
-					!(response.translation instanceof Array) ||
-					response.translation.every((i: any) => typeof i !== 'string')
-				) {
-					throw new Error('Unexpected response');
-				}
+		return this.fetch(apiHost, {
+			responseType: 'json',
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json; charset=utf-8',
+				...this.options.headers,
+			},
+			body: JSON.stringify(data),
+		}).then((rsp) => {
+			const response = rsp.data as any;
+			if (
+				!(response instanceof Object) ||
+				!(response.translation instanceof Array) ||
+				response.translation.every((i: any) => typeof i !== 'string')
+			) {
+				throw new Error('Unexpected response');
+			}
 
-				return (response.translation as string[]).join('');
-			});
+			return (response.translation as string[]).join('');
+		});
 	}
 
 	public translateBatch(text: string[], langFrom: langCode, langTo: langCode) {

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { stringify } from 'query-string';
 
 import { langCode, langCodeWithAuto } from '../../Translator';
@@ -66,30 +65,31 @@ export class LibreTranslateTranslator extends BaseTranslator {
 			requestData['api_key'] = this.options.apiKey;
 		}
 
-		return axios
-			.post(this.apiHost, stringify(requestData), {
-				headers: {
-					'User-Agent':
-						'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:99.0) Gecko/20100101 Firefox/99.0',
-					Accept: '*/*',
-					'Accept-Language': 'en-US,en;q=0.5',
-					'Sec-Fetch-Dest': 'empty',
-					'Sec-Fetch-Mode': 'cors',
-					'Sec-Fetch-Site': 'same-origin',
-					'Content-Type': 'application/x-www-form-urlencoded',
-				},
-			})
-			.then((rsp) => {
-				if (
-					typeof rsp.data !== 'object' ||
-					rsp.data === null ||
-					typeof (rsp.data as any).translatedText !== 'string'
-				) {
-					throw new TypeError('Unexpected data');
-				}
+		return this.fetch(this.apiHost, {
+			responseType: 'json',
+			method: 'POST',
+			headers: {
+				'User-Agent':
+					'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:99.0) Gecko/20100101 Firefox/99.0',
+				Accept: '*/*',
+				'Accept-Language': 'en-US,en;q=0.5',
+				'Sec-Fetch-Dest': 'empty',
+				'Sec-Fetch-Mode': 'cors',
+				'Sec-Fetch-Site': 'same-origin',
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			body: stringify(requestData),
+		}).then((rsp) => {
+			if (
+				typeof rsp.data !== 'object' ||
+				rsp.data === null ||
+				typeof (rsp.data as any).translatedText !== 'string'
+			) {
+				throw new TypeError('Unexpected data');
+			}
 
-				return (rsp.data as any).translatedText as string;
-			});
+			return (rsp.data as any).translatedText as string;
+		});
 	}
 
 	public async translateBatch(texts: string[], from: langCodeWithAuto, to: langCode) {
