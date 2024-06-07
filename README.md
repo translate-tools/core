@@ -1,3 +1,5 @@
+![CodeQL](https://github.com/translate-tools/core/actions/workflows/codeql.yml/badge.svg?branch=master&event=push)
+
 The translate tools core is a kit of translation primitives.
 
 The package contains translators, scheduler for translation tasks, tex-to-speech (TTS), some utils and standardized types for a build a large systems.
