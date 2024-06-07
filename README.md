@@ -56,6 +56,8 @@ translator
 	.then((translatedTexts) => console.log('Translate result', translatedTexts));
 ```
 
+### Use in NodeJS
+
 **For use with nodejs** you have to **specify user agent**. In most cases for nodejs, translator will work incorrectly with not set `User-Agent` header.
 
 ```ts
@@ -69,23 +71,30 @@ const translator = new GoogleTranslator({
 });
 ```
 
-Some translators API is **not available in browser, due to CSP policy**, for this cases you can set [CORS proxy](https://rapidapi.com/guides/cors-proxy-apis) to fix the problem. With this option, translator will use proxy to send requests, keep in mind that those who own the proxy server you use, can see your requests content.
+### Custom fetcher
+
+Sometimes you may want to use custom fetcher, to send requests through proxy server, implement retries or cache, etc.
+
+For example, some translators API is **not available in browser, due to CSP policy**, for this cases you may use some [CORS proxy](https://rapidapi.com/guides/cors-proxy-apis) to fix the problem. With this option, translator will use proxy to send requests, keep in mind that those who own the proxy server you use, can see your requests content.
+
+You may pass your implementation of `Fetcher` function to option `fetcher`.
 
 ```ts
 import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTranslator';
 
-// Use some CORS proxy service as prefix
-const translator = new GoogleTranslator({
-	corsProxy: 'https://corsproxy.io/?',
-});
+import { Fetcher } from '@translate-tools/core/utils/Fetcher';
+import { basicFetcher } from '@translate-tools/core/utils/Fetcher/basicFetcher';
 
-// Or use your own transform function
-const translator = new GoogleTranslator({
-	corsProxy(url) {
-		return `https://my-cors-proxy/${url}/my-postfix`;
-	},
-});
+// Extend `basicFetcher` with use CORS proxy for all requests
+const fetcher: Fetcher = async (url, options) => {
+	// Use some CORS proxy service as prefix
+	return basicFetcher('https://corsproxy.io/?' + url, options);
+};
+
+const translator = new GoogleTranslator({ fetcher });
 ```
+
+You may use any fetcher under the hood, like Axios, Got, or even [postMessage](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage).
 
 ## Translators list
 
@@ -311,13 +320,9 @@ type TranslatorOptions<O extends Record<any, any> = {}> = O & {
 	headers?: Record<string, string>;
 
 	/**
-	 * Proxy prefix or transform function which return url with CORS proxy
-	 *
-	 * CORS proxy useful to avoid CORS error in browser or to mask server requests as browser requests.
-	 *
-	 * All requests will send through this proxy server and this server will modify headers
+	 * Custom fetcher
 	 */
-	corsProxy?: CorsProxy;
+	fetcher?: Fetcher;
 };
 ```
 
