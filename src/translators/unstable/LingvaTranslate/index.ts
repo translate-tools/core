@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 import { langCode, langCodeWithAuto } from '../../Translator';
 import { BaseTranslator, TranslatorOptions } from '../../BaseTranslator';
 
@@ -58,31 +56,31 @@ export class LingvaTranslate extends BaseTranslator {
 		const requestUrl = `${this.apiHost}/api/v1/${encodeURIComponent(
 			from,
 		)}/${encodeURIComponent(to)}/${encodeURIComponent(text)}`;
-		return axios
-			.get(this.wrapUrlToCorsProxy(requestUrl), {
-				headers: {
-					'User-Agent':
-						'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:99.0) Gecko/20100101 Firefox/99.0',
-					Accept: '*/*',
-					'Accept-Language': 'en-US,en;q=0.5',
-					'Sec-Fetch-Dest': 'empty',
-					'Sec-Fetch-Mode': 'cors',
-					'Sec-Fetch-Site': 'same-origin',
-					'Content-Type': 'application/x-www-form-urlencoded',
-					...this.options.headers,
-				},
-			})
-			.then((rsp) => {
-				if (
-					typeof rsp.data !== 'object' ||
-					rsp.data === null ||
-					typeof (rsp.data as any).translation !== 'string'
-				) {
-					throw new TypeError('Unexpected data');
-				}
+		return this.fetch(this.wrapUrlToCorsProxy(requestUrl), {
+			responseType: 'json',
+			method: 'GET',
+			headers: {
+				'User-Agent':
+					'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:99.0) Gecko/20100101 Firefox/99.0',
+				Accept: '*/*',
+				'Accept-Language': 'en-US,en;q=0.5',
+				'Sec-Fetch-Dest': 'empty',
+				'Sec-Fetch-Mode': 'cors',
+				'Sec-Fetch-Site': 'same-origin',
+				'Content-Type': 'application/x-www-form-urlencoded',
+				...this.options.headers,
+			},
+		}).then((rsp) => {
+			if (
+				typeof rsp.data !== 'object' ||
+				rsp.data === null ||
+				typeof (rsp.data as any).translation !== 'string'
+			) {
+				throw new TypeError('Unexpected data');
+			}
 
-				return (rsp.data as any).translation as string;
-			});
+			return (rsp.data as any).translation as string;
+		});
 	}
 
 	public async translateBatch(texts: string[], from: langCodeWithAuto, to: langCode) {

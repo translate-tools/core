@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { stringify } from 'query-string';
 import xpath from 'xpath';
 import { DOMParser } from '@xmldom/xmldom';
@@ -138,11 +137,11 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 
 			const url = apiPath + '?' + stringify(data);
 
-			return axios
-				.get(this.wrapUrlToCorsProxy(url), {
-					withCredentials: false,
-					headers: this.options.headers,
-				})
+			return this.fetch(this.wrapUrlToCorsProxy(url), {
+				responseType: 'json',
+				method: 'GET',
+				headers: this.options.headers,
+			})
 				.then((rsp) => rsp.data)
 				.then((rsp) => {
 					if (!(rsp instanceof Array) || !(rsp[0] instanceof Array)) {
@@ -182,15 +181,14 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 				.map((text) => `&q=${encodeURIComponent(text)}`)
 				.join('');
 
-			return axios({
-				url: this.wrapUrlToCorsProxy(url),
+			return this.fetch(this.wrapUrlToCorsProxy(url), {
+				responseType: 'json',
 				method: 'POST',
-				withCredentials: false,
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded',
 					...this.options.headers,
 				},
-				data: body,
+				body,
 			})
 				.then((rsp) => rsp.data)
 				.then((rawResp) => {
@@ -261,10 +259,9 @@ export class GoogleTranslatorTokenFree extends AbstractGoogleTranslator {
 
 		const url = apiPath + '?' + stringify(data);
 
-		return axios({
-			url: this.wrapUrlToCorsProxy(url),
+		return this.fetch(this.wrapUrlToCorsProxy(url), {
+			responseType: 'json',
 			method: 'GET',
-			withCredentials: false,
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
 				...this.options.headers,

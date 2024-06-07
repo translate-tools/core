@@ -1,11 +1,16 @@
-import axios from 'axios';
-
 import { TTSAudioBuffer, TTSProviderProps } from '..';
+import { Fetcher } from '../../utils/Fetcher';
+import { basicFetcher } from '../../utils/Fetcher/basicFetcher';
 
 export class LingvaTTS implements TTSProviderProps {
 	private readonly host;
-	constructor({ apiHost }: { apiHost?: string } = {}) {
+	private readonly fetcher;
+	constructor({
+		fetcher = basicFetcher,
+		apiHost,
+	}: { fetcher?: Fetcher; apiHost?: string } = {}) {
 		this.host = apiHost ?? 'https://translate.plausibility.cloud';
+		this.fetcher = fetcher;
 	}
 
 	public async getAudioBuffer(text: string, language: string): Promise<TTSAudioBuffer> {
@@ -13,7 +18,7 @@ export class LingvaTTS implements TTSProviderProps {
 			language,
 		)}/${encodeURIComponent(text)}`;
 
-		return axios({ url, method: 'GET', responseType: 'json' }).then(
+		return this.fetcher(url, { responseType: 'json', method: 'GET' }).then(
 			({ data: json }) => {
 				if (typeof json !== 'object' || json === null) {
 					throw new TypeError('Unexpected response');

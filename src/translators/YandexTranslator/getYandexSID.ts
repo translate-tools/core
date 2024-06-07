@@ -1,12 +1,12 @@
 // Source: https://github.com/FilipePS/Traduzir-paginas-web/blob/f3a4956a1aa96b7a9124864158a5200827694521/background/translationService.js
 
-import axios from 'axios';
+import { Fetcher } from '../../utils/Fetcher';
 
 let lastYandexRequestSIDTime: number | null = null;
 let yandexTranslateSID: string | null = null;
 let yandexSIDNotFound: boolean = false;
 
-export function getYandexSID() {
+export function getYandexSID(fetcher: Fetcher) {
 	return new Promise<void>((resolve) => {
 		let updateYandexSid = false;
 		if (lastYandexRequestSIDTime) {
@@ -30,8 +30,7 @@ export function getYandexSID() {
 			const url =
 				'https://translate.yandex.net/website-widget/v1/widget.js?widgetId=ytWidget&pageLang=es&widgetTheme=light&autoMode=false';
 
-			axios
-				.get(url)
+			fetcher(url, { responseType: 'text' })
 				.then((response) => {
 					const result = (
 						typeof response.data === 'string' ? response.data : ''

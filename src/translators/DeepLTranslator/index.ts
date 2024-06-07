@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 import { langCode, langCodeWithAuto } from '../Translator';
 import { BaseTranslator, TranslatorOptions } from '../BaseTranslator';
 
@@ -80,25 +78,25 @@ export class DeepLTranslator extends BaseTranslator<DeepLTranslatorOptions> {
 			})
 			.join('&');
 
-		return axios
-			.post(this.apiHost, stringifiedBody, {
-				withCredentials: false,
-				headers: {
-					Authorization: `DeepL-Auth-Key ${this.options.apiKey}`,
-					'Content-Type': 'application/x-www-form-urlencoded',
-					...this.options.headers,
-				},
-			})
-			.then((rsp) => {
-				if (
-					typeof rsp.data !== 'object' ||
-					rsp.data === null ||
-					!Array.isArray((rsp.data as any).translations)
-				) {
-					throw new TypeError('Unexpected data');
-				}
+		return this.fetch(this.apiHost, {
+			responseType: 'json',
+			method: 'POST',
+			headers: {
+				Authorization: `DeepL-Auth-Key ${this.options.apiKey}`,
+				'Content-Type': 'application/x-www-form-urlencoded',
+				...this.options.headers,
+			},
+			body: stringifiedBody,
+		}).then((rsp) => {
+			if (
+				typeof rsp.data !== 'object' ||
+				rsp.data === null ||
+				!Array.isArray((rsp.data as any).translations)
+			) {
+				throw new TypeError('Unexpected data');
+			}
 
-				return ((rsp.data as any).translations as any[]).map(({ text }) => text);
-			});
+			return ((rsp.data as any).translations as any[]).map(({ text }) => text);
+		});
 	}
 }
