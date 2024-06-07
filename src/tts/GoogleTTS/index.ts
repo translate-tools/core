@@ -1,15 +1,20 @@
-import axios from 'axios';
-
 import { bufferToArrayBuffer } from '../../utils/buffers';
 import { TTSAudioBuffer, TTSProviderProps } from '..';
+import { basicFetcher } from '../../utils/Fetcher/basicFetcher';
+import { Fetcher } from '../../utils/Fetcher';
 
 export class GoogleTTS implements TTSProviderProps {
+	private readonly fetcher;
+	constructor({ fetcher = basicFetcher }: { fetcher?: Fetcher } = {}) {
+		this.fetcher = fetcher;
+	}
+
 	public getAudioBuffer(text: string, language: string): Promise<TTSAudioBuffer> {
 		const url =
 			`https://translate.google.com/translate_tts?ie=UTF-8&tl=${language}&client=dict-chrome-ex&ttsspeed=0.5&q=` +
 			encodeURIComponent(text);
 
-		return axios({ url, method: 'GET', responseType: 'arraybuffer' }).then(
+		return this.fetcher(url, { responseType: 'arrayBuffer', method: 'GET' }).then(
 			({ data }) => {
 				let buffer: ArrayBuffer;
 				if (typeof Buffer !== 'undefined' && data instanceof Buffer) {
