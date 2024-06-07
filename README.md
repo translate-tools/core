@@ -1,4 +1,4 @@
-![CodeQL](https://github.com/translate-tools/core/actions/workflows/codeql.yml/badge.svg?branch=master&event=push)
+[![CodeQL](https://github.com/translate-tools/core/actions/workflows/codeql.yml/badge.svg?branch=master&event=push)](https://github.com/translate-tools/core/actions/workflows/codeql.yml?branch=master&event=push)
 
 The translate tools core is a kit of translation primitives.
 
@@ -23,6 +23,10 @@ import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTransl
 // Example with import a ECMAScript module
 import { GoogleTranslator } from '@translate-tools/core/esm/translators/GoogleTranslator';
 ```
+
+# Migrations
+
+If you update package to a new major version, check [migration guides](https://github.com/translate-tools/core/tree/master/docs/migrations) to do it smooth.
 
 # Translators
 
