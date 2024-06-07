@@ -24,6 +24,10 @@ import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTransl
 import { GoogleTranslator } from '@translate-tools/core/esm/translators/GoogleTranslator';
 ```
 
+# Migrations
+
+If you update package to a new major version, check [migration guides](https://github.com/translate-tools/core/tree/master/docs/migrations) to do it smooth.
+
 # Translators
 
 Directory `translators` contains a translators interfaces and default implementations.
