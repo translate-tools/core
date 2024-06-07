@@ -1,3 +1,4 @@
+import 'isomorphic-fetch';
 import { Fetcher, FetcherOptions, FetcherRequestType } from '.';
 
 export const convertHeadersToMap = (headers: Headers) => {
