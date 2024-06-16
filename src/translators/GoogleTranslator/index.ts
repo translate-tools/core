@@ -39,7 +39,7 @@ export const supportedLanguages = [
 	'si', 'sk', 'sl', 'sm', 'sn', 'so', 'sq', 'sr', 'st', 'su',
 	'sv', 'sw', 'ta', 'te', 'tg', 'th', 'ti', 'tk', 'tl', 'tr',
 	'ts', 'tt', 'ug', 'uk', 'ur', 'uz', 'vi', 'xh', 'yi', 'yo',
-	'zh-CN', 'zh-TW', 'zu'
+	'zh', 'zh-CN', 'zh-TW', 'zu'
 ];
 // eslint-enable
 
