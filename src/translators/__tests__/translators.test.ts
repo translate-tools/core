@@ -106,6 +106,29 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 			});
 		});
 
+		const isNeedCheckToZh = [
+			'GoogleTranslator',
+			'YandexTranslator',
+			'DeepLTranslator',
+		].some((name) => translatorName.startsWith(name));
+		if (isNeedCheckToZh) {
+			test(`Method "getSupportedLanguages" supports chinese language`, () => {
+				const languages = translatorClass.getSupportedLanguages();
+				expect(languages).toContain('zh');
+			});
+
+			test(`Method "translate" supports chinese language`, async () => {
+				const translator = new translatorClass(translatorOptions);
+				await translator
+					.translate('Hello world', 'en', 'zh')
+					.then((translation) => {
+						expect(typeof translation).toBe('string');
+						expect(translation).toContain('世界');
+						expect(isStringStartFromLetter(translation)).toBeTruthy();
+					});
+			});
+		}
+
 		test(`Translate one text with method "translate"`, async () => {
 			const translator = new translatorClass(translatorOptions);
 			await translator.translate('Hello world', 'en', 'ru').then((translation) => {
