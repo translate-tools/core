@@ -10,6 +10,7 @@ import { TartuNLPTranslator } from '../TartuNLPTranslator';
 import { DeepLTranslator } from '../DeepLTranslator';
 import { LibreTranslateTranslator } from '../unstable/LibreTranslateTranslator';
 import { ReversoTranslator } from '../unstable/ReversoTranslator';
+import { DeepLFreeTranslator } from '../DeepLFreeTranslator';
 
 const commonTranslatorOptions = {
 	headers: {
@@ -21,6 +22,7 @@ const commonTranslatorOptions = {
 
 // Verify types
 const translators: TranslatorConstructor[] = [
+	DeepLFreeTranslator,
 	GoogleTranslator,
 	GoogleTranslatorTokenFree,
 	YandexTranslator,
