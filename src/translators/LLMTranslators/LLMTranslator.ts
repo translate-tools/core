@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { BaseTranslator } from '../BaseTranslator';
 import { LLMFetcher } from './Fetchers/GeminiFetcher';
 
@@ -51,13 +52,21 @@ Here is the array of texts: ${JSON.stringify(text)}`;
 				const response = await this.llm.fetch(
 					this.config.getPrompt(text, from, to),
 				);
-				const result = JSON.parse(response);
 
-				// TODO: validate with zod
-				if (!result || result.length !== text.length) {
+				// validate response
+
+				const validateResult = z
+					.array(z.string())
+					.safeParse(JSON.parse(response));
+
+				if (
+					!validateResult.success ||
+					validateResult.data.length !== text.length
+				) {
 					throw new Error('Unexpected response');
 				}
-				return result;
+
+				return validateResult.data;
 			} catch (error) {
 				console.log(`The attempt number: ${count + 1}`);
 				if (count === this.config.retries - 1) {

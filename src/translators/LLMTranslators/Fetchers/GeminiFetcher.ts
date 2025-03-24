@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export interface LLMFetcher {
 	/**
 	 * Method for request to AI model
@@ -53,7 +55,23 @@ export class GeminiFetcher implements LLMFetcher {
 
 		const res = await response.json();
 
-		// TODO: validate response
-		return res?.candidates?.[0]?.content?.parts?.[0]?.text;
+		// validate response structure
+		const parseResult = z
+			.object({
+				candidates: z.array(
+					z.object({
+						content: z.object({
+							parts: z.array(z.object({ text: z.string() })),
+						}),
+					}),
+				),
+			})
+			.safeParse(res);
+
+		if (!parseResult.success) {
+			throw new Error('Invalid response format');
+		}
+
+		return parseResult.data.candidates?.[0]?.content?.parts?.[0]?.text;
 	}
 }
