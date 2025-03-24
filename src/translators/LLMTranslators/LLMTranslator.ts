@@ -1,23 +1,35 @@
 import { BaseTranslator } from '../BaseTranslator';
 import { LLMFetcher } from './Fetchers/GeminiFetcher';
 
-type LLMTranslatorOptionals = {
-	getPrompt: (texts: string[], from: string, to: string) => string;
+type LLMTranslatorOptions = {
+	getPrompt?: (texts: string[], from: string, to: string) => string;
 	retries?: number;
 };
 
+type LLMTranslatorConfig = {
+	getPrompt: (texts: string[], from: string, to: string) => string;
+	retries: number;
+};
+
 export class LLMTranslator extends BaseTranslator {
-	private readonly llm: LLMFetcher;
+	private readonly config: LLMTranslatorConfig;
 
-	private readonly optionals: LLMTranslatorOptionals;
-
-	constructor(llm: LLMFetcher, optionals: LLMTranslatorOptionals) {
+	constructor(private readonly llm: LLMFetcher, options?: LLMTranslatorOptions) {
 		super();
-		this.llm = llm;
-		this.optionals = { ...optionals, retries: optionals.retries ?? 3 };
-	}
 
-	//TODO: think about return the llmFetcher name
+		this.config = {
+			...options,
+			retries: options?.retries ?? 3,
+			getPrompt:
+				options?.getPrompt ??
+				((text: string[], from: string, to: string) => {
+					return `You are a text translation service. I will provide an array of texts, and your task is to translate them from language ${from} to language ${to}.
+If I specify the source language as 'auto', you should automatically detect it and translate it into the target language I set.
+Do not add any explanations—translate strictly according to the content. Return an array of translated texts while preserving their order.
+Here is the array of texts: ${JSON.stringify(text)}`;
+				}),
+		};
+	}
 
 	public static readonly translatorName: string = 'LLMTranslator';
 
@@ -34,44 +46,26 @@ export class LLMTranslator extends BaseTranslator {
 	}
 
 	public async translateBatch(text: string[], from: string, to: string) {
-		// const startTime: number = performance.now();
-
-		const sendRequest = async (count: number) => {
+		for (let count = 0; count < this.config.retries; count++) {
 			try {
 				const response = await this.llm.fetch(
-					this.optionals.getPrompt(text, from, to),
+					this.config.getPrompt(text, from, to),
 				);
+				const result = JSON.parse(response);
 
-				//TODO: validate with zod
-				if (!response || response.length !== text.length) {
+				// TODO: validate with zod
+				if (!result || result.length !== text.length) {
 					throw new Error('Unexpected response');
 				}
-
-				// const endTime = performance.now();
-				// console.log(`Response time: ${(endTime - startTime).toFixed(2)} ms`);
-
-				return response;
+				return result;
 			} catch (error) {
-				if (count < 3) {
-					console.log(`The attempt number: ${count}`);
-					sendRequest(count + 1);
+				console.log(`The attempt number: ${count + 1}`);
+				if (count === this.config.retries - 1) {
+					throw new Error('Error in translation after maximum retries');
 				}
-
-				throw new Error('Error in translation ');
 			}
-		};
-		return sendRequest(0);
+		}
+
+		throw new Error('Failed to translate');
 	}
 }
-
-// const getPrompt = (text: string[], from: string, to: string) => {
-// 	const prompt = `You are a text translation service. I will provide an array of texts, and your task is to translate them from language ${from} to language ${to}.
-// If I specify the source language as 'auto', you should automatically detect it and translate it into the target language I set.
-// Do not add any explanations—translate strictly according to the content. Return an array of translated texts while preserving their order.
-// Here is the array of texts: ${JSON.stringify(text)}`;
-// 	return prompt;
-// };
-
-// const geminiFetcher = new GeminiIATranslator('AIzaSyChAsqxOkms7dREYpnjjSvNDLI7RaJ6fIU');
-// const foo = new LLMTranslator(geminiFetcher, { getPrompt });
-// foo.translateBatch(['Hello', 'How a u'], 'auto', 'ru');
