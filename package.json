@@ -38,6 +38,7 @@
 		"access": "public"
 	},
 	"dependencies": {
+		"@huggingface/transformers": "^3.4.1",
 		"@xmldom/xmldom": "^0.8.1",
 		"isomorphic-fetch": "^3.0.0",
 		"lodash": "^4.17.21",
@@ -70,6 +71,7 @@
 		"mp3-parser": "^0.3.0",
 		"prettier": "^2.3.1",
 		"ts-jest": "^27.0.7",
-		"typescript": "^4.3.2"
+		"typescript": "^4.3.2",
+		"vitest": "^3.0.9"
 	}
 }
