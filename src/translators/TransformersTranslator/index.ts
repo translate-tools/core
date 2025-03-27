@@ -18,6 +18,11 @@ export type TransformersTranslatorInstanceConfig = {
 	onProgress?: (info: ProgressInfo) => void;
 };
 
+const instances: Array<{
+	pipeline: Promise<TranslationPipeline>;
+	config: Partial<TransformersTranslatorInstanceConfig>;
+}> = [];
+
 export class TransformersTranslator extends BaseTranslator {
 	constructor(private readonly config: Partial<TransformersTranslatorInstanceConfig>) {
 		super();
@@ -34,20 +39,42 @@ export class TransformersTranslator extends BaseTranslator {
 
 		// Init
 		if (!this.pipeline) {
-			// @ts-ignore
-			this.pipeline = pipeline('translation', model, {
-				// eslint-disable-next-line camelcase
-				progress_callback: onProgress,
-				dtype,
-				device,
-			});
+			// Search for instances
+			const instance = instances.find(
+				({ config }) =>
+					config.model === model &&
+					config.device === device &&
+					config.dtype === dtype,
+			);
+
+			if (instance) {
+				console.log('Use instance from cache');
+				this.pipeline = instance.pipeline;
+			} else {
+				// @ts-ignore
+				this.pipeline = pipeline('translation', model, {
+					// eslint-disable-next-line camelcase
+					progress_callback: onProgress,
+					dtype,
+					device,
+				});
+
+				instances.push({
+					pipeline: this.pipeline,
+					config: {
+						model,
+						device,
+						dtype,
+					},
+				});
+			}
 		}
 
 		return this.pipeline;
 	}
 
 	public getLengthLimit(): number {
-		return 5000;
+		return 8000;
 	}
 	public getRequestsTimeout(): number {
 		return 0;
@@ -66,6 +93,8 @@ export class TransformersTranslator extends BaseTranslator {
 			// @ts-ignore
 			tgt_lang: languagesMap[targetLanguage],
 			src_lang: languagesMap[sourceLanguage],
+			max_length: Math.round(text.length * 5),
+			min_length: Math.round(text.length * 0.6),
 		})) as TranslationOutput;
 
 		if (!Array.isArray(result))
