@@ -55,26 +55,21 @@ Here is the array of texts: ${JSON.stringify(text)}`;
 
 				// validate response
 
-				const validateResult = z
-					.array(z.string())
-					.safeParse(JSON.parse(response));
+				const validateResult = z.array(z.string()).parse(JSON.parse(response));
 
-				if (
-					!validateResult.success ||
-					validateResult.data.length !== text.length
-				) {
-					throw new Error('Unexpected response');
+				if (validateResult.length !== text.length) {
+					throw new Error(
+						`Unexpected response: expected an array of length ${text.length}, but received an array of length ${validateResult.length}.`,
+					);
 				}
 
-				return validateResult.data;
+				return validateResult;
 			} catch (error) {
-				console.log(`The attempt number: ${count + 1}`);
 				if (count === this.config.retries - 1) {
-					throw new Error('Error in translation after maximum retries');
+					throw error;
 				}
 			}
 		}
-
 		throw new Error('Failed to translate');
 	}
 }

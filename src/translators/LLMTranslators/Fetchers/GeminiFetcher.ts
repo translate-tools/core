@@ -50,7 +50,9 @@ export class GeminiFetcher implements LLMFetcher {
 		});
 
 		if (!response.ok) {
-			throw new Error('Response errors');
+			throw new Error(
+				`Request failed with status ${response.status}: ${response.statusText}`,
+			);
 		}
 
 		const res = await response.json();
@@ -66,12 +68,8 @@ export class GeminiFetcher implements LLMFetcher {
 					}),
 				),
 			})
-			.safeParse(res);
+			.parse(res);
 
-		if (!parseResult.success) {
-			throw new Error('Invalid response format');
-		}
-
-		return parseResult.data.candidates?.[0]?.content?.parts?.[0]?.text;
+		return parseResult.candidates?.[0].content.parts?.[0]?.text;
 	}
 }
