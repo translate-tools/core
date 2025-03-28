@@ -9,7 +9,6 @@ import { YandexTranslator } from '../YandexTranslator';
 import { TartuNLPTranslator } from '../TartuNLPTranslator';
 import { DeepLTranslator } from '../DeepLTranslator';
 import { LibreTranslateTranslator } from '../unstable/LibreTranslateTranslator';
-import { ReversoTranslator } from '../unstable/ReversoTranslator';
 
 const commonTranslatorOptions = {
 	headers: {
@@ -25,7 +24,6 @@ const translators: TranslatorConstructor[] = [
 	GoogleTranslatorTokenFree,
 	YandexTranslator,
 	TartuNLPTranslator,
-	ReversoTranslator,
 ];
 
 type TranslatorWithOptions = {
