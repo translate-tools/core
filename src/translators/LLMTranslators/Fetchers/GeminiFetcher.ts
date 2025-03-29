@@ -12,14 +12,11 @@ export class GeminiFetcher implements LLMFetcher {
 	}
 
 	public getLengthLimit() {
-		// an increase of 1,000 characters in a request adds one second to the response time
-		// response time for 2,000 characters is approximately 2 seconds
 		return 2000;
 	}
 
 	public getRequestsTimeout() {
-		// free access has a limit of 15 requests per minute, requiring a delay of 4 seconds between requests (60/15 = 4s).
-		return 400;
+		return 500;
 	}
 
 	public async fetch(prompt: string): Promise<string> {

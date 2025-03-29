@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { BaseTranslator } from '../BaseTranslator';
 import { LLMFetcher } from './LLMFetcher';
 
-type LLMTranslatorOptions = {
+export type LLMTranslatorOptions = {
 	getPrompt?: (texts: string[], from: string, to: string) => string;
 	retries?: number;
 };
@@ -32,8 +32,6 @@ Here is the array of texts: ${JSON.stringify(text)}`;
 		};
 	}
 
-	public static readonly translatorName: string = 'LLMTranslator';
-
 	public getLengthLimit() {
 		return this.llm.getLengthLimit();
 	}
@@ -53,9 +51,15 @@ Here is the array of texts: ${JSON.stringify(text)}`;
 					this.config.getPrompt(text, from, to),
 				);
 
-				// validate response
+				// for large, poorly structured code, the some model introduces extraneous characters
+				const cleanedResponse = response
+					.replace(/^```json\s*|\s*```$/g, '')
+					.trim();
 
-				const validateResult = z.array(z.string()).parse(JSON.parse(response));
+				// validate response
+				const validateResult = z
+					.array(z.string())
+					.parse(JSON.parse(cleanedResponse));
 
 				if (validateResult.length !== text.length) {
 					throw new Error(

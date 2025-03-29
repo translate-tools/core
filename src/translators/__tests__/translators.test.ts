@@ -9,6 +9,7 @@ import { YandexTranslator } from '../YandexTranslator';
 import { TartuNLPTranslator } from '../TartuNLPTranslator';
 import { DeepLTranslator } from '../DeepLTranslator';
 import { LibreTranslateTranslator } from '../unstable/LibreTranslateTranslator';
+import { GeminiTransaltor } from '../LLMTranslators/GeminiTransaltor';
 
 const commonTranslatorOptions = {
 	headers: {
@@ -39,10 +40,14 @@ const translatorsWithOptions: TranslatorWithOptions[] = [
 		translator: LibreTranslateTranslator,
 		options: process.env.TEST_LIBRETRANSLATE_API_ENDPOINT
 			? {
-				apiHost: process.env.TEST_LIBRETRANSLATE_API_ENDPOINT,
-				apiKey: process.env.TEST_LIBRETRANSLATE_API_KEY,
+					apiHost: process.env.TEST_LIBRETRANSLATE_API_ENDPOINT,
+					apiKey: process.env.TEST_LIBRETRANSLATE_API_KEY,
 			  }
 			: {},
+	},
+	{
+		translator: GeminiTransaltor,
+		options: { apiKey: process.env.TEST_GEMINI_API_KEY },
 	},
 ];
 
