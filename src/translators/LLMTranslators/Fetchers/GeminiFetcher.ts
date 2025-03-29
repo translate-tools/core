@@ -1,21 +1,5 @@
 import { z } from 'zod';
-
-export interface LLMFetcher {
-	/**
-	 * Method for request to AI model
-	 */
-	fetch(prompt: string): Promise<string>;
-
-	/**
-	 * Max length of string for `translate` or total length of strings from array for `translateBatch`
-	 */
-	getLengthLimit(): number;
-
-	/**
-	 * Delay between requests that required by translator to a correct work
-	 */
-	getRequestsTimeout(): number;
-}
+import { LLMFetcher } from '../LLMFetcher';
 
 export class GeminiFetcher implements LLMFetcher {
 	private url: string;
