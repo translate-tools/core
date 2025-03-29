@@ -60,16 +60,25 @@ export class GeminiFetcher implements LLMFetcher {
 		// validate response structure
 		const parseResult = z
 			.object({
-				candidates: z.array(
-					z.object({
-						content: z.object({
-							parts: z.array(z.object({ text: z.string() })),
+				candidates: z
+					.array(
+						z.object({
+							content: z.object({
+								parts: z.array(z.object({ text: z.string() })),
+							}),
 						}),
-					}),
-				),
+					)
+					.min(1),
 			})
 			.parse(res);
 
-		return parseResult.candidates?.[0].content.parts?.[0]?.text;
+		// content.parts contains ordered segments that together may form a complete response from the LLM
+		// each segment may contain different types of data (e.g., text, functions, etc.), we join all text parts to get the complete response
+		// documentation source: https://ai.google.dev/api/caching#Content
+
+		const parts = parseResult.candidates[0].content.parts;
+
+		// join all parts in one string
+		return parts.map((part) => part.text).join('');
 	}
 }
