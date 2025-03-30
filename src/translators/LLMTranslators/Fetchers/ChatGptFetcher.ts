@@ -5,8 +5,12 @@ export class ChatGptFetcher implements LLMFetcher {
 	constructor(
 		private readonly apiKey: string,
 		private readonly model = 'gpt-4o-mini',
-		private readonly url = 'https://api.openai.com/v1/chat/completions',
+		private readonly apiHost = 'https://api.openai.com/v1/chat/completions',
 	) {}
+
+	private buildUrl() {
+		return this.apiHost;
+	}
 
 	public getLengthLimit() {
 		return 2000;
@@ -17,7 +21,7 @@ export class ChatGptFetcher implements LLMFetcher {
 	}
 
 	public async fetch(prompt: string): Promise<string> {
-		const response = await fetch(this.url, {
+		const response = await fetch(this.buildUrl(), {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -48,7 +52,6 @@ export class ChatGptFetcher implements LLMFetcher {
 
 		// a list of chat completion choices, there can be more than one only if specified directly.
 		// sourse: https://platform.openai.com/docs/api-reference/chat/object#chat/object-choices
-
 		return parseResult.choices[0].message.content;
 	}
 }

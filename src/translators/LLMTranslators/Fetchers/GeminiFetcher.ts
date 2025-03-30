@@ -2,13 +2,14 @@ import { z } from 'zod';
 import { LLMFetcher } from '../LLMFetcher';
 
 export class GeminiFetcher implements LLMFetcher {
-	private url: string;
-
 	constructor(
 		private readonly apiKey: string,
 		private readonly model = 'gemini-2.0-flash',
-	) {
-		this.url = `https://generativelanguage.googleapis.com/v1beta/models/${this.model}:generateContent?key=${this.apiKey}`;
+		private readonly apiHost = `https://generativelanguage.googleapis.com/v1beta/`,
+	) {}
+
+	private buildUrl() {
+		return this.apiHost + `models/${this.model}:generateContent?key=${this.apiKey}`;
 	}
 
 	public getLengthLimit() {
@@ -20,7 +21,7 @@ export class GeminiFetcher implements LLMFetcher {
 	}
 
 	public async fetch(prompt: string): Promise<string> {
-		const response = await fetch(this.url, {
+		const response = await fetch(this.buildUrl(), {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
