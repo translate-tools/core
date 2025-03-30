@@ -10,6 +10,7 @@ import { TartuNLPTranslator } from '../TartuNLPTranslator';
 import { DeepLTranslator } from '../DeepLTranslator';
 import { LibreTranslateTranslator } from '../unstable/LibreTranslateTranslator';
 import { GeminiTransaltor } from '../LLMTranslators/GeminiTransaltor';
+import { ChatGPTTransalator } from '../LLMTranslators/ChatGPTTransalator';
 
 const commonTranslatorOptions = {
 	headers: {
@@ -48,6 +49,10 @@ const translatorsWithOptions: TranslatorWithOptions[] = [
 	{
 		translator: GeminiTransaltor,
 		options: { apiKey: process.env.TEST_GEMINI_API_KEY },
+	},
+	{
+		translator: ChatGPTTransalator,
+		options: { apiKey: process.env.TEST_CHATGPT_API_KEY },
 	},
 ];
 
