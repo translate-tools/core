@@ -3,8 +3,8 @@ import { ChatGptFetcher } from './Fetchers/ChatGptFetcher';
 import { TranslatorConfig } from './LLMFetcher';
 
 export class ChatGPTTransalator extends LLMTranslator {
-	constructor({ apiKey, model, translatorOptions }: TranslatorConfig) {
-		super(new ChatGptFetcher(apiKey, model), translatorOptions);
+	constructor({ apiKey, model, apiHost, translatorOptions }: TranslatorConfig) {
+		super(new ChatGptFetcher(apiKey, model, apiHost), translatorOptions);
 	}
 
 	public static readonly translatorName: string = 'ChatGPTTranslator';

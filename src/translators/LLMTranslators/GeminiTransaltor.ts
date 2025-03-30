@@ -3,8 +3,8 @@ import { GeminiFetcher } from './Fetchers/GeminiFetcher';
 import { TranslatorConfig } from './LLMFetcher';
 
 export class GeminiTransaltor extends LLMTranslator {
-	constructor({ apiKey, model, translatorOptions }: TranslatorConfig) {
-		super(new GeminiFetcher(apiKey, model), translatorOptions);
+	constructor({ apiKey, model, apiHost, translatorOptions }: TranslatorConfig) {
+		super(new GeminiFetcher(apiKey, apiHost, model), translatorOptions);
 	}
 
 	public static readonly translatorName: string = 'GeminiTransalator';

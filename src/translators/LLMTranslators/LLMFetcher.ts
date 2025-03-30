@@ -19,6 +19,7 @@ export interface LLMFetcher {
 
 export type TranslatorConfig = {
 	apiKey: string;
+	apiHost: string;
 	model?: string;
 	translatorOptions: LLMTranslatorOptions;
 };
