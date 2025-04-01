@@ -57,10 +57,12 @@ export class GeminiFetcher implements LLMFetcher {
 		// content.parts contains ordered segments that together may form a complete response from the LLM
 		// each segment may contain different types of data (e.g., text, functions, etc.), we join all text parts to get the complete response
 		// documentation source: https://ai.google.dev/api/caching#Content
-
 		const parts = parseResult.candidates[0].content.parts;
 
 		// join all parts in one string
-		return parts.map((part) => part.text).join('');
+		const text = parts.map((part) => part.text).join('');
+
+		// for large, poorly structured code, the gemini add extraneous characters
+		return text.replace(/^```json\s*|\s*```$/g, '').trim();
 	}
 }

@@ -51,15 +51,8 @@ Here is the array of texts: ${JSON.stringify(text)}`;
 					this.config.getPrompt(text, from, to),
 				);
 
-				// for large, poorly structured code, the some model introduces extraneous characters
-				const cleanedResponse = response
-					.replace(/^```json\s*|\s*```$/g, '')
-					.trim();
-
 				// validate response
-				const validateResult = z
-					.array(z.string())
-					.parse(JSON.parse(cleanedResponse));
+				const validateResult = z.array(z.string()).parse(JSON.parse(response));
 
 				if (validateResult.length !== text.length) {
 					throw new Error(
