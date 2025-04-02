@@ -1,6 +1,6 @@
-import { LLMTranslator } from './LLMTranslator';
-import { GeminiFetcher } from './Fetchers/GeminiFetcher';
-import { TranslatorConfig } from './LLMFetcher';
+import { GeminiFetcher } from '../Fetchers/GeminiFetcher';
+import { TranslatorConfig } from '../LLMFetcher';
+import { LLMTranslator } from '../LLMTranslator';
 
 export class GeminiTransaltor extends LLMTranslator {
 	constructor({ apiKey, model, apiHost, translatorOptions }: TranslatorConfig) {

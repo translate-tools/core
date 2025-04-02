@@ -10,9 +10,9 @@ import { YandexTranslator } from '../YandexTranslator';
 import { TartuNLPTranslator } from '../TartuNLPTranslator';
 import { DeepLTranslator } from '../DeepLTranslator';
 import { LibreTranslateTranslator } from '../unstable/LibreTranslateTranslator';
-import { GeminiTransaltor } from '../LLMTranslators/GeminiTransaltor';
-import { ChatGPTTransalator } from '../LLMTranslators/ChatGPTTransalator';
-import { DuckDuckGoTranslator } from '../LLMTranslators/DuckDuckGoTranslator';
+import { ChatGPTTransalator } from '../LLMTranslators/snippets/ChatGPTTransalator';
+import { DuckDuckGoTranslator } from '../LLMTranslators/snippets/DuckDuckGoTranslator';
+import { GeminiTransaltor } from '../LLMTranslators/snippets/GeminiTransaltor';
 
 const commonTranslatorOptions = {
 	headers: {

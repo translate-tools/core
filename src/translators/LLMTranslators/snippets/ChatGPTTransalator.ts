@@ -1,6 +1,6 @@
-import { LLMTranslator } from './LLMTranslator';
-import { ChatGptFetcher } from './Fetchers/ChatGptFetcher';
-import { TranslatorConfig } from './LLMFetcher';
+import { ChatGptFetcher } from '../Fetchers/ChatGptFetcher';
+import { TranslatorConfig } from '../LLMFetcher';
+import { LLMTranslator } from '../LLMTranslator';
 
 export class ChatGPTTransalator extends LLMTranslator {
 	constructor({ apiKey, model, apiHost, translatorOptions }: TranslatorConfig) {

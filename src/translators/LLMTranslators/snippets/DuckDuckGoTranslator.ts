@@ -1,6 +1,6 @@
-import { DuckDuckGoFetcher } from './Fetchers/DuckDuckGoFetcher';
-import { TranslatorConfig } from './LLMFetcher';
-import { LLMTranslator } from './LLMTranslator';
+import { DuckDuckGoFetcher } from '../Fetchers/DuckDuckGoFetcher';
+import { TranslatorConfig } from '../LLMFetcher';
+import { LLMTranslator } from '../LLMTranslator';
 
 export class DuckDuckGoTranslator extends LLMTranslator {
 	constructor({ model, userAgent, translatorOptions }: TranslatorConfig) {
