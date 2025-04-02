@@ -29,7 +29,7 @@
 		"publish:patch": "npm version patch && npm run publish",
 		"publish:minor": "npm version minor && npm run publish",
 		"prepare": "husky install",
-		"test": "jest"
+		"test": "vitest"
 	},
 	"engines": {
 		"node": ">=20"
@@ -52,7 +52,7 @@
 		"@types/jest": "^27.0.2",
 		"@types/jsdom": "^16.2.13",
 		"@types/lodash": "^4.14.170",
-		"@types/node": "^15.12.1",
+		"@types/node": "^22.13.17",
 		"@types/xmldom": "^0.1.31",
 		"@typescript-eslint/eslint-plugin": "^4.8.1",
 		"@typescript-eslint/parser": "^4.8.1",
@@ -65,12 +65,12 @@
 		"gulp-sourcemaps": "^3.0.0",
 		"gulp-typescript": "^6.0.0-alpha.1",
 		"husky": "^7.0.0",
-		"jest": "^27.3.1",
 		"lint-staged": "^11.0.0",
 		"merge-stream": "^2.0.0",
 		"mp3-parser": "^0.3.0",
 		"prettier": "^2.3.1",
 		"ts-jest": "^27.0.7",
-		"typescript": "^4.3.2"
+		"typescript": "^4.3.2",
+		"vitest": "^3.1.1"
 	}
 }

@@ -8,8 +8,8 @@ export class DuckDuckGoFetcher implements LLMFetcher {
 		private readonly userAgent = 'Mozilla/5.0 (X11; Linux i686; rv:124.0) Gecko/20100101 Firefox/124.0',
 	) {}
 
-	public getLengthLimit = () => 5000;
-	public getRequestsTimeout = () => 5000;
+	public getLengthLimit = () => 2300;
+	public getRequestsTimeout = () => 2000;
 
 	private processRawText(rawText: string) {
 		const texts: {

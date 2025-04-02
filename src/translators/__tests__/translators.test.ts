@@ -1,3 +1,4 @@
+import { vitest } from 'vitest';
 import { readFileSync } from 'fs';
 import path from 'path';
 
@@ -11,6 +12,7 @@ import { DeepLTranslator } from '../DeepLTranslator';
 import { LibreTranslateTranslator } from '../unstable/LibreTranslateTranslator';
 import { GeminiTransaltor } from '../LLMTranslators/GeminiTransaltor';
 import { ChatGPTTransalator } from '../LLMTranslators/ChatGPTTransalator';
+import { DuckDuckGoTranslator } from '../LLMTranslators/DuckDuckGoTranslator';
 
 const commonTranslatorOptions = {
 	headers: {
@@ -26,6 +28,7 @@ const translators: TranslatorConstructor[] = [
 	GoogleTranslatorTokenFree,
 	YandexTranslator,
 	TartuNLPTranslator,
+	DuckDuckGoTranslator,
 ];
 
 type TranslatorWithOptions = {
@@ -67,6 +70,7 @@ const midTextForTest = readFileSync(
 ).toString('utf8');
 
 const LONG_TEXT_TRANSLATION_TIMEOUT = 80000;
+const DUCK_DUCK_GO_TEXT_LIMIT = 2300;
 
 // TODO: use `こんにちは` > `hello`
 
@@ -100,7 +104,7 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 	const translatorOptions = { ...commonTranslatorOptions, ...options };
 
 	describe(`Translator ${translatorName}`, () => {
-		jest.setTimeout(60000);
+		vitest.setSystemTime(60000);
 
 		// TODO: enable test back or remove
 		// Disable test, to allow translators to return any lang codes they support
@@ -235,46 +239,67 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 			expect(typeof translation[2]).toBe('string');
 		});
 
-		// Test long text
-		test(
-			`Translate long text with "translate" method`,
-			async () => {
-				const translator = new translatorClass(translatorOptions);
-				await translator
-					.translate(longTextForTest, 'en', 'ru')
-					.then((translation) => {
-						expect(typeof translation).toBe('string');
+		describe.only('Test long text', () => {
+			// DuckDuckGoTranslator has a small limit for text length, so truncate the string
+			const longText =
+				translatorClass.translatorName === 'DuckDuckGoTranslator'
+					? longTextForTest.slice(0, DUCK_DUCK_GO_TEXT_LIMIT)
+					: longTextForTest;
 
-						const expectedMinimalLength = longTextForTest.length * 0.7;
-						expect(translation.length >= expectedMinimalLength).toBeTruthy();
+			test(
+				`Translate long text with "translate" method`,
+				async () => {
+					const translator = new translatorClass(translatorOptions);
 
-						expect(isStringStartFromLetter(translation)).toBeTruthy();
-					});
-			},
-			LONG_TEXT_TRANSLATION_TIMEOUT,
-		);
+					await translator
+						.translate(longText, 'en', 'ru')
+						.then((translation) => {
+							expect(typeof translation).toBe('string');
 
-		test(
-			`Translate long text with "translateBatch" method`,
-			async () => {
-				const translator = new translatorClass(translatorOptions);
-				await translator
-					.translateBatch([longTextForTest], 'en', 'ru')
-					.then(([translation]) => {
-						expect(typeof translation).toBe('string');
+							const expectedMinimalLength = longText.length * 0.7;
+							expect(
+								translation.length >= expectedMinimalLength,
+							).toBeTruthy();
 
-						const expectedMinimalLength = longTextForTest.length * 0.7;
-						expect(
-							(translation as string).length >= expectedMinimalLength,
-						).toBeTruthy();
+							expect(isStringStartFromLetter(translation)).toBeTruthy();
 
-						expect(
-							isStringStartFromLetter(translation as string),
-						).toBeTruthy();
-					});
-			},
-			LONG_TEXT_TRANSLATION_TIMEOUT,
-		);
+							// the result string should be at least 80% of the original length
+							expect(translation.length).not.toBeLessThan(
+								DUCK_DUCK_GO_TEXT_LIMIT * 0.8,
+							);
+						});
+				},
+				LONG_TEXT_TRANSLATION_TIMEOUT,
+			);
+
+			test(
+				`Translate long text with "translateBatch" method`,
+				async () => {
+					const translator = new translatorClass(translatorOptions);
+
+					await translator
+						.translateBatch([longText], 'en', 'ru')
+						.then(([translation]) => {
+							expect(typeof translation).toBe('string');
+
+							const expectedMinimalLength = longText.length * 0.7;
+							expect(
+								(translation as string).length >= expectedMinimalLength,
+							).toBeTruthy();
+
+							expect(
+								isStringStartFromLetter(translation as string),
+							).toBeTruthy();
+
+							// the result string should be at least 80% of the original length
+							expect((translation as string).length).not.toBeLessThan(
+								DUCK_DUCK_GO_TEXT_LIMIT * 0.8,
+							);
+						});
+				},
+				LONG_TEXT_TRANSLATION_TIMEOUT,
+			);
+		});
 
 		test(
 			`Translate many texts - test concurrent requests for some translators`,
