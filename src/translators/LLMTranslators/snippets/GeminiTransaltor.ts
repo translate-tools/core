@@ -1,5 +1,5 @@
 import { GeminiFetcher } from '../Fetchers/GeminiFetcher';
-import { TranslatorConfig } from '../LLMFetcher';
+import { TranslatorConfig } from '../LLMTranslatorTypes';
 import { LLMTranslator } from '../LLMTranslator';
 
 export class GeminiTransaltor extends LLMTranslator {

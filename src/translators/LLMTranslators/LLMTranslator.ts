@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { BaseTranslator } from '../BaseTranslator';
-import { LLMFetcher } from './LLMFetcher';
+import { LLMFetcher } from './LLMTranslatorTypes';
 
 export type LLMTranslatorOptions = {
 	getPrompt?: (texts: string[], from: string, to: string) => string;

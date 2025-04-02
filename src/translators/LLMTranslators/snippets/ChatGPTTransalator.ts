@@ -1,5 +1,5 @@
 import { ChatGptFetcher } from '../Fetchers/ChatGptFetcher';
-import { TranslatorConfig } from '../LLMFetcher';
+import { TranslatorConfig } from '../LLMTranslatorTypes';
 import { LLMTranslator } from '../LLMTranslator';
 
 export class ChatGPTTransalator extends LLMTranslator {

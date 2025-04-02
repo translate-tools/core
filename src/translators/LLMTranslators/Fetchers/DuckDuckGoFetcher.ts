@@ -1,4 +1,4 @@
-import { LLMFetcher } from '../LLMFetcher';
+import { LLMFetcher } from '../LLMTranslatorTypes';
 
 export class DuckDuckGoFetcher implements LLMFetcher {
 	private key: string | null = null;

@@ -1,5 +1,5 @@
 import { DuckDuckGoFetcher } from '../Fetchers/DuckDuckGoFetcher';
-import { TranslatorConfig } from '../LLMFetcher';
+import { TranslatorConfig } from '../LLMTranslatorTypes';
 import { LLMTranslator } from '../LLMTranslator';
 
 export class DuckDuckGoTranslator extends LLMTranslator {

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { LLMFetcher } from '../LLMFetcher';
+import { LLMFetcher } from '../LLMTranslatorTypes';
 
 export class GeminiFetcher implements LLMFetcher {
 	constructor(
