@@ -55,7 +55,11 @@ const translatorsWithOptions: TranslatorWithOptions[] = [
 	},
 	{
 		translator: ChatGPTTransalator,
-		options: { apiKey: process.env.TEST_CHATGPT_API_KEY },
+		options: {
+			apiKey: process.env.TEST_CHATGPT_API_KEY,
+			model: 'openai/gpt-4o-mini',
+			apiHost: 'https://cryptotalks.ai/v1/chat/completions',
+		},
 	},
 ];
 
