@@ -13,7 +13,7 @@ export class GeminiFetcher implements LLMFetcher {
 	}
 
 	public getLengthLimit() {
-		return 2000;
+		return 5000;
 	}
 
 	public getRequestsTimeout() {

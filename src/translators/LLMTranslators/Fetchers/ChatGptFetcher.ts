@@ -13,7 +13,7 @@ export class ChatGptFetcher implements LLMFetcher {
 	}
 
 	public getLengthLimit() {
-		return 2000;
+		return 5000;
 	}
 
 	public getRequestsTimeout() {
@@ -52,6 +52,8 @@ export class ChatGptFetcher implements LLMFetcher {
 
 		// a list of chat completion choices, there can be more than one only if specified directly.
 		// sourse: https://platform.openai.com/docs/api-reference/chat/object#chat/object-choices
+
+		console.log(parseResult.choices[0].message.content);
 		return parseResult.choices[0].message.content;
 	}
 }
