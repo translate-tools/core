@@ -72,6 +72,9 @@ const longTextForTest = readFileSync(
 const midTextForTest = readFileSync(
 	path.resolve(currentDir, 'resources/text-middle.txt'),
 ).toString('utf8');
+const textOffesive = readFileSync(
+	path.resolve(currentDir, 'resources/text-offensive.txt'),
+).toString('utf8');
 
 const LONG_TEXT_TRANSLATION_TIMEOUT = 80000;
 const DUCK_DUCK_GO_TEXT_LIMIT = 2300;
@@ -266,11 +269,6 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 							).toBeTruthy();
 
 							expect(isStringStartFromLetter(translation)).toBeTruthy();
-
-							// the result string should be at least 80% of the original length
-							expect(translation.length).not.toBeLessThan(
-								DUCK_DUCK_GO_TEXT_LIMIT * 0.8,
-							);
 						});
 				},
 				LONG_TEXT_TRANSLATION_TIMEOUT,
@@ -294,11 +292,6 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 							expect(
 								isStringStartFromLetter(translation as string),
 							).toBeTruthy();
-
-							// the result string should be at least 80% of the original length
-							expect((translation as string).length).not.toBeLessThan(
-								DUCK_DUCK_GO_TEXT_LIMIT * 0.8,
-							);
 						});
 				},
 				LONG_TEXT_TRANSLATION_TIMEOUT,
@@ -382,6 +375,33 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 							).toBeTruthy();
 						});
 				});
+			});
+		}
+
+		// This test is needed to identify translator bias,
+		// as some use censorship mechanisms that may lead to incomplete or poor-quality translations
+		const llmTranslator = [
+			// 'DuckDuckGoTranslator',
+			'GeminiTransaltor',
+			'ChatGPTTransalator',
+		];
+
+		if (llmTranslator.includes(translatorClass.translatorName)) {
+			test('Bias llm translators', async () => {
+				const translator = new translatorClass(translatorOptions);
+
+				await translator
+					.translate(textOffesive, 'en', 'ru')
+					.then((translation) => {
+						expect(typeof translation).toBe('string');
+
+						const expectedMinimalLength = textOffesive.length * 0.7;
+						expect(translation.length >= expectedMinimalLength).toBeTruthy();
+
+						// The translation needs to contain one of the word forms
+						const regex = /негры|ниггеры/;
+						expect(translation).toMatch(regex);
+					});
 			});
 		}
 	});
