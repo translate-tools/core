@@ -4,10 +4,10 @@
 name: Node.js CI
 
 on:
-  push:
-    branches: ["master"]
-  pull_request_target:
-    branches: ["master"]
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_review:
+    types: [submitted]
   schedule:
     - cron: "29 9 * * *"
 
