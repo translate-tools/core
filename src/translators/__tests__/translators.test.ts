@@ -1,4 +1,3 @@
-import { vitest } from 'vitest';
 import { readFileSync } from 'fs';
 import path from 'path';
 
@@ -44,8 +43,8 @@ const translatorsWithOptions: TranslatorWithOptions[] = [
 		translator: LibreTranslateTranslator,
 		options: process.env.TEST_LIBRETRANSLATE_API_ENDPOINT
 			? {
-					apiHost: process.env.TEST_LIBRETRANSLATE_API_ENDPOINT,
-					apiKey: process.env.TEST_LIBRETRANSLATE_API_KEY,
+				apiHost: process.env.TEST_LIBRETRANSLATE_API_ENDPOINT,
+				apiKey: process.env.TEST_LIBRETRANSLATE_API_KEY,
 			  }
 			: {},
 	},
