@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { LLMFetcher } from '../LLMTranslatorTypes';
+import { LLMFetcher } from '..';
 
 export class ChatGptFetcher implements LLMFetcher {
 	private readonly apiUrl: string;

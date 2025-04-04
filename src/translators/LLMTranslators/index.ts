@@ -1,8 +1,24 @@
 import { z } from 'zod';
-import { LLMFetcher } from './LLMTranslatorTypes';
 import { TranslatorInstanceMembers } from '../Translator';
 
-type LLMTranslatorConfig = {
+export interface LLMFetcher {
+	/**
+	 * Method for request to AI model
+	 */
+	fetch(prompt: string): Promise<string>;
+
+	/**
+	 * Max length of string for prompt
+	 */
+	getLengthLimit(): number;
+
+	/**
+	 * Delay between requests to comply with the requests per minute limit
+	 */
+	getRequestsTimeout(): number;
+}
+
+export type LLMTranslatorConfig = {
 	getPrompt: (texts: string[], from: string, to: string) => string;
 	/**
 	 * The retryLimit - number of retries on error, must be a natural number

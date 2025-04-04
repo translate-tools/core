@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { LLMFetcher } from '../LLMTranslatorTypes';
+import { LLMFetcher } from '..';
 
 export class GeminiFetcher implements LLMFetcher {
 	private readonly url;
