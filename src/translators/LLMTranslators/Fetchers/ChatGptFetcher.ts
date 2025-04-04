@@ -2,26 +2,32 @@ import { z } from 'zod';
 import { LLMFetcher } from '../LLMTranslatorTypes';
 
 export class ChatGptFetcher implements LLMFetcher {
+	private readonly apiUrl: string;
 	constructor(
 		private readonly apiKey: string,
 		private readonly model = 'gpt-4o-mini',
-		private readonly apiHost = 'https://api.openai.com/v1/chat/completions',
-	) {}
-
-	private buildUrl() {
-		return this.apiHost;
+		private readonly apiHost = 'api.openai.com',
+	) {
+		this.apiUrl = new URL(
+			'v1/chat/completions',
+			`https://${this.apiHost}`,
+		).toString();
 	}
 
 	public getLengthLimit() {
 		return 5000;
 	}
 
-	public getRequestsTimeout() {
-		return 500;
+	/**
+	 * The getRequestsTimeout - receive number of request per minute,
+	 * return value in millisecond
+	 */
+	public getRequestsTimeout(rpmLimit?: number) {
+		return rpmLimit ? (60 * 1000) / rpmLimit : 500;
 	}
 
 	public async fetch(prompt: string): Promise<string> {
-		const response = await fetch(this.buildUrl(), {
+		const response = await fetch(this.apiUrl, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -51,7 +57,7 @@ export class ChatGptFetcher implements LLMFetcher {
 			.parse(data);
 
 		// a list of chat completion choices, there can be more than one only if specified directly.
-		// sourse: https://platform.openai.com/docs/api-reference/chat/object#chat/object-choices
+		// source: https://platform.openai.com/docs/api-reference/chat/object#chat/object-choices
 
 		return parseResult.choices[0].message.content;
 	}
