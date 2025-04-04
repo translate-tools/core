@@ -9,9 +9,9 @@ import { YandexTranslator } from '../YandexTranslator';
 import { TartuNLPTranslator } from '../TartuNLPTranslator';
 import { DeepLTranslator } from '../DeepLTranslator';
 import { LibreTranslateTranslator } from '../unstable/LibreTranslateTranslator';
-import { ChatGPTTransalator } from '../LLMTranslators/snippets/ChatGPTTransalator';
-import { DuckDuckGoTranslator } from '../LLMTranslators/snippets/DuckDuckGoTranslator';
-import { GeminiTransaltor } from '../LLMTranslators/snippets/GeminiTransaltor';
+import { ChatGPTLLMTranslator } from '../LLMTranslators/ChatGPTLLMTranslator';
+import { DuckDuckGoLLMTranslator } from '../LLMTranslators/DuckDuckGoLLMTranslator';
+import { GeminiLLMTranslator } from '../LLMTranslators/GeminiLLMTranslator';
 
 const commonTranslatorOptions = {
 	headers: {
@@ -27,7 +27,7 @@ const translators: TranslatorConstructor[] = [
 	GoogleTranslatorTokenFree,
 	YandexTranslator,
 	TartuNLPTranslator,
-	DuckDuckGoTranslator,
+	DuckDuckGoLLMTranslator,
 ];
 
 type TranslatorWithOptions = {
@@ -49,17 +49,23 @@ const translatorsWithOptions: TranslatorWithOptions[] = [
 			: {},
 	},
 	{
-		translator: GeminiTransaltor,
+		translator: GeminiLLMTranslator,
 		options: { apiKey: process.env.TEST_GEMINI_API_KEY },
 	},
 	{
-		translator: ChatGPTTransalator,
+		translator: ChatGPTLLMTranslator,
 		options: {
 			apiKey: process.env.TEST_CHATGPT_API_KEY,
-			model: 'openai/gpt-4o-mini',
-			apiHost: 'https://cryptotalks.ai/v1/chat/completions',
+			model: 'openai/o3-mini',
+			apiHost: 'cryptotalks.ai',
 		},
 	},
+];
+
+const llmTranslators = [
+	DuckDuckGoLLMTranslator.translatorName,
+	GeminiLLMTranslator.translatorName,
+	ChatGPTLLMTranslator.translatorName,
 ];
 
 const isStringStartFromLetter = (text: string) => Boolean(text.match(/^\p{Letter}/u));
@@ -71,12 +77,11 @@ const longTextForTest = readFileSync(
 const midTextForTest = readFileSync(
 	path.resolve(currentDir, 'resources/text-middle.txt'),
 ).toString('utf8');
-const textOffesive = readFileSync(
+const textOffensive = readFileSync(
 	path.resolve(currentDir, 'resources/text-offensive.txt'),
 ).toString('utf8');
 
 const LONG_TEXT_TRANSLATION_TIMEOUT = 80000;
-const DUCK_DUCK_GO_TEXT_LIMIT = 2300;
 
 // TODO: use `こんにちは` > `hello`
 
@@ -245,57 +250,55 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 			expect(typeof translation[2]).toBe('string');
 		});
 
-		describe.only('Test long text', () => {
-			// DuckDuckGoTranslator has a small limit for text length, so truncate the string
-			const longText =
-				translatorClass.translatorName === 'DuckDuckGoTranslator'
-					? longTextForTest.slice(0, DUCK_DUCK_GO_TEXT_LIMIT)
-					: longTextForTest;
+		test(
+			`Translate long text with "translate" method`,
+			async () => {
+				const translator = new translatorClass(translatorOptions);
 
-			test(
-				`Translate long text with "translate" method`,
-				async () => {
-					const translator = new translatorClass(translatorOptions);
+				const translationLengthLimit = translator.getLengthLimit();
+				expect(translationLengthLimit).toBeGreaterThanOrEqual(2300);
 
-					await translator
-						.translate(longText, 'en', 'ru')
-						.then((translation) => {
-							expect(typeof translation).toBe('string');
+				const longText = longTextForTest.slice(0, translationLengthLimit);
 
-							const expectedMinimalLength = longText.length * 0.7;
-							expect(
-								translation.length >= expectedMinimalLength,
-							).toBeTruthy();
+				await translator.translate(longText, 'en', 'ru').then((translation) => {
+					expect(typeof translation).toBe('string');
 
-							expect(isStringStartFromLetter(translation)).toBeTruthy();
-						});
-				},
-				LONG_TEXT_TRANSLATION_TIMEOUT,
-			);
+					const expectedMinimalLength = longText.length * 0.7;
+					expect(translation.length >= expectedMinimalLength).toBeTruthy();
 
-			test(
-				`Translate long text with "translateBatch" method`,
-				async () => {
-					const translator = new translatorClass(translatorOptions);
+					expect(isStringStartFromLetter(translation)).toBeTruthy();
+				});
+			},
+			LONG_TEXT_TRANSLATION_TIMEOUT,
+		);
 
-					await translator
-						.translateBatch([longText], 'en', 'ru')
-						.then(([translation]) => {
-							expect(typeof translation).toBe('string');
+		test(
+			`Translate long text with "translateBatch" method`,
+			async () => {
+				const translator = new translatorClass(translatorOptions);
 
-							const expectedMinimalLength = longText.length * 0.7;
-							expect(
-								(translation as string).length >= expectedMinimalLength,
-							).toBeTruthy();
+				const translationLengthLimit = translator.getLengthLimit();
+				expect(translationLengthLimit).toBeGreaterThanOrEqual(2300);
 
-							expect(
-								isStringStartFromLetter(translation as string),
-							).toBeTruthy();
-						});
-				},
-				LONG_TEXT_TRANSLATION_TIMEOUT,
-			);
-		});
+				const longText = longTextForTest.slice(0, translationLengthLimit);
+
+				await translator
+					.translateBatch([longText], 'en', 'ru')
+					.then(([translation]) => {
+						expect(typeof translation).toBe('string');
+
+						const expectedMinimalLength = longText.length * 0.7;
+						expect(
+							(translation as string).length >= expectedMinimalLength,
+						).toBeTruthy();
+
+						expect(
+							isStringStartFromLetter(translation as string),
+						).toBeTruthy();
+					});
+			},
+			LONG_TEXT_TRANSLATION_TIMEOUT,
+		);
 
 		test(
 			`Translate many texts - test concurrent requests for some translators`,
@@ -377,29 +380,22 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 			});
 		}
 
-		// This test is needed to identify translator bias,
-		// as some use censorship mechanisms that may lead to incomplete or poor-quality translations
-		const llmTranslator = [
-			// 'DuckDuckGoTranslator',
-			'GeminiTransaltor',
-			'ChatGPTTransalator',
-		];
-
-		if (llmTranslator.includes(translatorClass.translatorName)) {
-			test('Bias llm translators', async () => {
+		if (llmTranslators.includes(translatorClass.translatorName)) {
+			test('LLM translators translate offensive text', async () => {
 				const translator = new translatorClass(translatorOptions);
 
 				await translator
-					.translate(textOffesive, 'en', 'ru')
+					.translate(textOffensive, 'en', 'ru')
 					.then((translation) => {
 						expect(typeof translation).toBe('string');
 
-						const expectedMinimalLength = textOffesive.length * 0.7;
-						expect(translation.length >= expectedMinimalLength).toBeTruthy();
+						const expectedMinimalLength = textOffensive.length * 0.7;
+						expect(translation.length).toBeGreaterThanOrEqual(
+							expectedMinimalLength,
+						);
 
 						// The translation needs to contain one of the word forms
-						const regex = /негры|ниггеры/;
-						expect(translation).toMatch(regex);
+						expect(translation).toMatch(/негры|ниггеры/);
 					});
 			});
 		}
