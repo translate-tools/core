@@ -1,4 +1,4 @@
-import { GeminiFetcher } from '../Fetchers/GeminiFetcher';
+import { GeminiFetcher } from './GeminiFetcher';
 import { LLMTranslator, LLMTranslatorConfig } from '..';
 
 type GeminiLLMTranslatorConfig = {

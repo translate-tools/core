@@ -1,4 +1,4 @@
-import { ChatGptFetcher } from '../Fetchers/ChatGptFetcher';
+import { ChatGptFetcher } from './ChatGptFetcher';
 import { LLMTranslator, LLMTranslatorConfig } from '..';
 
 type ChatGPTLLMTranslatorConfig = {

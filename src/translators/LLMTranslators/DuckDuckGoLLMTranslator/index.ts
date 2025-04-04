@@ -1,4 +1,4 @@
-import { DuckDuckGoFetcher } from '../Fetchers/DuckDuckGoFetcher';
+import { DuckDuckGoFetcher } from './DuckDuckGoFetcher';
 import { LLMTranslator, LLMTranslatorConfig } from '..';
 
 type DuckDuckGoLLMTranslatorType = {
