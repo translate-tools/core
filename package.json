@@ -32,7 +32,7 @@
 		"test": "vitest"
 	},
 	"engines": {
-		"node": ">=20"
+		"node": ">=18"
 	},
 	"publishConfig": {
 		"access": "public"
@@ -51,7 +51,7 @@
 		"@commitlint/config-conventional": "^12.1.4",
 		"@types/jsdom": "^16.2.13",
 		"@types/lodash": "^4.14.170",
-		"@types/node": "^20.17.30",
+		"@types/node": "^18.19.86",
 		"@types/xmldom": "^0.1.31",
 		"@typescript-eslint/eslint-plugin": "^4.8.1",
 		"@typescript-eslint/parser": "^4.8.1",
