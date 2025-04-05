@@ -115,7 +115,7 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 	const translatorOptions = { ...commonTranslatorOptions, ...options };
 
 	describe(`Translator ${translatorName}`, () => {
-		vitest.setSystemTime(60000);
+		vi.setConfig({ testTimeout: 60_000 });
 
 		// TODO: enable test back or remove
 		// Disable test, to allow translators to return any lang codes they support
@@ -381,7 +381,7 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 		}
 
 		if (llmTranslators.includes(translatorClass.translatorName)) {
-			test('LLM translators translate offensive text', async () => {
+			test('Translate offensive text with LLM translators', async () => {
 				const translator = new translatorClass(translatorOptions);
 
 				await translator
