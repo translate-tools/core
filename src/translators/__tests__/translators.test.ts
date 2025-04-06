@@ -264,7 +264,9 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 					expect(typeof translation).toBe('string');
 
 					const expectedMinimalLength = longText.length * 0.7;
-					expect(translation.length >= expectedMinimalLength).toBeTruthy();
+					expect(translation.length).toBeGreaterThanOrEqual(
+						expectedMinimalLength,
+					);
 
 					expect(isStringStartFromLetter(translation)).toBeTruthy();
 				});
@@ -288,9 +290,9 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 						expect(typeof translation).toBe('string');
 
 						const expectedMinimalLength = longText.length * 0.7;
-						expect(
-							(translation as string).length >= expectedMinimalLength,
-						).toBeTruthy();
+						expect((translation as string).length).toBeGreaterThanOrEqual(
+							expectedMinimalLength,
+						);
 
 						expect(
 							isStringStartFromLetter(translation as string),
