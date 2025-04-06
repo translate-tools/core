@@ -18,10 +18,6 @@ export class ChatGptFetcher implements LLMFetcher {
 		return 5000;
 	}
 
-	/**
-	 * The getRequestsTimeout - receive number of request per minute,
-	 * return value in millisecond
-	 */
 	public getRequestsTimeout(rpmLimit?: number) {
 		return rpmLimit ? (60 * 1000) / rpmLimit : 500;
 	}

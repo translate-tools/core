@@ -18,8 +18,8 @@ export class GeminiFetcher implements LLMFetcher {
 		return 5000;
 	}
 
-	public getRequestsTimeout() {
-		return 500;
+	public getRequestsTimeout(rpmLimit?: number) {
+		return rpmLimit ? (60 * 1000) / rpmLimit : 500;
 	}
 
 	public async fetch(prompt: string): Promise<string> {

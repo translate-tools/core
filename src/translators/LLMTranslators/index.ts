@@ -13,7 +13,8 @@ export interface LLMFetcher {
 	getLengthLimit(): number;
 
 	/**
-	 * Delay between requests to comply with the requests per minute limit
+	 * Delay between requests to comply with the requests-per-minute limit.
+	 * Receives the number of requests per minute and returns the delay in milliseconds.
 	 */
 	getRequestsTimeout(): number;
 }
