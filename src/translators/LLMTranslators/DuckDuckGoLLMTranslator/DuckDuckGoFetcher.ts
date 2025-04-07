@@ -15,6 +15,14 @@ function processRawText(rawText: string) {
 		if (text === '[DONE]') break;
 
 		const json = JSON.parse(text);
+
+		// In case of an error, DuckDuckGo may return a response containing an error object
+		if (json.action === 'error') {
+			const error = `The received text contains error object; action: ${json.action}: status: ${json.status}, type: ${json.type}`;
+			console.warn(error);
+			throw new Error(error);
+		}
+
 		if (json.message === undefined) continue;
 
 		const validText = z
