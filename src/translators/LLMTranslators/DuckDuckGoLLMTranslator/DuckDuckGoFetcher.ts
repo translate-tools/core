@@ -68,12 +68,12 @@ export class DuckDuckGoFetcher implements LLMFetcher {
 
 			// extract key
 			const key = response.headers.get('x-vqd-4');
-			if (!key) {
-				throw new Error(
-					`Missing or invalid 'x-vqd-4' header in response, expected string, received: ${typeof key}`,
-				);
-			}
-			this.key = key;
+			const validKey = z
+				.string()
+				.min(1, { message: "Header 'x-vqd-4' is missing or empty" })
+				.parse(key);
+
+			this.key = validKey;
 		}
 		return this.key;
 	}
