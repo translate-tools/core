@@ -1,5 +1,6 @@
 import { GeminiFetcher } from './GeminiFetcher';
-import { LLMTranslator, LLMTranslatorConfig } from '..';
+import { LLMTranslator } from '../LLMTranslator';
+import { LLMTranslatorConfig } from '../LLMTranslator';
 
 type GeminiLLMTranslatorConfig = {
 	apiKey: string;

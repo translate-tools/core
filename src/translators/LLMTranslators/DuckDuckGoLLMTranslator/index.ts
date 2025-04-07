@@ -1,5 +1,6 @@
 import { DuckDuckGoFetcher } from './DuckDuckGoFetcher';
-import { LLMTranslator, LLMTranslatorConfig } from '..';
+import { LLMTranslator } from '../LLMTranslator';
+import { LLMTranslatorConfig } from '../LLMTranslator';
 
 type DuckDuckGoLLMTranslatorType = {
 	model: string;

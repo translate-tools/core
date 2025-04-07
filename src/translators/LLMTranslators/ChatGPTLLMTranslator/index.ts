@@ -1,5 +1,6 @@
 import { ChatGptFetcher } from './ChatGptFetcher';
-import { LLMTranslator, LLMTranslatorConfig } from '..';
+import { LLMTranslator } from '../LLMTranslator';
+import { LLMTranslatorConfig } from '../LLMTranslator';
 
 type ChatGPTLLMTranslatorConfig = {
 	apiKey: string;
