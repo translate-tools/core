@@ -21,10 +21,16 @@ export interface LLMFetcher {
 
 export type LLMTranslatorConfig = {
 	getPrompt: (texts: string[], from: string, to: string) => string;
+
 	/**
 	 * The retryLimit - number of retries on error, must be a natural number
 	 */
 	retryLimit: number;
+
+	/**
+	 * Delay in milliseconds before attempting the next retry
+	 */
+	retryTimeout: number;
 };
 
 const getPrompt = (text: string[], from: string, to: string) => {
@@ -45,6 +51,7 @@ export class LLMTranslator implements TranslatorInstanceMembers {
 		this.config = {
 			...options,
 			retryLimit: options?.retryLimit ?? 3,
+			retryTimeout: options?.retryTimeout ?? this.llm.getRequestsTimeout(),
 			getPrompt: options?.getPrompt ?? getPrompt,
 		};
 	}
@@ -58,29 +65,27 @@ export class LLMTranslator implements TranslatorInstanceMembers {
 
 		while (true) {
 			try {
-				console.log('request', text.length, text);
+				if (attempt > 0)
+					await new Promise((r) => setTimeout(r, this.config.retryTimeout));
 
 				const response = await this.llm.fetch(
 					this.config.getPrompt(text, from, to),
 				);
 
-				console.log('response', response.length, response);
-
-				// response length should be equal to request length
+				const textResponse: string[] = JSON.parse(response);
 				const validateResult = z
 					.string()
 					.array()
-					.min(text.length)
-					.parse(JSON.parse(response));
-
-				console.log('validate response', validateResult.length, validateResult);
+					.min(text.length, {
+						message:
+							'The response must be the same length as the requested array',
+					})
+					.parse(textResponse);
 
 				return validateResult;
 			} catch (error) {
-				if (attempt + 1 === this.config.retryLimit) {
-					throw error;
-				}
 				attempt++;
+				if (attempt >= this.config.retryLimit) throw error;
 			}
 		}
 	}
