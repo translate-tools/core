@@ -25,4 +25,3 @@ export class GeminiLLMTranslator extends LLMTranslator {
 	public static isSupportedAutoFrom = () => true;
 	public static getSupportedLanguages = (): string[] => [];
 }
-const x = new GeminiLLMTranslator({});
