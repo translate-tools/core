@@ -4,9 +4,9 @@ import { LLMTranslatorConfig } from '../LLMTranslator';
 
 type ChatGPTLLMTranslatorConfig = {
 	apiKey: string;
-	model: string;
-	apiHost: string;
-	translatorOptions: Partial<LLMTranslatorConfig>;
+	model?: string;
+	apiHost?: string;
+	translatorOptions?: Partial<LLMTranslatorConfig>;
 };
 
 export class ChatGPTLLMTranslator extends LLMTranslator {

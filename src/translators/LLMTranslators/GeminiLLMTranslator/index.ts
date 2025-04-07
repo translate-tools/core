@@ -4,9 +4,9 @@ import { LLMTranslatorConfig } from '../LLMTranslator';
 
 type GeminiLLMTranslatorConfig = {
 	apiKey: string;
-	model: string;
-	apiHost: string;
-	translatorOptions: Partial<LLMTranslatorConfig>;
+	model?: string;
+	apiHost?: string;
+	translatorOptions?: Partial<LLMTranslatorConfig>;
 };
 
 export class GeminiLLMTranslator extends LLMTranslator {
@@ -25,3 +25,4 @@ export class GeminiLLMTranslator extends LLMTranslator {
 	public static isSupportedAutoFrom = () => true;
 	public static getSupportedLanguages = (): string[] => [];
 }
+const x = new GeminiLLMTranslator({});
