@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { LLMFetcher } from '..';
+import { LLMFetcher } from '../../LLMTranslators';
 
 function processRawText(rawText: string) {
 	const texts: {

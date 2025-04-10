@@ -10,7 +10,6 @@ import { TartuNLPTranslator } from '../TartuNLPTranslator';
 import { DeepLTranslator } from '../DeepLTranslator';
 import { LibreTranslateTranslator } from '../unstable/LibreTranslateTranslator';
 import { ChatGPTLLMTranslator } from '../LLMTranslators/ChatGPTLLMTranslator';
-import { DuckDuckGoLLMTranslator } from '../LLMTranslators/DuckDuckGoLLMTranslator';
 import { GeminiLLMTranslator } from '../LLMTranslators/GeminiLLMTranslator';
 
 const commonTranslatorOptions = {
@@ -27,7 +26,6 @@ const translators: TranslatorConstructor[] = [
 	GoogleTranslatorTokenFree,
 	YandexTranslator,
 	TartuNLPTranslator,
-	DuckDuckGoLLMTranslator,
 ];
 
 type TranslatorWithOptions = {
@@ -63,7 +61,6 @@ const translatorsWithOptions: TranslatorWithOptions[] = [
 ];
 
 const llmTranslators = [
-	DuckDuckGoLLMTranslator.translatorName,
 	GeminiLLMTranslator.translatorName,
 	ChatGPTLLMTranslator.translatorName,
 ];
