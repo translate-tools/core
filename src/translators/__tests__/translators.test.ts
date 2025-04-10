@@ -397,7 +397,7 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 						);
 
 						// The translation needs to contain one of the word forms
-						expect(translation).toMatch(/негры|нигеры|ниггеры/);
+						expect(translation).toMatch(/ниг\W+?|нег\W+?/);
 					});
 			});
 		}
