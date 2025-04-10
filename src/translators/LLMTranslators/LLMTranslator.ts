@@ -14,6 +14,11 @@ export type LLMTranslatorConfig = {
 	 * Delay in milliseconds before attempting the next retry
 	 */
 	retryTimeout: number;
+
+	/**
+	 * Maximum delay before the next retry
+	 */
+	maxRetryTimeout: number;
 };
 
 export const getPrompt = (text: string[], from: string, to: string) => {
@@ -35,6 +40,7 @@ export class LLMTranslator implements TranslatorInstanceMembers {
 			...options,
 			retryLimit: options?.retryLimit ?? 3,
 			retryTimeout: options?.retryTimeout ?? this.llm.getRequestsTimeout(),
+			maxRetryTimeout: options?.maxRetryTimeout ?? 4000,
 			getPrompt: options?.getPrompt ?? getPrompt,
 		};
 	}
@@ -48,8 +54,16 @@ export class LLMTranslator implements TranslatorInstanceMembers {
 
 		while (true) {
 			try {
-				if (attempt > 0)
-					await new Promise((r) => setTimeout(r, this.config.retryTimeout));
+				if (attempt > 0) {
+					// delay increases in an exponential progression with a factor of 1.5 at each step
+					// on the first step, the delay equals retryTimeout
+					const delay = Math.min(
+						this.config.maxRetryTimeout,
+						this.config.retryTimeout * 1.5 ** (attempt - 1),
+					);
+
+					await new Promise((r) => setTimeout(r, delay));
+				}
 
 				const response = await this.llm.fetch(
 					this.config.getPrompt(text, from, to),
