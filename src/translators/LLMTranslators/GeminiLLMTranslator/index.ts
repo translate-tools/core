@@ -18,7 +18,7 @@ export class GeminiLLMTranslator extends LLMTranslator {
 		apiHost,
 		translatorOptions,
 	}: GeminiLLMTranslatorConfig) {
-		super(new GeminiFetcher(apiKey, apiHost, model), translatorOptions);
+		super(new GeminiFetcher(apiKey, model, apiHost), translatorOptions);
 	}
 
 	public static isRequiredKey = () => true;
