@@ -11,7 +11,7 @@ export type LLMTranslatorConfig = {
 	retryLimit: number;
 
 	/**
-	 * Delay in milliseconds before attempting the next retry
+	 * Delay before first retry in ms; increases exponentially up to maxRetryTimeout
 	 */
 	retryTimeout: number;
 
