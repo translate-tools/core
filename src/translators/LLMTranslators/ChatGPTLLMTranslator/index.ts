@@ -1,26 +1,35 @@
-import { ChatGptFetcher } from './ChatGptFetcher';
+import { ChatGPTLLMFetcher, ChatGptLLMFetcherOptions } from './ChatGptFetcher';
 import { LLMTranslator } from '../LLMTranslator';
 import { LLMTranslatorConfig } from '../LLMTranslator';
 
 type ChatGPTLLMTranslatorConfig = {
 	apiKey: string;
-	model?: string;
-	apiHost?: string;
+	llmFetcherOptions?: ChatGptLLMFetcherOptions;
 	translatorOptions?: Partial<LLMTranslatorConfig>;
 };
 
 export class ChatGPTLLMTranslator extends LLMTranslator {
 	constructor({
 		apiKey,
-		model,
-		apiHost,
+		llmFetcherOptions,
 		translatorOptions,
 	}: ChatGPTLLMTranslatorConfig) {
-		super(new ChatGptFetcher(apiKey, model, apiHost), translatorOptions);
+		super(new ChatGPTLLMFetcher(apiKey, llmFetcherOptions), translatorOptions);
 	}
 
 	public static readonly translatorName: string = 'ChatGPTLLMTranslator';
 	public static isRequiredKey = () => true;
 	public static isSupportedAutoFrom = () => true;
-	public static getSupportedLanguages = (): string[] => [];
+	public static getSupportedLanguages = (): string[] => {
+		// eslint-disable
+		// prettier-ignore
+		return [
+			"ar", "bn", "bg", "zh", "hr", "cs", "da", "nl", "en",
+			"et", "fa", "fi", "fr", "de", "el", "gu", "he", "hi", "hu",
+			"id", "it", "ja", "kn", "ko", "lv", "lt", "ml", "mr", "no",
+			"pl", "pt", "ro", "ru", "sr", "sk", "sl", "es", "sw", "sv",
+			"ta", "te", "th", "tr", "uk", "ur", "vi"
+		];
+		// eslint-enable
+	};
 }

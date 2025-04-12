@@ -1,16 +1,24 @@
 import { z } from 'zod';
 import { LLMFetcher } from '..';
 
-export class ChatGptFetcher implements LLMFetcher {
+export type ChatGptLLMFetcherOptions = {
+	model?: string;
+	apiOrigin?: string;
+};
+
+export class ChatGPTLLMFetcher implements LLMFetcher {
 	private readonly apiUrl: string;
+
 	constructor(
 		private readonly apiKey: string,
-		private readonly model = 'gpt-4o-mini',
-		private readonly apiHost = 'api.openai.com',
+		private readonly fetcherOptions: ChatGptLLMFetcherOptions = {
+			model: 'gpt-4o-mini',
+			apiOrigin: 'https://api.openai.com',
+		},
 	) {
 		this.apiUrl = new URL(
-			'v1/chat/completions',
-			`https://${this.apiHost}`,
+			'/v1/chat/completions',
+			this.fetcherOptions.apiOrigin,
 		).toString();
 	}
 
@@ -18,8 +26,8 @@ export class ChatGptFetcher implements LLMFetcher {
 		return 5000;
 	}
 
-	public getRequestsTimeout(rpmLimit?: number) {
-		return rpmLimit ? (60 * 1000) / rpmLimit : 500;
+	public getRequestsTimeout() {
+		return 500;
 	}
 
 	public async fetch(prompt: string): Promise<string> {
@@ -30,7 +38,7 @@ export class ChatGptFetcher implements LLMFetcher {
 				Authorization: `Bearer ${this.apiKey}`,
 			},
 			body: JSON.stringify({
-				model: this.model,
+				model: this.fetcherOptions.model,
 				messages: [{ role: 'user', content: prompt }],
 			}),
 		});
@@ -47,14 +55,14 @@ export class ChatGptFetcher implements LLMFetcher {
 		const parseResult = z
 			.object({
 				choices: z
-					.array(z.object({ message: z.object({ content: z.string() }) }))
+					.object({ message: z.object({ content: z.string() }) })
+					.array()
 					.min(1),
 			})
 			.parse(data);
 
 		// a list of chat completion choices, there can be more than one only if specified directly.
 		// source: https://platform.openai.com/docs/api-reference/chat/object#chat/object-choices
-
 		return parseResult.choices[0].message.content;
 	}
 }

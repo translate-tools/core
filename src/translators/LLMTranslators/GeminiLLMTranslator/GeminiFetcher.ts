@@ -1,16 +1,24 @@
 import { z } from 'zod';
 import { LLMFetcher } from '..';
 
-export class GeminiFetcher implements LLMFetcher {
+export type GeminiLLMFetcherOptions = {
+	model?: string;
+	apiOrigin?: string;
+};
+
+export class GeminiLLMFetcher implements LLMFetcher {
 	private readonly url;
+
 	constructor(
 		private readonly apiKey: string,
-		private readonly model = 'gemini-2.0-flash',
-		private readonly apiHost = `generativelanguage.googleapis.com`,
+		private readonly fetcherOptions: GeminiLLMFetcherOptions = {
+			model: 'gemini-2.0-flash',
+			apiOrigin: `https://generativelanguage.googleapis.com`,
+		},
 	) {
 		this.url = new URL(
-			`/v1beta/models/${this.model}:generateContent?key=${this.apiKey}`,
-			`https://${this.apiHost}`,
+			`/v1beta/models/${this.fetcherOptions.model}:generateContent?key=${this.apiKey}`,
+			this.fetcherOptions.apiOrigin,
 		).toString();
 	}
 
@@ -18,8 +26,8 @@ export class GeminiFetcher implements LLMFetcher {
 		return 5000;
 	}
 
-	public getRequestsTimeout(rpmLimit?: number) {
-		return rpmLimit ? (60 * 1000) / rpmLimit : 500;
+	public getRequestsTimeout() {
+		return 500;
 	}
 
 	public async fetch(prompt: string): Promise<string> {
@@ -45,13 +53,12 @@ export class GeminiFetcher implements LLMFetcher {
 		const parseResult = z
 			.object({
 				candidates: z
-					.array(
-						z.object({
-							content: z.object({
-								parts: z.array(z.object({ text: z.string() })),
-							}),
+					.object({
+						content: z.object({
+							parts: z.object({ text: z.string() }).array(),
 						}),
-					)
+					})
+					.array()
 					.min(1),
 			})
 			.parse(res);

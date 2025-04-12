@@ -55,7 +55,7 @@ const translatorsWithOptions: TranslatorWithOptions[] = [
 		options: {
 			apiKey: process.env.TEST_CHATGPT_API_KEY,
 			model: 'openai/o3-mini',
-			apiHost: 'cryptotalks.ai',
+			apiHost: 'https://cryptotalks.ai',
 		},
 	},
 ];

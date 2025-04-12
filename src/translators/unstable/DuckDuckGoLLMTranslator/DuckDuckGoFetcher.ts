@@ -1,6 +1,11 @@
 import { z } from 'zod';
 import { LLMFetcher } from '../../LLMTranslators';
 
+export type DuckDuckGoLLMFetcherOptions = {
+	model: string;
+	headers: Record<string, string>;
+};
+
 function processRawText(rawText: string) {
 	const texts: {
 		message: string;
@@ -38,13 +43,22 @@ function processRawText(rawText: string) {
 		.join('');
 }
 
-export class DuckDuckGoFetcher implements LLMFetcher {
+export class DuckDuckGoLLMFetcher implements LLMFetcher {
 	private key: string | null = null;
 
-	constructor(
-		private readonly model = 'o3-mini',
-		private readonly userAgent = 'Mozilla/5.0 (X11; Linux i686; rv:124.0) Gecko/20100101 Firefox/124.0',
-	) {}
+	private readonly fetcherOptions: DuckDuckGoLLMFetcherOptions;
+
+	constructor(options: Partial<DuckDuckGoLLMFetcherOptions> = {}) {
+		this.fetcherOptions = {
+			model: 'o3-mini',
+			headers: {
+				...options.headers,
+				'User-Agent':
+					options.headers?.['User-Agent'] ||
+					'Mozilla/5.0 (X11; Linux i686; rv:124.0) Gecko/20100101 Firefox/124.0',
+			},
+		};
+	}
 
 	public getLengthLimit = () => 2300;
 	public getRequestsTimeout = () => 2000;
@@ -53,7 +67,7 @@ export class DuckDuckGoFetcher implements LLMFetcher {
 		if (!this.key) {
 			const response = await fetch('https://duckduckgo.com/duckchat/v1/status', {
 				headers: {
-					'User-Agent': this.userAgent,
+					...this.fetcherOptions.headers,
 					Accept: '*/*',
 					'x-vqd-accept': '1',
 					Priority: 'u=4',
@@ -83,14 +97,14 @@ export class DuckDuckGoFetcher implements LLMFetcher {
 		const response = await fetch('https://duckduckgo.com/duckchat/v1/chat', {
 			method: 'POST',
 			headers: {
-				'User-Agent': this.userAgent,
+				...this.fetcherOptions.headers,
 				Accept: 'text/event-stream',
 				'Content-Type': 'application/json',
 				'X-Vqd-4': key,
 				Priority: 'u=4',
 			},
 			body: JSON.stringify({
-				model: this.model,
+				model: this.fetcherOptions.model,
 				messages: [
 					{
 						role: 'user',
