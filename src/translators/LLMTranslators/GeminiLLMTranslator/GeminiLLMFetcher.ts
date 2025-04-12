@@ -9,14 +9,15 @@ export type GeminiLLMFetcherOptions = {
 
 export class GeminiLLMFetcher implements LLMFetcher {
 	private readonly url;
+	private readonly fetcherOptions: GeminiLLMFetcherOptions;
 
-	constructor(
-		private readonly apiKey: string,
-		private readonly fetcherOptions: GeminiLLMFetcherOptions = {
-			model: 'gemini-2.0-flash',
-			apiOrigin: `https://generativelanguage.googleapis.com`,
-		},
-	) {
+	constructor(private readonly apiKey: string, options?: GeminiLLMFetcherOptions) {
+		this.fetcherOptions = {
+			model: options?.model ?? 'gemini-2.0-flash',
+			apiOrigin: options?.apiOrigin ?? `https://generativelanguage.googleapis.com`,
+			rpmLimit: options?.rpmLimit,
+		};
+
 		this.url = new URL(
 			`/v1beta/models/${this.fetcherOptions.model}:generateContent?key=${this.apiKey}`,
 			this.fetcherOptions.apiOrigin,

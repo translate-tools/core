@@ -9,14 +9,14 @@ export type ChatGptLLMFetcherOptions = {
 
 export class ChatGPTLLMFetcher implements LLMFetcher {
 	private readonly apiUrl: string;
+	private readonly fetcherOptions: ChatGptLLMFetcherOptions;
 
-	constructor(
-		private readonly apiKey: string,
-		private readonly fetcherOptions: ChatGptLLMFetcherOptions = {
-			model: 'gpt-4o-mini',
-			apiOrigin: 'https://api.openai.com',
-		},
-	) {
+	constructor(private readonly apiKey: string, options?: ChatGptLLMFetcherOptions) {
+		this.fetcherOptions = {
+			model: options?.model ?? 'gpt-4o-mini',
+			apiOrigin: options?.apiOrigin ?? 'https://api.openai.com',
+			rpmLimit: options?.rpmLimit,
+		};
 		this.apiUrl = new URL(
 			'/v1/chat/completions',
 			this.fetcherOptions.apiOrigin,
