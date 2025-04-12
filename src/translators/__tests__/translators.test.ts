@@ -54,8 +54,10 @@ const translatorsWithOptions: TranslatorWithOptions[] = [
 		translator: ChatGPTLLMTranslator,
 		options: {
 			apiKey: process.env.TEST_CHATGPT_API_KEY,
-			model: 'openai/o3-mini',
-			apiHost: 'https://cryptotalks.ai',
+			llmFetcherOptions: {
+				model: 'openai/o3-mini',
+				apiOrigin: 'https://cryptotalks.ai',
+			},
 		},
 	},
 ];
@@ -126,10 +128,18 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 			});
 		});
 
+		test('Method "getSupportedLanguages" returns a minimum of two language codes', () => {
+			expect(translatorClass.getSupportedLanguages().length).toBeGreaterThanOrEqual(
+				2,
+			);
+		});
+
 		const isNeedCheckToZh = [
 			'GoogleTranslator',
 			'YandexTranslator',
 			'DeepLTranslator',
+			'GeminiLLMTranslator',
+			'ChatGPTLLMTranslator',
 		].some((name) => translatorName.startsWith(name));
 		if (isNeedCheckToZh) {
 			test(`Method "getSupportedLanguages" supports chinese language`, () => {
