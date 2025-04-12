@@ -4,6 +4,7 @@ import { LLMFetcher } from '..';
 export type ChatGptLLMFetcherOptions = {
 	model?: string;
 	apiOrigin?: string;
+	rpmLimit?: number;
 };
 
 export class ChatGPTLLMFetcher implements LLMFetcher {
@@ -27,7 +28,7 @@ export class ChatGPTLLMFetcher implements LLMFetcher {
 	}
 
 	public getRequestsTimeout() {
-		return 500;
+		return this.fetcherOptions?.rpmLimit ? 60000 / this.fetcherOptions.rpmLimit : 500;
 	}
 
 	public async fetch(prompt: string): Promise<string> {

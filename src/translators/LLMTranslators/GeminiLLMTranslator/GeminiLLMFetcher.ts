@@ -4,6 +4,7 @@ import { LLMFetcher } from '..';
 export type GeminiLLMFetcherOptions = {
 	model?: string;
 	apiOrigin?: string;
+	rpmLimit?: number;
 };
 
 export class GeminiLLMFetcher implements LLMFetcher {
@@ -27,7 +28,7 @@ export class GeminiLLMFetcher implements LLMFetcher {
 	}
 
 	public getRequestsTimeout() {
-		return 500;
+		return this.fetcherOptions?.rpmLimit ? 60000 / this.fetcherOptions.rpmLimit : 500;
 	}
 
 	public async fetch(prompt: string): Promise<string> {
