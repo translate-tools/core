@@ -1,5 +1,8 @@
 import { LLMTranslatorConfig, LLMTranslator } from '../../LLMTranslators/LLMTranslator';
-import { DuckDuckGoLLMFetcher, DuckDuckGoLLMFetcherOptions } from './DuckDuckGoFetcher';
+import {
+	DuckDuckGoLLMFetcher,
+	DuckDuckGoLLMFetcherOptions,
+} from './DuckDuckGoLLMFetcher';
 
 type DuckDuckGoLLMTranslatorType = {
 	llmFetcherOptions?: DuckDuckGoLLMFetcherOptions;

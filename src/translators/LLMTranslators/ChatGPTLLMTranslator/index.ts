@@ -1,4 +1,4 @@
-import { ChatGPTLLMFetcher, ChatGptLLMFetcherOptions } from './ChatGptFetcher';
+import { ChatGPTLLMFetcher, ChatGptLLMFetcherOptions } from './ChatGPTLLMFetcher';
 import { LLMTranslator } from '../LLMTranslator';
 import { LLMTranslatorConfig } from '../LLMTranslator';
 

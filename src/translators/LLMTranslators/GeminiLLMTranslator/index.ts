@@ -1,4 +1,4 @@
-import { GeminiLLMFetcher, GeminiLLMFetcherOptions } from './GeminiFetcher';
+import { GeminiLLMFetcher, GeminiLLMFetcherOptions } from './GeminiLLMFetcher';
 import { LLMTranslator } from '../LLMTranslator';
 import { LLMTranslatorConfig } from '../LLMTranslator';
 
