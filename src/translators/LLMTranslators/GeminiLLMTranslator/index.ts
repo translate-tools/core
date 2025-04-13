@@ -4,15 +4,19 @@ import { LLMTranslatorConfig } from '../LLMTranslator';
 
 type GeminiLLMTranslatorConfig = {
 	apiKey: string;
-	llmOptions?: GeminiLLMFetcherOptions;
+	llmFetcherOptions?: Partial<GeminiLLMFetcherOptions>;
 	translatorOptions?: Partial<LLMTranslatorConfig>;
 };
 
 export class GeminiLLMTranslator extends LLMTranslator {
 	public static readonly translatorName: string = 'GeminiLLMTranslator';
 
-	constructor({ apiKey, llmOptions, translatorOptions }: GeminiLLMTranslatorConfig) {
-		super(new GeminiLLMFetcher(apiKey, llmOptions), translatorOptions);
+	constructor({
+		apiKey,
+		llmFetcherOptions,
+		translatorOptions,
+	}: GeminiLLMTranslatorConfig) {
+		super(new GeminiLLMFetcher(apiKey, llmFetcherOptions), translatorOptions);
 	}
 
 	public static isRequiredKey = () => true;

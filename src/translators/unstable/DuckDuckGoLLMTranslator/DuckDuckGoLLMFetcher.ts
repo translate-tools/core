@@ -2,8 +2,8 @@ import { z } from 'zod';
 import { LLMFetcher } from '../../LLMTranslators';
 
 export type DuckDuckGoLLMFetcherOptions = {
-	model?: string;
-	headers?: Record<string, string>;
+	model: string;
+	headers: Record<string, string>;
 };
 
 function processRawText(rawText: string) {
@@ -48,7 +48,7 @@ export class DuckDuckGoLLMFetcher implements LLMFetcher {
 
 	private readonly fetcherOptions: DuckDuckGoLLMFetcherOptions;
 
-	constructor(options?: DuckDuckGoLLMFetcherOptions) {
+	constructor(options?: Partial<DuckDuckGoLLMFetcherOptions>) {
 		this.fetcherOptions = {
 			model: options?.model ?? 'o3-mini',
 			headers: {

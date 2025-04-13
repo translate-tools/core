@@ -4,7 +4,7 @@ import { LLMTranslatorConfig } from '../LLMTranslator';
 
 type ChatGPTLLMTranslatorConfig = {
 	apiKey: string;
-	llmFetcherOptions?: ChatGptLLMFetcherOptions;
+	llmFetcherOptions?: Partial<ChatGptLLMFetcherOptions>;
 	translatorOptions?: Partial<LLMTranslatorConfig>;
 };
 

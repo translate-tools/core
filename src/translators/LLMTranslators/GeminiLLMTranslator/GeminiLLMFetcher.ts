@@ -2,8 +2,8 @@ import { z } from 'zod';
 import { LLMFetcher } from '..';
 
 export type GeminiLLMFetcherOptions = {
-	model?: string;
-	apiOrigin?: string;
+	model: string;
+	apiOrigin: string;
 	rpmLimit?: number;
 };
 
@@ -11,7 +11,10 @@ export class GeminiLLMFetcher implements LLMFetcher {
 	private readonly url;
 	private readonly fetcherOptions: GeminiLLMFetcherOptions;
 
-	constructor(private readonly apiKey: string, options?: GeminiLLMFetcherOptions) {
+	constructor(
+		private readonly apiKey: string,
+		options?: Partial<GeminiLLMFetcherOptions>,
+	) {
 		this.fetcherOptions = {
 			model: options?.model ?? 'gemini-2.0-flash',
 			apiOrigin: options?.apiOrigin ?? `https://generativelanguage.googleapis.com`,

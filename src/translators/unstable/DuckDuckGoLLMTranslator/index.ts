@@ -5,7 +5,7 @@ import {
 } from './DuckDuckGoLLMFetcher';
 
 type DuckDuckGoLLMTranslatorType = {
-	llmFetcherOptions?: DuckDuckGoLLMFetcherOptions;
+	llmFetcherOptions?: Partial<DuckDuckGoLLMFetcherOptions>;
 	translatorOptions?: Partial<LLMTranslatorConfig>;
 };
 
@@ -17,7 +17,7 @@ export class DuckDuckGoLLMTranslator extends LLMTranslator {
 		super(new DuckDuckGoLLMFetcher(llmFetcherOptions), translatorOptions);
 	}
 
-	public static readonly translatorName: string = 'DuckDuckGoTranslator';
+	public static readonly translatorName: string = 'DuckDuckGoLLMTranslator';
 	public static isRequiredKey = () => false;
 	public static isSupportedAutoFrom = () => true;
 

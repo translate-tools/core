@@ -2,8 +2,8 @@ import { z } from 'zod';
 import { LLMFetcher } from '..';
 
 export type ChatGptLLMFetcherOptions = {
-	model?: string;
-	apiOrigin?: string;
+	model: string;
+	apiOrigin: string;
 	rpmLimit?: number;
 };
 
@@ -11,7 +11,10 @@ export class ChatGPTLLMFetcher implements LLMFetcher {
 	private readonly apiUrl: string;
 	private readonly fetcherOptions: ChatGptLLMFetcherOptions;
 
-	constructor(private readonly apiKey: string, options?: ChatGptLLMFetcherOptions) {
+	constructor(
+		private readonly apiKey: string,
+		options?: Partial<ChatGptLLMFetcherOptions>,
+	) {
 		this.fetcherOptions = {
 			model: options?.model ?? 'gpt-4o-mini',
 			apiOrigin: options?.apiOrigin ?? 'https://api.openai.com',
