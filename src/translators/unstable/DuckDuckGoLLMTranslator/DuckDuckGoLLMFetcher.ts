@@ -2,8 +2,8 @@ import { z } from 'zod';
 import { LLMFetcher } from '../../LLMTranslators';
 
 export type DuckDuckGoLLMFetcherOptions = {
-	model: string;
-	headers: Record<string, string>;
+	model?: string;
+	headers?: Record<string, string>;
 };
 
 function processRawText(rawText: string) {
@@ -48,13 +48,13 @@ export class DuckDuckGoLLMFetcher implements LLMFetcher {
 
 	private readonly fetcherOptions: DuckDuckGoLLMFetcherOptions;
 
-	constructor(options: Partial<DuckDuckGoLLMFetcherOptions> = {}) {
+	constructor(options?: DuckDuckGoLLMFetcherOptions) {
 		this.fetcherOptions = {
-			model: 'o3-mini',
+			model: options?.model ?? 'o3-mini',
 			headers: {
-				...options.headers,
+				...options?.headers,
 				'User-Agent':
-					options.headers?.['User-Agent'] ||
+					options?.headers?.['User-Agent'] ||
 					'Mozilla/5.0 (X11; Linux i686; rv:124.0) Gecko/20100101 Firefox/124.0',
 			},
 		};

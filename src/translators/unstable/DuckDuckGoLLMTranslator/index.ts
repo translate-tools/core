@@ -14,7 +14,7 @@ export class DuckDuckGoLLMTranslator extends LLMTranslator {
 		llmFetcherOptions,
 		translatorOptions,
 	}: DuckDuckGoLLMTranslatorType = {}) {
-		super(new DuckDuckGoLLMFetcher({ ...llmFetcherOptions }), translatorOptions);
+		super(new DuckDuckGoLLMFetcher(llmFetcherOptions), translatorOptions);
 	}
 
 	public static readonly translatorName: string = 'DuckDuckGoTranslator';
