@@ -6,7 +6,7 @@ export type LLMTranslatorConfig = {
 	getPrompt: (texts: string[], from: string, to: string) => string;
 
 	/**
-	 * The retryLimit - number of retries on error
+	 * Maximum number of retry attempts after a failed request
 	 */
 	retryLimit: number;
 
@@ -19,6 +19,11 @@ export type LLMTranslatorConfig = {
 	 * Maximum delay before the next retry
 	 */
 	maxRetryTimeout?: number;
+
+	/**
+	 * Multiplier for exponential backoff between retries. Defaults to 1.5
+	 */
+	retryBackoffFactor?: number;
 };
 
 export const getPrompt = (text: string[], from: string, to: string) => {
@@ -40,12 +45,14 @@ export class LLMTranslator implements TranslatorInstanceMembers {
 			retryLimit: options?.retryLimit ?? 3,
 			retryTimeout: options?.retryTimeout ?? this.llm.getRequestsTimeout(),
 			maxRetryTimeout: options?.maxRetryTimeout,
+			retryBackoffFactor: options?.retryBackoffFactor,
 			getPrompt: options?.getPrompt ?? getPrompt,
 		};
 	}
 
-	public async translate(text: string, from: string, to: string): Promise<string> {
-		return this.translateBatch([text], from, to).then((resp) => resp[0]);
+	public async translate(text: string, from: string, to: string) {
+		const translated = await this.translateBatch([text], from, to);
+		return translated[0];
 	}
 
 	public async translateBatch(text: string[], from: string, to: string) {
@@ -53,15 +60,9 @@ export class LLMTranslator implements TranslatorInstanceMembers {
 
 		while (true) {
 			try {
-				// first request without await
+				// first request without delay
 				if (attempt > 0) {
-					// delay increases in an exponential progression with a factor of 1.5 at each step
-					// on the first step, the delay equals retryTimeout
-					const delay = Math.min(
-						this.config.maxRetryTimeout || 4000,
-						this.config.retryTimeout * 1.5 ** (attempt - 1),
-					);
-					await new Promise((r) => setTimeout(r, delay));
+					await this.waitRetryDelay(attempt);
 				}
 
 				const response = await this.llm.fetch(
@@ -98,5 +99,18 @@ export class LLMTranslator implements TranslatorInstanceMembers {
 		const plainText = Array.isArray(text) ? text.join('') : text;
 		const extra = plainText.length - this.getLengthLimit();
 		return extra > 0 ? extra : 0;
+	}
+
+	private waitRetryDelay(attempt: number) {
+		// Delay increases exponentially with each retry attempt, multiplied by a backoff factor (default: 1.5).
+		// On the first retry, the delay is equal to retryTimeout. Subsequent delays grow as retryTimeout * factor^n.
+		const maxTimeout = this.config.maxRetryTimeout ?? 4000;
+		const factor = this.config.retryBackoffFactor ?? 1.5;
+		const delay = Math.min(
+			maxTimeout,
+			this.config.retryTimeout * factor ** (attempt - 1),
+		);
+
+		return new Promise((r) => setTimeout(r, delay));
 	}
 }
