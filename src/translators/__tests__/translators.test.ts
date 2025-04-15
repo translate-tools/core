@@ -263,7 +263,7 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 				const translator = new translatorClass(translatorOptions);
 
 				const translationLengthLimit = translator.getLengthLimit();
-				expect(translationLengthLimit).toBeGreaterThanOrEqual(2300);
+				expect(translationLengthLimit).toBeGreaterThanOrEqual(3000);
 
 				const longText = longTextForTest.slice(0, translationLengthLimit);
 
@@ -287,7 +287,7 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 				const translator = new translatorClass(translatorOptions);
 
 				const translationLengthLimit = translator.getLengthLimit();
-				expect(translationLengthLimit).toBeGreaterThanOrEqual(2300);
+				expect(translationLengthLimit).toBeGreaterThanOrEqual(3000);
 
 				const longText = longTextForTest.slice(0, translationLengthLimit);
 
