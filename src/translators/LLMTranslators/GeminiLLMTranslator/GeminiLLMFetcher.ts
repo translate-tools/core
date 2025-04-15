@@ -1,11 +1,7 @@
 import { z } from 'zod';
-import { LLMFetcher } from '..';
+import { CommonLLMFetcherOptions, LLMFetcher } from '..';
 
-export type GeminiLLMFetcherOptions = {
-	model: string;
-	apiOrigin: string;
-	rpmLimit?: number;
-};
+export type GeminiLLMFetcherOptions = CommonLLMFetcherOptions;
 
 export class GeminiLLMFetcher implements LLMFetcher {
 	private readonly url;

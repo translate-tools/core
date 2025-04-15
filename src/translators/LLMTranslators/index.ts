@@ -1,3 +1,5 @@
+import { LLMTranslatorConfig } from './LLMTranslator';
+
 export interface LLMFetcher {
 	/**
 	 * Method for request to AI model
@@ -14,3 +16,14 @@ export interface LLMFetcher {
 	 */
 	getRequestsTimeout(): number;
 }
+
+export type BaseLLMTranslatorConfig<F> = {
+	llmFetcherOptions?: Partial<F>;
+	translatorOptions?: Partial<LLMTranslatorConfig>;
+};
+
+export type CommonLLMFetcherOptions = {
+	model: string;
+	apiOrigin: string;
+	rpmLimit?: number;
+};

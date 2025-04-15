@@ -1,13 +1,11 @@
-import { LLMTranslatorConfig, LLMTranslator } from '../../LLMTranslators/LLMTranslator';
+import { BaseLLMTranslatorConfig } from '../../LLMTranslators';
+import { LLMTranslator } from '../../LLMTranslators/LLMTranslator';
 import {
 	DuckDuckGoLLMFetcher,
 	DuckDuckGoLLMFetcherOptions,
 } from './DuckDuckGoLLMFetcher';
 
-type DuckDuckGoLLMTranslatorType = {
-	llmFetcherOptions?: Partial<DuckDuckGoLLMFetcherOptions>;
-	translatorOptions?: Partial<LLMTranslatorConfig>;
-};
+type DuckDuckGoLLMTranslatorType = BaseLLMTranslatorConfig<DuckDuckGoLLMFetcherOptions>;
 
 export class DuckDuckGoLLMTranslator extends LLMTranslator {
 	constructor({

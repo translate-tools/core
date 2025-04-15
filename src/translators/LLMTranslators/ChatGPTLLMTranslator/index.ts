@@ -1,11 +1,9 @@
-import { ChatGPTLLMFetcher, ChatGptLLMFetcherOptions } from './ChatGPTLLMFetcher';
+import { ChatGPTLLMFetcher, ChatGPTLLMFetcherOptions } from './ChatGPTLLMFetcher';
 import { LLMTranslator } from '../LLMTranslator';
-import { LLMTranslatorConfig } from '../LLMTranslator';
+import { BaseLLMTranslatorConfig } from '..';
 
-type ChatGPTLLMTranslatorConfig = {
+type ChatGPTLLMTranslatorConfig = BaseLLMTranslatorConfig<ChatGPTLLMFetcherOptions> & {
 	apiKey: string;
-	llmFetcherOptions?: Partial<ChatGptLLMFetcherOptions>;
-	translatorOptions?: Partial<LLMTranslatorConfig>;
 };
 
 export class ChatGPTLLMTranslator extends LLMTranslator {

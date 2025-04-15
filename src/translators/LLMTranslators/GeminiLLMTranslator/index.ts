@@ -1,11 +1,9 @@
 import { GeminiLLMFetcher, GeminiLLMFetcherOptions } from './GeminiLLMFetcher';
 import { LLMTranslator } from '../LLMTranslator';
-import { LLMTranslatorConfig } from '../LLMTranslator';
+import { BaseLLMTranslatorConfig } from '..';
 
-type GeminiLLMTranslatorConfig = {
+type GeminiLLMTranslatorConfig = BaseLLMTranslatorConfig<GeminiLLMFetcherOptions> & {
 	apiKey: string;
-	llmFetcherOptions?: Partial<GeminiLLMFetcherOptions>;
-	translatorOptions?: Partial<LLMTranslatorConfig>;
 };
 
 export class GeminiLLMTranslator extends LLMTranslator {

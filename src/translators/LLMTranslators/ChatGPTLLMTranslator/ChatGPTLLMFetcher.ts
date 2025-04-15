@@ -1,19 +1,15 @@
 import { z } from 'zod';
-import { LLMFetcher } from '..';
+import { CommonLLMFetcherOptions, LLMFetcher } from '..';
 
-export type ChatGptLLMFetcherOptions = {
-	model: string;
-	apiOrigin: string;
-	rpmLimit?: number;
-};
+export type ChatGPTLLMFetcherOptions = CommonLLMFetcherOptions;
 
 export class ChatGPTLLMFetcher implements LLMFetcher {
 	private readonly apiUrl: string;
-	private readonly fetcherOptions: ChatGptLLMFetcherOptions;
+	private readonly fetcherOptions: ChatGPTLLMFetcherOptions;
 
 	constructor(
 		private readonly apiKey: string,
-		options?: Partial<ChatGptLLMFetcherOptions>,
+		options?: Partial<ChatGPTLLMFetcherOptions>,
 	) {
 		this.fetcherOptions = {
 			model: options?.model ?? 'gpt-4o-mini',
