@@ -1,18 +1,29 @@
-import { BaseLLMTranslatorConfig } from '../../LLMTranslators';
 import { LLMTranslator } from '../../LLMTranslators/LLMTranslator';
-import {
-	DuckDuckGoLLMFetcher,
-	DuckDuckGoLLMFetcherOptions,
-} from './DuckDuckGoLLMFetcher';
-
-type DuckDuckGoLLMTranslatorType = BaseLLMTranslatorConfig<DuckDuckGoLLMFetcherOptions>;
+import { DuckDuckGoLLMFetcher } from './DuckDuckGoLLMFetcher';
 
 export class DuckDuckGoLLMTranslator extends LLMTranslator {
-	constructor({
-		llmFetcherOptions,
-		translatorOptions,
-	}: DuckDuckGoLLMTranslatorType = {}) {
-		super(new DuckDuckGoLLMFetcher(llmFetcherOptions), translatorOptions);
+	constructor(config?: {
+		model?: string;
+		headers?: Record<string, string>;
+
+		getPrompt?: (texts: string[], from: string, to: string) => string;
+		retryOptions?: {
+			retryLimit?: number;
+			retryTimeout?: number;
+			maxRetryTimeout?: number;
+			retryBackoffFactor?: number;
+		};
+	}) {
+		super(
+			new DuckDuckGoLLMFetcher({ model: config?.model, headers: config?.headers }),
+			{
+				getPrompt: config?.getPrompt,
+				retryLimit: config?.retryOptions?.retryLimit,
+				retryTimeout: config?.retryOptions?.retryTimeout,
+				maxRetryTimeout: config?.retryOptions?.maxRetryTimeout,
+				retryBackoffFactor: config?.retryOptions?.retryBackoffFactor,
+			},
+		);
 	}
 
 	public static readonly translatorName: string = 'DuckDuckGoLLMTranslator';

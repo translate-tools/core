@@ -1,20 +1,36 @@
-import { GeminiLLMFetcher, GeminiLLMFetcherOptions } from './GeminiLLMFetcher';
+import { GeminiLLMFetcher } from './GeminiLLMFetcher';
 import { LLMTranslator } from '../LLMTranslator';
-import { BaseLLMTranslatorConfig } from '..';
-
-type GeminiLLMTranslatorConfig = BaseLLMTranslatorConfig<GeminiLLMFetcherOptions> & {
-	apiKey: string;
-};
 
 export class GeminiLLMTranslator extends LLMTranslator {
 	public static readonly translatorName: string = 'GeminiLLMTranslator';
 
-	constructor({
-		apiKey,
-		llmFetcherOptions,
-		translatorOptions,
-	}: GeminiLLMTranslatorConfig) {
-		super(new GeminiLLMFetcher(apiKey, llmFetcherOptions), translatorOptions);
+	constructor(config: {
+		apiKey: string;
+		model?: string;
+		getPrompt?: (texts: string[], from: string, to: string) => string;
+
+		apiOrigin?: string;
+		retryOptions?: {
+			retryLimit?: number;
+			retryTimeout?: number;
+			maxRetryTimeout?: number;
+			retryBackoffFactor?: number;
+		};
+	}) {
+		super(
+			new GeminiLLMFetcher({
+				apiKey: config.apiKey,
+				model: config.model,
+				apiOrigin: config.apiOrigin,
+			}),
+			{
+				getPrompt: config.getPrompt,
+				retryLimit: config.retryOptions?.retryLimit,
+				retryTimeout: config.retryOptions?.retryTimeout,
+				maxRetryTimeout: config.retryOptions?.maxRetryTimeout,
+				retryBackoffFactor: config.retryOptions?.retryBackoffFactor,
+			},
+		);
 	}
 
 	public static isRequiredKey = () => true;

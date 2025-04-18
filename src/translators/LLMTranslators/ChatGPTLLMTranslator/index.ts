@@ -1,18 +1,34 @@
-import { ChatGPTLLMFetcher, ChatGPTLLMFetcherOptions } from './ChatGPTLLMFetcher';
+import { ChatGPTLLMFetcher } from './ChatGPTLLMFetcher';
 import { LLMTranslator } from '../LLMTranslator';
-import { BaseLLMTranslatorConfig } from '..';
-
-type ChatGPTLLMTranslatorConfig = BaseLLMTranslatorConfig<ChatGPTLLMFetcherOptions> & {
-	apiKey: string;
-};
 
 export class ChatGPTLLMTranslator extends LLMTranslator {
-	constructor({
-		apiKey,
-		llmFetcherOptions,
-		translatorOptions,
-	}: ChatGPTLLMTranslatorConfig) {
-		super(new ChatGPTLLMFetcher(apiKey, llmFetcherOptions), translatorOptions);
+	constructor(config: {
+		apiKey: string;
+		model?: string;
+		getPrompt?: (texts: string[], from: string, to: string) => string;
+
+		apiOrigin?: string;
+		retryOptions?: {
+			retryLimit?: number;
+			retryTimeout?: number;
+			maxRetryTimeout?: number;
+			retryBackoffFactor?: number;
+		};
+	}) {
+		super(
+			new ChatGPTLLMFetcher({
+				apiKey: config.apiKey,
+				model: config.model,
+				apiOrigin: config.apiOrigin,
+			}),
+			{
+				getPrompt: config.getPrompt,
+				retryLimit: config.retryOptions?.retryLimit,
+				retryTimeout: config.retryOptions?.retryTimeout,
+				maxRetryTimeout: config.retryOptions?.maxRetryTimeout,
+				retryBackoffFactor: config.retryOptions?.retryBackoffFactor,
+			},
+		);
 	}
 
 	public static readonly translatorName: string = 'ChatGPTLLMTranslator';

@@ -1,17 +1,18 @@
 import { z } from 'zod';
-import { CommonLLMFetcherOptions, LLMFetcher } from '..';
-
-export type ChatGPTLLMFetcherOptions = CommonLLMFetcherOptions;
+import { LLMFetcher } from '..';
 
 export class ChatGPTLLMFetcher implements LLMFetcher {
 	private readonly apiUrl: string;
-	private readonly fetcherOptions: ChatGPTLLMFetcherOptions;
+	private readonly fetcherOptions;
 
-	constructor(
-		private readonly apiKey: string,
-		options?: Partial<ChatGPTLLMFetcherOptions>,
-	) {
+	constructor(options?: {
+		apiKey: string;
+		model?: string;
+		apiOrigin?: string;
+		rpmLimit?: number;
+	}) {
 		this.fetcherOptions = {
+			apiKey: options?.apiKey,
 			model: options?.model ?? 'gpt-4o-mini',
 			apiOrigin: options?.apiOrigin ?? 'https://api.openai.com',
 			rpmLimit: options?.rpmLimit,
@@ -35,7 +36,7 @@ export class ChatGPTLLMFetcher implements LLMFetcher {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${this.apiKey}`,
+				Authorization: `Bearer ${this.fetcherOptions.apiKey}`,
 			},
 			body: JSON.stringify({
 				model: this.fetcherOptions.model,

@@ -54,10 +54,8 @@ const translatorsWithOptions: TranslatorWithOptions[] = [
 		translator: ChatGPTLLMTranslator,
 		options: {
 			apiKey: process.env.TEST_CHATGPT_API_KEY,
-			llmFetcherOptions: {
-				model: 'openai/o3-mini',
-				apiOrigin: 'https://cryptotalks.ai',
-			},
+			model: 'openai/o3-mini',
+			apiOrigin: 'https://cryptotalks.ai',
 		},
 	},
 ];
