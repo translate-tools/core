@@ -28,7 +28,12 @@ export type LLMTranslatorConfig = {
 };
 
 export const getPrompt = (text: string[], from: string, to: string) => {
-	return `You are a text translation service. I will provide an array of texts, and your task is to translate them from language ${from} to language ${to}.
+	// use full language name
+	const langFormatter = new Intl.DisplayNames(['en'], { type: 'language' });
+	const originLang = langFormatter.of(from);
+	const targetLang = langFormatter.of(to);
+
+	return `You are a text translation service. I will provide an array of texts, and your task is to translate them from language ${originLang} to language ${targetLang}.
 If I specify the source language as 'auto', you should automatically detect it and translate it into the target language I set.
 The array in your response must be the same length as the one in the request. Do not add any explanations — translate strictly according to the content. 
 Be careful when creating an array; it must be syntactically correct and do not change quotation marks. Return an array of translated texts while preserving their order.
@@ -53,7 +58,12 @@ export class LLMTranslator implements TranslatorInstanceMembers {
 
 	public async translate(text: string, from: string, to: string) {
 		const translated = await this.translateBatch([text], from, to);
-		return translated[0];
+		const validateTranslation = z
+			.array(z.string())
+			.min(1, { message: 'Expected array with translated string' })
+			.parse(translated);
+
+		return validateTranslation[0];
 	}
 
 	public async translateBatch(text: string[], from: string, to: string) {
