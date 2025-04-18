@@ -5,17 +5,11 @@ export class ChatGPTLLMFetcher implements LLMFetcher {
 	private readonly apiUrl: string;
 	private readonly fetcherOptions;
 
-	constructor(options?: {
-		apiKey: string;
-		model?: string;
-		apiOrigin?: string;
-		rpmLimit?: number;
-	}) {
+	constructor(options?: { apiKey: string; model?: string; apiOrigin?: string }) {
 		this.fetcherOptions = {
 			apiKey: options?.apiKey,
 			model: options?.model ?? 'gpt-4o-mini',
 			apiOrigin: options?.apiOrigin ?? 'https://api.openai.com',
-			rpmLimit: options?.rpmLimit,
 		};
 		this.apiUrl = new URL(
 			'/v1/chat/completions',
@@ -28,7 +22,7 @@ export class ChatGPTLLMFetcher implements LLMFetcher {
 	}
 
 	public getRequestsTimeout() {
-		return this.fetcherOptions?.rpmLimit ? 60000 / this.fetcherOptions.rpmLimit : 500;
+		return 500;
 	}
 
 	public async fetch(prompt: string): Promise<string> {

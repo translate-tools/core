@@ -5,17 +5,11 @@ export class GeminiLLMFetcher implements LLMFetcher {
 	private readonly url;
 	private readonly fetcherOptions;
 
-	constructor(options?: {
-		apiKey: string;
-		model?: string;
-		apiOrigin?: string;
-		rpmLimit?: number;
-	}) {
+	constructor(options?: { apiKey: string; model?: string; apiOrigin?: string }) {
 		this.fetcherOptions = {
 			apiKey: options?.apiKey,
 			model: options?.model ?? 'gemini-2.0-flash',
 			apiOrigin: options?.apiOrigin ?? `https://generativelanguage.googleapis.com`,
-			rpmLimit: options?.rpmLimit,
 		};
 
 		this.url = new URL(
@@ -29,7 +23,7 @@ export class GeminiLLMFetcher implements LLMFetcher {
 	}
 
 	public getRequestsTimeout() {
-		return this.fetcherOptions?.rpmLimit ? 60000 / this.fetcherOptions.rpmLimit : 500;
+		return 500;
 	}
 
 	public async fetch(prompt: string): Promise<string> {
