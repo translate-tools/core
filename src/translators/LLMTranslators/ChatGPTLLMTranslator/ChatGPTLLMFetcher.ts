@@ -1,6 +1,13 @@
 import { z } from 'zod';
 import { LLMFetcher } from '..';
 
+export const chatGPTLlmResponseSchema = z.object({
+	choices: z
+		.object({ message: z.object({ content: z.string() }) })
+		.array()
+		.min(1),
+});
+
 export class ChatGPTLLMFetcher implements LLMFetcher {
 	private readonly apiUrl: string;
 	private readonly fetcherOptions;
@@ -47,14 +54,7 @@ export class ChatGPTLLMFetcher implements LLMFetcher {
 		const data = await response.json();
 
 		// validate response structure
-		const parseResult = z
-			.object({
-				choices: z
-					.object({ message: z.object({ content: z.string() }) })
-					.array()
-					.min(1),
-			})
-			.parse(data);
+		const parseResult = chatGPTLlmResponseSchema.parse(data);
 
 		// a list of chat completion choices, there can be more than one only if specified directly.
 		// source: https://platform.openai.com/docs/api-reference/chat/object#chat/object-choices

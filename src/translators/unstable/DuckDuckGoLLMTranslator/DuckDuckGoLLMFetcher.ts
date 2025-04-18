@@ -39,8 +39,6 @@ function processRawText(rawText: string) {
 }
 
 export class DuckDuckGoLLMFetcher implements LLMFetcher {
-	private key: string | null = null;
-
 	private readonly fetcherOptions;
 
 	constructor(options?: { model?: string; headers?: Record<string, string> }) {
@@ -58,6 +56,7 @@ export class DuckDuckGoLLMFetcher implements LLMFetcher {
 	public getLengthLimit = () => 2300;
 	public getRequestsTimeout = () => 2000;
 
+	private key: string | null = null;
 	public async getKey() {
 		if (!this.key) {
 			const response = await fetch('https://duckduckgo.com/duckchat/v1/status', {

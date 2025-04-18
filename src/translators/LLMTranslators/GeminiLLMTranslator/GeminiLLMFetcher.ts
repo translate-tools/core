@@ -1,6 +1,17 @@
 import { z } from 'zod';
 import { LLMFetcher } from '..';
 
+export const geminiLlmResponseSchema = z.object({
+	candidates: z
+		.object({
+			content: z.object({
+				parts: z.object({ text: z.string() }).array(),
+			}),
+		})
+		.array()
+		.min(1),
+});
+
 export class GeminiLLMFetcher implements LLMFetcher {
 	private readonly url;
 	private readonly fetcherOptions;
@@ -46,18 +57,7 @@ export class GeminiLLMFetcher implements LLMFetcher {
 		const res = await response.json();
 
 		// validate response structure
-		const parseResult = z
-			.object({
-				candidates: z
-					.object({
-						content: z.object({
-							parts: z.object({ text: z.string() }).array(),
-						}),
-					})
-					.array()
-					.min(1),
-			})
-			.parse(res);
+		const parseResult = geminiLlmResponseSchema.parse(res);
 
 		// content.parts contains ordered segments that together may form a complete response from the LLM
 		// each segment may contain different types of data (e.g., text, functions, etc.), we join all text parts to get the complete response
