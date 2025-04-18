@@ -255,14 +255,17 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 			expect(typeof translation[2]).toBe('string');
 		});
 
+		test('Translator can translate long text ', () => {
+			const translator = new translatorClass(translatorOptions);
+			expect(translator.getLengthLimit()).toBeGreaterThanOrEqual(3000);
+		});
+
 		test(
 			`Translate long text with "translate" method`,
 			async () => {
 				const translator = new translatorClass(translatorOptions);
 
 				const translationLengthLimit = translator.getLengthLimit();
-				expect(translationLengthLimit).toBeGreaterThanOrEqual(3000);
-
 				const longText = longTextForTest.slice(0, translationLengthLimit);
 
 				await translator.translate(longText, 'en', 'ru').then((translation) => {
@@ -285,8 +288,6 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 				const translator = new translatorClass(translatorOptions);
 
 				const translationLengthLimit = translator.getLengthLimit();
-				expect(translationLengthLimit).toBeGreaterThanOrEqual(3000);
-
 				const longText = longTextForTest.slice(0, translationLengthLimit);
 
 				await translator
@@ -295,7 +296,7 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 						expect(typeof translation).toBe('string');
 
 						const expectedMinimalLength = longText.length * 0.7;
-						expect((translation as string).length).toBeGreaterThanOrEqual(
+						expect(translation?.length).toBeGreaterThanOrEqual(
 							expectedMinimalLength,
 						);
 
