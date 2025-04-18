@@ -30,6 +30,7 @@ export class DuckDuckGoLLMTranslator extends LLMTranslator {
 	public static isRequiredKey = () => false;
 	public static isSupportedAutoFrom = () => true;
 
+	// Use list form chatgpt docs: https://platform.openai.com/docs/guides/text-to-speech#supported-languages
 	public static getSupportedLanguages = (): string[] => {
 		// eslint-disable
 		// prettier-ignore

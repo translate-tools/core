@@ -34,6 +34,9 @@ export class ChatGPTLLMTranslator extends LLMTranslator {
 	public static readonly translatorName: string = 'ChatGPTLLMTranslator';
 	public static isRequiredKey = () => true;
 	public static isSupportedAutoFrom = () => true;
+
+	// ChatGPT docs don’t list supported languages for text models, we can use the list for text-to-speech instead
+	// source: https://platform.openai.com/docs/guides/text-to-speech#supported-languages
 	public static getSupportedLanguages = (): string[] => {
 		// eslint-disable
 		// prettier-ignore

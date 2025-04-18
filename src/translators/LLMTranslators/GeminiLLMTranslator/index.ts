@@ -35,6 +35,8 @@ export class GeminiLLMTranslator extends LLMTranslator {
 
 	public static isRequiredKey = () => true;
 	public static isSupportedAutoFrom = () => true;
+
+	// source: https://ai.google.dev/gemini-api/docs/models#supported-languages
 	public static getSupportedLanguages = (): string[] => {
 		// eslint-disable
 		// prettier-ignore
