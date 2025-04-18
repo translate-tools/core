@@ -12,7 +12,7 @@ export class ChatGPTLLMFetcher implements LLMFetcher {
 	private readonly apiUrl: string;
 	private readonly fetcherOptions;
 
-	constructor(options?: { apiKey: string; model?: string; apiOrigin?: string }) {
+	constructor(options: { apiKey: string; model?: string; apiOrigin?: string }) {
 		this.fetcherOptions = {
 			apiKey: options?.apiKey,
 			model: options?.model ?? 'gpt-4o-mini',

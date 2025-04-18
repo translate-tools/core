@@ -16,7 +16,7 @@ export class GeminiLLMFetcher implements LLMFetcher {
 	private readonly url;
 	private readonly fetcherOptions;
 
-	constructor(options?: { apiKey: string; model?: string; apiOrigin?: string }) {
+	constructor(options: { apiKey: string; model?: string; apiOrigin?: string }) {
 		this.fetcherOptions = {
 			apiKey: options?.apiKey,
 			model: options?.model ?? 'gemini-2.0-flash',
