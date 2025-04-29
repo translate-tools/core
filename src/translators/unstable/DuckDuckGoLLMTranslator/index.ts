@@ -1,8 +1,8 @@
 import {
 	GeneratePrompt,
+	LLMTranslator,
 	LLMTranslatorRetryOptions,
 } from '../../LLMTranslators/LLMTranslator';
-import { LLMTranslator } from '../../LLMTranslators/LLMTranslator';
 import { DuckDuckGoLLMFetcher } from './DuckDuckGoLLMFetcher';
 
 export class DuckDuckGoLLMTranslator extends LLMTranslator {

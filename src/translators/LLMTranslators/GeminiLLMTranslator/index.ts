@@ -1,6 +1,9 @@
 import { GeminiLLMFetcher } from './GeminiLLMFetcher';
-import { GeneratePrompt, LLMTranslator } from '../LLMTranslator';
-import { LLMTranslatorRetryOptions } from '../LLMTranslator';
+import {
+	GeneratePrompt,
+	LLMTranslator,
+	LLMTranslatorRetryOptions,
+} from '../LLMTranslator';
 
 export class GeminiLLMTranslator extends LLMTranslator {
 	public static readonly translatorName: string = 'GeminiLLMTranslator';

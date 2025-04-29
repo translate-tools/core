@@ -1,6 +1,9 @@
 import { ChatGPTLLMFetcher } from './ChatGPTLLMFetcher';
-import { GeneratePrompt, LLMTranslator } from '../LLMTranslator';
-import { LLMTranslatorRetryOptions } from '../LLMTranslator';
+import {
+	GeneratePrompt,
+	LLMTranslator,
+	LLMTranslatorRetryOptions,
+} from '../LLMTranslator';
 
 export class ChatGPTLLMTranslator extends LLMTranslator {
 	constructor(config: {
