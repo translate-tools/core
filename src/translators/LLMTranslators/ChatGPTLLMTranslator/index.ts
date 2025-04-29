@@ -10,22 +10,20 @@ export class ChatGPTLLMTranslator extends LLMTranslator {
 		apiOrigin?: string;
 		retryOptions?: LLMTranslatorRetryOptions;
 	}) {
-		super(
-			new ChatGPTLLMFetcher({
-				apiKey: config.apiKey,
-				model: config.model,
-				apiOrigin: config.apiOrigin,
-			}),
-			{
-				getPrompt: config.getPrompt,
-				retryOptions: {
-					retryLimit: config.retryOptions?.retryLimit,
-					retryTimeout: config.retryOptions?.retryTimeout,
-					maxRetryTimeout: config.retryOptions?.maxRetryTimeout,
-					retryBackoffFactor: config.retryOptions?.retryBackoffFactor,
-				},
+		const llm = new ChatGPTLLMFetcher({
+			apiKey: config.apiKey,
+			model: config.model,
+			apiOrigin: config.apiOrigin,
+		});
+		super(llm, {
+			getPrompt: config.getPrompt,
+			retryOptions: {
+				retryLimit: config.retryOptions?.retryLimit,
+				retryTimeout: config.retryOptions?.retryTimeout,
+				maxRetryTimeout: config.retryOptions?.maxRetryTimeout,
+				retryBackoffFactor: config.retryOptions?.retryBackoffFactor,
 			},
-		);
+		});
 	}
 
 	public static readonly translatorName: string = 'ChatGPTLLMTranslator';

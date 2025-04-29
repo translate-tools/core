@@ -12,22 +12,20 @@ export class GeminiLLMTranslator extends LLMTranslator {
 		apiOrigin?: string;
 		retryOptions?: LLMTranslatorRetryOptions;
 	}) {
-		super(
-			new GeminiLLMFetcher({
-				apiKey: config.apiKey,
-				model: config.model,
-				apiOrigin: config.apiOrigin,
-			}),
-			{
-				getPrompt: config.getPrompt,
-				retryOptions: {
-					retryLimit: config.retryOptions?.retryLimit,
-					retryTimeout: config.retryOptions?.retryTimeout,
-					maxRetryTimeout: config.retryOptions?.maxRetryTimeout,
-					retryBackoffFactor: config.retryOptions?.retryBackoffFactor,
-				},
+		const llm = new GeminiLLMFetcher({
+			apiKey: config.apiKey,
+			model: config.model,
+			apiOrigin: config.apiOrigin,
+		});
+		super(llm, {
+			getPrompt: config.getPrompt,
+			retryOptions: {
+				retryLimit: config.retryOptions?.retryLimit,
+				retryTimeout: config.retryOptions?.retryTimeout,
+				maxRetryTimeout: config.retryOptions?.maxRetryTimeout,
+				retryBackoffFactor: config.retryOptions?.retryBackoffFactor,
 			},
-		);
+		});
 	}
 
 	public static isRequiredKey = () => true;
