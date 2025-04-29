@@ -1,12 +1,12 @@
 import { ChatGPTLLMFetcher } from './ChatGPTLLMFetcher';
-import { LLMTranslator } from '../LLMTranslator';
+import { GeneratePrompt, LLMTranslator } from '../LLMTranslator';
 import { LLMTranslatorRetryOptions } from '../LLMTranslator';
 
 export class ChatGPTLLMTranslator extends LLMTranslator {
 	constructor(config: {
 		apiKey: string;
 		model?: string;
-		getPrompt?: (texts: string[], from: string, to: string) => string;
+		getPrompt?: GeneratePrompt;
 		apiOrigin?: string;
 		retryOptions?: LLMTranslatorRetryOptions;
 	}) {

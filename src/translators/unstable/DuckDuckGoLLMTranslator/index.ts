@@ -1,4 +1,7 @@
-import { LLMTranslatorRetryOptions } from '../../LLMTranslators/LLMTranslator';
+import {
+	GeneratePrompt,
+	LLMTranslatorRetryOptions,
+} from '../../LLMTranslators/LLMTranslator';
 import { LLMTranslator } from '../../LLMTranslators/LLMTranslator';
 import { DuckDuckGoLLMFetcher } from './DuckDuckGoLLMFetcher';
 
@@ -6,7 +9,7 @@ export class DuckDuckGoLLMTranslator extends LLMTranslator {
 	constructor(config?: {
 		model?: string;
 		headers?: Record<string, string>;
-		getPrompt?: (texts: string[], from: string, to: string) => string;
+		getPrompt?: GeneratePrompt;
 		retryOptions?: LLMTranslatorRetryOptions;
 	}) {
 		super(

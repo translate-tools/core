@@ -2,6 +2,8 @@ import { z } from 'zod';
 import { LLMFetcher } from '.';
 import { TranslatorInstanceMembers } from '../Translator';
 
+export type GeneratePrompt = (texts: string[], from: string, to: string) => string;
+
 export type LLMTranslatorRetryOptions = {
 	/**
 	 * Maximum number of retry attempts after a failed request
@@ -44,7 +46,7 @@ export class LLMTranslator implements TranslatorInstanceMembers {
 	constructor(
 		private readonly llm: LLMFetcher,
 		options?: {
-			getPrompt?: (texts: string[], from: string, to: string) => string;
+			getPrompt?: GeneratePrompt;
 			retryOptions?: LLMTranslatorRetryOptions;
 		},
 	) {
