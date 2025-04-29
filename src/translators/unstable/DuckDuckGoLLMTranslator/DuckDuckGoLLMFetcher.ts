@@ -39,10 +39,10 @@ function processRawText(rawText: string) {
 }
 
 export class DuckDuckGoLLMFetcher implements LLMFetcher {
-	private readonly fetcherOptions;
+	private readonly options;
 
 	constructor(options?: { model?: string; headers?: Record<string, string> }) {
-		this.fetcherOptions = {
+		this.options = {
 			model: options?.model ?? 'o3-mini',
 			headers: {
 				...options?.headers,
@@ -61,7 +61,7 @@ export class DuckDuckGoLLMFetcher implements LLMFetcher {
 		if (!this.key) {
 			const response = await fetch('https://duckduckgo.com/duckchat/v1/status', {
 				headers: {
-					...this.fetcherOptions.headers,
+					...this.options.headers,
 					Accept: '*/*',
 					'x-vqd-accept': '1',
 					Priority: 'u=4',
@@ -91,14 +91,14 @@ export class DuckDuckGoLLMFetcher implements LLMFetcher {
 		const response = await fetch('https://duckduckgo.com/duckchat/v1/chat', {
 			method: 'POST',
 			headers: {
-				...this.fetcherOptions.headers,
+				...this.options.headers,
 				Accept: 'text/event-stream',
 				'Content-Type': 'application/json',
 				'X-Vqd-4': key,
 				Priority: 'u=4',
 			},
 			body: JSON.stringify({
-				model: this.fetcherOptions.model,
+				model: this.options.model,
 				messages: [
 					{
 						role: 'user',
