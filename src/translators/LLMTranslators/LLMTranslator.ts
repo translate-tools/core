@@ -2,18 +2,16 @@ import { z } from 'zod';
 import { LLMFetcher } from '.';
 import { TranslatorInstanceMembers } from '../Translator';
 
-export type LLMTranslatorConfig = {
-	getPrompt: (texts: string[], from: string, to: string) => string;
-
+export type LLMTranslatorRetryOptions = {
 	/**
 	 * Maximum number of retry attempts after a failed request
 	 */
-	retryLimit: number;
+	retryLimit?: number;
 
 	/**
 	 * Delay before first retry in ms; increases exponentially up to maxRetryTimeout
 	 */
-	retryTimeout: number;
+	retryTimeout?: number;
 
 	/**
 	 * Maximum delay before the next retry
@@ -41,17 +39,21 @@ Here is the JSON array of texts: ${JSON.stringify(text)}`;
 };
 
 export class LLMTranslator implements TranslatorInstanceMembers {
-	private readonly config: LLMTranslatorConfig;
+	private readonly config;
 
 	constructor(
 		private readonly llm: LLMFetcher,
-		options?: Partial<LLMTranslatorConfig>,
+		options?: {
+			getPrompt?: (texts: string[], from: string, to: string) => string;
+			retryOptions?: LLMTranslatorRetryOptions;
+		},
 	) {
 		this.config = {
-			retryLimit: options?.retryLimit ?? 3,
-			retryTimeout: options?.retryTimeout ?? this.llm.getRequestsTimeout(),
-			maxRetryTimeout: options?.maxRetryTimeout,
-			retryBackoffFactor: options?.retryBackoffFactor,
+			retryLimit: options?.retryOptions?.retryLimit ?? 3,
+			retryTimeout:
+				options?.retryOptions?.retryTimeout ?? this.llm.getRequestsTimeout(),
+			maxRetryTimeout: options?.retryOptions?.maxRetryTimeout,
+			retryBackoffFactor: options?.retryOptions?.retryBackoffFactor,
 			getPrompt: options?.getPrompt ?? getPrompt,
 		};
 	}

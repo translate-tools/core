@@ -1,6 +1,6 @@
 import { ChatGPTLLMFetcher } from './ChatGPTLLMFetcher';
 import { LLMTranslator } from '../LLMTranslator';
-import { LLMTranslatorRetryOptions } from '..';
+import { LLMTranslatorRetryOptions } from '../LLMTranslator';
 
 export class ChatGPTLLMTranslator extends LLMTranslator {
 	constructor(config: {
@@ -18,10 +18,12 @@ export class ChatGPTLLMTranslator extends LLMTranslator {
 			}),
 			{
 				getPrompt: config.getPrompt,
-				retryLimit: config.retryOptions?.retryLimit,
-				retryTimeout: config.retryOptions?.retryTimeout,
-				maxRetryTimeout: config.retryOptions?.maxRetryTimeout,
-				retryBackoffFactor: config.retryOptions?.retryBackoffFactor,
+				retryOptions: {
+					retryLimit: config.retryOptions?.retryLimit,
+					retryTimeout: config.retryOptions?.retryTimeout,
+					maxRetryTimeout: config.retryOptions?.maxRetryTimeout,
+					retryBackoffFactor: config.retryOptions?.retryBackoffFactor,
+				},
 			},
 		);
 	}

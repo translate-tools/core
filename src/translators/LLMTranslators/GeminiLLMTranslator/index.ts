@@ -1,6 +1,6 @@
 import { GeminiLLMFetcher } from './GeminiLLMFetcher';
 import { LLMTranslator } from '../LLMTranslator';
-import { LLMTranslatorRetryOptions } from '..';
+import { LLMTranslatorRetryOptions } from '../LLMTranslator';
 
 export class GeminiLLMTranslator extends LLMTranslator {
 	public static readonly translatorName: string = 'GeminiLLMTranslator';
@@ -20,10 +20,12 @@ export class GeminiLLMTranslator extends LLMTranslator {
 			}),
 			{
 				getPrompt: config.getPrompt,
-				retryLimit: config.retryOptions?.retryLimit,
-				retryTimeout: config.retryOptions?.retryTimeout,
-				maxRetryTimeout: config.retryOptions?.maxRetryTimeout,
-				retryBackoffFactor: config.retryOptions?.retryBackoffFactor,
+				retryOptions: {
+					retryLimit: config.retryOptions?.retryLimit,
+					retryTimeout: config.retryOptions?.retryTimeout,
+					maxRetryTimeout: config.retryOptions?.maxRetryTimeout,
+					retryBackoffFactor: config.retryOptions?.retryBackoffFactor,
+				},
 			},
 		);
 	}

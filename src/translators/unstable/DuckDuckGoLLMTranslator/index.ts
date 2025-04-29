@@ -1,4 +1,4 @@
-import { LLMTranslatorRetryOptions } from '../../LLMTranslators';
+import { LLMTranslatorRetryOptions } from '../../LLMTranslators/LLMTranslator';
 import { LLMTranslator } from '../../LLMTranslators/LLMTranslator';
 import { DuckDuckGoLLMFetcher } from './DuckDuckGoLLMFetcher';
 
@@ -13,10 +13,12 @@ export class DuckDuckGoLLMTranslator extends LLMTranslator {
 			new DuckDuckGoLLMFetcher({ model: config?.model, headers: config?.headers }),
 			{
 				getPrompt: config?.getPrompt,
-				retryLimit: config?.retryOptions?.retryLimit,
-				retryTimeout: config?.retryOptions?.retryTimeout,
-				maxRetryTimeout: config?.retryOptions?.maxRetryTimeout,
-				retryBackoffFactor: config?.retryOptions?.retryBackoffFactor,
+				retryOptions: {
+					retryLimit: config?.retryOptions?.retryLimit,
+					retryTimeout: config?.retryOptions?.retryTimeout,
+					maxRetryTimeout: config?.retryOptions?.maxRetryTimeout,
+					retryBackoffFactor: config?.retryOptions?.retryBackoffFactor,
+				},
 			},
 		);
 	}
