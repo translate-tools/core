@@ -5,7 +5,6 @@ export class DuckDuckGoLLMTranslator extends LLMTranslator {
 	constructor(config?: {
 		model?: string;
 		headers?: Record<string, string>;
-
 		getPrompt?: (texts: string[], from: string, to: string) => string;
 		retryOptions?: {
 			retryLimit?: number;

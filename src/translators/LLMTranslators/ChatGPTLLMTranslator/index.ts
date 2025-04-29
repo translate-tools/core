@@ -6,7 +6,6 @@ export class ChatGPTLLMTranslator extends LLMTranslator {
 		apiKey: string;
 		model?: string;
 		getPrompt?: (texts: string[], from: string, to: string) => string;
-
 		apiOrigin?: string;
 		retryOptions?: {
 			retryLimit?: number;
