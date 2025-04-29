@@ -22,7 +22,7 @@ export type LLMTranslatorRetryOptions = {
 
 	/**
 	 * An exponential multiplier used to increase the delay between retry attempts.
-	 * With each subsequent attempt, the delay grows exponentially based on this factor.
+	 * With each attempt, the delay grows based on this factor.
 	 */
 	retryBackoffFactor?: number;
 };
@@ -117,8 +117,9 @@ export class LLMTranslator implements TranslatorInstanceMembers {
 	}
 
 	/**
-	 * Calculate the delay for all retry attempts. The delay increases exponentially with each retry, multiplied by a backoff factor (default: 1.5)
-	 * On the first retry, the delay is equal to retryTimeout. Subsequent delays increase as retryTimeout * factor^n
+	 * Calculates retry delays: starts with retryTimeout,
+	 * then increases exponentially (retryTimeout * factor^n) up to maxRetryTimeout (default: 4000).
+	 * Default retryBackoffFactor: 1.5
 	 */
 	private waitRetryDelay(attempt: number) {
 		const maxTimeout = this.config.maxRetryTimeout ?? 4000;
