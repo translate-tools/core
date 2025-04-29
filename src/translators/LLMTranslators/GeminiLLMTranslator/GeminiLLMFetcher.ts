@@ -14,18 +14,26 @@ export const geminiLlmResponseSchema = z.object({
 
 export class GeminiLLMFetcher implements LLMFetcher {
 	private readonly url;
-	private readonly fetcherOptions;
+	private readonly config;
 
-	constructor(options: { apiKey: string; model?: string; apiOrigin?: string }) {
-		this.fetcherOptions = {
-			apiKey: options?.apiKey,
-			model: options?.model ?? 'gemini-2.0-flash',
-			apiOrigin: options?.apiOrigin ?? `https://generativelanguage.googleapis.com`,
+	constructor({
+		apiKey,
+		model,
+		apiOrigin,
+	}: {
+		apiKey: string;
+		model?: string;
+		apiOrigin?: string;
+	}) {
+		this.config = {
+			apiKey: apiKey,
+			model: model ?? 'gemini-2.0-flash',
+			apiOrigin: apiOrigin ?? `https://generativelanguage.googleapis.com`,
 		};
 
 		this.url = new URL(
-			`/v1beta/models/${this.fetcherOptions.model}:generateContent?key=${this.fetcherOptions.apiKey}`,
-			this.fetcherOptions.apiOrigin,
+			`/v1beta/models/${this.config.model}:generateContent?key=${this.config.apiKey}`,
+			this.config.apiOrigin,
 		).toString();
 	}
 

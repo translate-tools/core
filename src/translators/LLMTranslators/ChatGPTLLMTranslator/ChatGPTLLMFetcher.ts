@@ -10,18 +10,23 @@ export const chatGPTLlmResponseSchema = z.object({
 
 export class ChatGPTLLMFetcher implements LLMFetcher {
 	private readonly apiUrl: string;
-	private readonly fetcherOptions;
+	private readonly config;
 
-	constructor(options: { apiKey: string; model?: string; apiOrigin?: string }) {
-		this.fetcherOptions = {
-			apiKey: options?.apiKey,
-			model: options?.model ?? 'gpt-4o-mini',
-			apiOrigin: options?.apiOrigin ?? 'https://api.openai.com',
+	constructor({
+		apiKey,
+		model,
+		apiOrigin,
+	}: {
+		apiKey: string;
+		model?: string;
+		apiOrigin?: string;
+	}) {
+		this.config = {
+			apiKey: apiKey,
+			model: model ?? 'gpt-4o-mini',
+			apiOrigin: apiOrigin ?? 'https://api.openai.com',
 		};
-		this.apiUrl = new URL(
-			'/v1/chat/completions',
-			this.fetcherOptions.apiOrigin,
-		).toString();
+		this.apiUrl = new URL('/v1/chat/completions', this.config.apiOrigin).toString();
 	}
 
 	public getLengthLimit() {
@@ -37,10 +42,10 @@ export class ChatGPTLLMFetcher implements LLMFetcher {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${this.fetcherOptions.apiKey}`,
+				Authorization: `Bearer ${this.config.apiKey}`,
 			},
 			body: JSON.stringify({
-				model: this.fetcherOptions.model,
+				model: this.config.model,
 				messages: [{ role: 'user', content: prompt }],
 			}),
 		});
