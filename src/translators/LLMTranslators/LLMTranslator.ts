@@ -30,7 +30,7 @@ export type LLMTranslatorConfig = {
 export const getPrompt = (text: string[], from: string, to: string) => {
 	// use full language name
 	const langFormatter = new Intl.DisplayNames(['en'], { type: 'language' });
-	const originLang = langFormatter.of(from);
+	const originLang = from == 'auto' ? 'auto' : langFormatter.of(from);
 	const targetLang = langFormatter.of(to);
 
 	return `You are a text translation service. I will provide an array of texts, and your task is to translate them from language ${originLang} to language ${targetLang}.
