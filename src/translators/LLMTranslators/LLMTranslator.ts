@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { LLMFetcher } from '.';
 import { TranslatorInstanceMembers } from '../Translator';
 
-export type GeneratePrompt = (texts: string[], from: string, to: string) => string;
+export type PromptGenerator = (texts: string[], from: string, to: string) => string;
 
 export type LLMTranslatorRetryOptions = {
 	/**
@@ -46,7 +46,7 @@ export class LLMTranslator implements TranslatorInstanceMembers {
 	constructor(
 		private readonly llm: LLMFetcher,
 		options?: {
-			getPrompt?: GeneratePrompt;
+			getPrompt?: PromptGenerator;
 			retryOptions?: LLMTranslatorRetryOptions;
 		},
 	) {

@@ -1,6 +1,6 @@
 import { GeminiLLMFetcher } from './GeminiLLMFetcher';
 import {
-	GeneratePrompt,
+	PromptGenerator,
 	LLMTranslator,
 	LLMTranslatorRetryOptions,
 } from '../LLMTranslator';
@@ -11,7 +11,7 @@ export class GeminiLLMTranslator extends LLMTranslator {
 	constructor(config: {
 		apiKey: string;
 		model?: string;
-		getPrompt?: GeneratePrompt;
+		getPrompt?: PromptGenerator;
 		apiOrigin?: string;
 		retryOptions?: LLMTranslatorRetryOptions;
 	}) {

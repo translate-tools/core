@@ -1,5 +1,5 @@
 import {
-	GeneratePrompt,
+	PromptGenerator,
 	LLMTranslator,
 	LLMTranslatorRetryOptions,
 } from '../../LLMTranslators/LLMTranslator';
@@ -9,7 +9,7 @@ export class DuckDuckGoLLMTranslator extends LLMTranslator {
 	constructor(config?: {
 		model?: string;
 		headers?: Record<string, string>;
-		getPrompt?: GeneratePrompt;
+		getPrompt?: PromptGenerator;
 		retryOptions?: LLMTranslatorRetryOptions;
 	}) {
 		super(
