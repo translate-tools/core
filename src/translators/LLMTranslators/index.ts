@@ -14,3 +14,26 @@ export interface LLMFetcher {
 	 */
 	getRequestsTimeout(): number;
 }
+
+export type LLMTranslatorRetryOptions = {
+	/**
+	 * Maximum number of retry attempts after a failed request
+	 */
+	retryLimit?: number;
+
+	/**
+	 * Delay before first retry in ms; increases exponentially up to maxRetryTimeout
+	 */
+	retryTimeout?: number;
+
+	/**
+	 * Maximum delay before the next retry
+	 */
+	maxRetryTimeout?: number;
+
+	/**
+	 * An exponential multiplier used to increase the delay between retry attempts.
+	 * With each subsequent attempt, the delay grows exponentially based on this factor.
+	 */
+	retryBackoffFactor?: number;
+};

@@ -1,3 +1,4 @@
+import { LLMTranslatorRetryOptions } from '../../LLMTranslators';
 import { LLMTranslator } from '../../LLMTranslators/LLMTranslator';
 import { DuckDuckGoLLMFetcher } from './DuckDuckGoLLMFetcher';
 
@@ -6,12 +7,7 @@ export class DuckDuckGoLLMTranslator extends LLMTranslator {
 		model?: string;
 		headers?: Record<string, string>;
 		getPrompt?: (texts: string[], from: string, to: string) => string;
-		retryOptions?: {
-			retryLimit?: number;
-			retryTimeout?: number;
-			maxRetryTimeout?: number;
-			retryBackoffFactor?: number;
-		};
+		retryOptions?: LLMTranslatorRetryOptions;
 	}) {
 		super(
 			new DuckDuckGoLLMFetcher({ model: config?.model, headers: config?.headers }),

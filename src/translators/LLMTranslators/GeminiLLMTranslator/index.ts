@@ -1,5 +1,6 @@
 import { GeminiLLMFetcher } from './GeminiLLMFetcher';
 import { LLMTranslator } from '../LLMTranslator';
+import { LLMTranslatorRetryOptions } from '..';
 
 export class GeminiLLMTranslator extends LLMTranslator {
 	public static readonly translatorName: string = 'GeminiLLMTranslator';
@@ -9,12 +10,7 @@ export class GeminiLLMTranslator extends LLMTranslator {
 		model?: string;
 		getPrompt?: (texts: string[], from: string, to: string) => string;
 		apiOrigin?: string;
-		retryOptions?: {
-			retryLimit?: number;
-			retryTimeout?: number;
-			maxRetryTimeout?: number;
-			retryBackoffFactor?: number;
-		};
+		retryOptions?: LLMTranslatorRetryOptions;
 	}) {
 		super(
 			new GeminiLLMFetcher({
