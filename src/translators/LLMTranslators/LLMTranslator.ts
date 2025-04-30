@@ -62,12 +62,12 @@ export class LLMTranslator implements TranslatorInstanceMembers {
 
 	public async translate(text: string, from: string, to: string) {
 		const translated = await this.translateBatch([text], from, to);
-		const validateTranslation = z
+		const validatedTranslation = z
 			.array(z.string())
 			.min(1, { message: 'Expected array with translated string' })
 			.parse(translated);
 
-		return validateTranslation[0];
+		return validatedTranslation[0];
 	}
 
 	public async translateBatch(text: string[], from: string, to: string) {
