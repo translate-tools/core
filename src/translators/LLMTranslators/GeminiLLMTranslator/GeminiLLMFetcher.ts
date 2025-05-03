@@ -65,7 +65,7 @@ export class GeminiLLMFetcher implements LLMFetcher {
 		const res = await response.json();
 
 		// validate response structure
-		const parseResult = geminiLlmResponseSchema.parse(res);
+		const parseResult = GeminiLLMResponseSchema.parse(res);
 
 		// content.parts contains ordered segments that together may form a complete response from the LLM
 		// each segment may contain different types of data (e.g., text, functions, etc.), we join all text parts to get the complete response

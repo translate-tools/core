@@ -59,7 +59,7 @@ export class ChatGPTLLMFetcher implements LLMFetcher {
 		const data = await response.json();
 
 		// validate response structure
-		const parseResult = chatGPTLlmResponseSchema.parse(data);
+		const parseResult = ChatGPTLLMResponseSchema.parse(data);
 
 		// a list of chat completion choices, there can be more than one only if specified directly.
 		// source: https://platform.openai.com/docs/api-reference/chat/object#chat/object-choices
