@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { LLMFetcher } from '..';
 
-export const chatGPTLlmResponseSchema = z.object({
+export const ChatGPTLLMResponseSchema = z.object({
 	choices: z
 		.object({ message: z.object({ content: z.string() }) })
 		.array()
