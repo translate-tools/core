@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { LLMFetcher } from '..';
 
-export const geminiLlmResponseSchema = z.object({
+export const GeminiLLMResponseSchema = z.object({
 	candidates: z
 		.object({
 			content: z.object({
