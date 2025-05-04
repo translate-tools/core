@@ -88,7 +88,7 @@ export class LLMTranslator implements TranslatorInstanceMembers {
 				const validateResult = z
 					.string()
 					.array()
-					.min(text.length, {
+					.length(text.length, {
 						message:
 							'The response must be the same length as the requested array',
 					})
