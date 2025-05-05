@@ -142,6 +142,35 @@ export class Scheduler implements IScheduler {
 		this.semafor = new Semaphore({ timeout: translator.getRequestsTimeout() });
 	}
 
+	private readonly abortedContexts: Set<string> = new Set();
+	public async abort(context: string) {
+		// Clear tasks
+		for (const task of this.taskContainersStorage) {
+			if (context === task.context) {
+				this.taskContainersStorage.delete(task);
+				task.tasks.forEach((task) =>
+					task.reject(new Error('Translation is aborted in scheduler')),
+				);
+			}
+		}
+
+		// Remove tasks from translation queue
+		this.translateQueue = this.translateQueue.filter((task) => {
+			const isAbortedTask = context === task.context;
+			if (isAbortedTask) {
+				task.tasks.forEach((task) =>
+					task.reject(new Error('Translation is aborted in scheduler')),
+				);
+				return false;
+			}
+
+			return true;
+		});
+
+		// Abort in-flight translations
+		this.abortedContexts.add(context);
+	}
+
 	private contextCounter = 0;
 	public async translate(
 		text: string,
@@ -442,6 +471,11 @@ export class Scheduler implements IScheduler {
 	}
 
 	private taskErrorHandler(task: Task, error: any, context: string, priority: number) {
+		if (this.abortedContexts.has(context)) {
+			task.reject(error);
+			return;
+		}
+
 		if (task.attempt >= this.config.translateRetryAttemptLimit) {
 			if (this.config.isAllowDirectTranslateBadChunks) {
 				const { text, from, to, resolve, reject } = task;
