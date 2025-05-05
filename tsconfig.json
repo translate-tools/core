@@ -29,7 +29,8 @@
 		"rootDir": ".",
 		"jsx": "react",
 		"allowJs": true,
-		"resolveJsonModule": true
+		"resolveJsonModule": true,
+		"types": ["vitest/globals"]
 	},
 	"include": ["src/*.ts", "src/**/*.ts"]
 }

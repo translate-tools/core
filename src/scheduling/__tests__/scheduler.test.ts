@@ -4,7 +4,7 @@ import { FakeTranslator } from '../../translators/FakeTranslator';
 const from = 'en';
 const to = 'de';
 
-test('test Scheduler', (done) => {
+test('test Scheduler', async () => {
 	const translator = new FakeTranslator();
 	const scheduler = new Scheduler(translator);
 
@@ -13,24 +13,23 @@ test('test Scheduler', (done) => {
 		.fill(textSample)
 		.map((val, idx) => `${val} #${idx}`);
 
-	Promise.all(textsForTest.map((text) => scheduler.translate(text, from, to)))
-		.then((translations) =>
-			Promise.all(
-				translations.map(async (translation, idx) => {
-					const expectedText = await translator.translate(
-						`${textSample} #${idx}`,
-						from,
-						to,
-					);
-					expect(translation).toBe(expectedText);
-				}),
-			),
-		)
-		.finally(done)
-		.catch(done);
+	await Promise.all(
+		textsForTest.map((text) => scheduler.translate(text, from, to)),
+	).then((translations) =>
+		Promise.all(
+			translations.map(async (translation, idx) => {
+				const expectedText = await translator.translate(
+					`${textSample} #${idx}`,
+					from,
+					to,
+				);
+				expect(translation).toBe(expectedText);
+			}),
+		),
+	);
 });
 
-test('test Scheduler queue priority', (done) => {
+test('test Scheduler queue priority', async () => {
 	const translator = new FakeTranslator();
 	const scheduler = new Scheduler(translator, {
 		// Add to stable results
@@ -65,28 +64,24 @@ test('test Scheduler queue priority', (done) => {
 		},
 	];
 
-	(async () => {
-		const expectedResults = await Promise.all(
-			tasksList
-				.slice()
-				.sort((a, b) => b.priority - a.priority)
-				.map(({ text }) => translator.translate(text, from, to)),
-		);
+	const expectedResults = await Promise.all(
+		tasksList
+			.slice()
+			.sort((a, b) => b.priority - a.priority)
+			.map(({ text }) => translator.translate(text, from, to)),
+	);
 
-		const results: string[] = [];
+	const results: string[] = [];
 
-		await Promise.all(
-			tasksList.map(({ text, priority }) =>
-				scheduler
-					.translate(text, from, to, { priority })
-					.then((translatedText) => results.push(translatedText)),
-			),
-		).catch(done);
+	await Promise.all(
+		tasksList.map(({ text, priority }) =>
+			scheduler
+				.translate(text, from, to, { priority })
+				.then((translatedText) => results.push(translatedText)),
+		),
+	);
 
-		expectedResults.forEach((expectedText, idx) => {
-			expect(results[idx]).toBe(expectedText);
-		});
-	})()
-		.catch(done)
-		.finally(done);
+	expectedResults.forEach((expectedText, idx) => {
+		expect(results[idx]).toBe(expectedText);
+	});
 });

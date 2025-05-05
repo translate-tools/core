@@ -29,10 +29,10 @@
 		"publish:patch": "npm version patch && npm run publish",
 		"publish:minor": "npm version minor && npm run publish",
 		"prepare": "husky install",
-		"test": "jest"
+		"test": "vitest"
 	},
 	"engines": {
-		"node": ">=20"
+		"node": ">=18"
 	},
 	"publishConfig": {
 		"access": "public"
@@ -42,16 +42,16 @@
 		"isomorphic-fetch": "^3.0.0",
 		"lodash": "^4.17.21",
 		"query-string": "^6.14.1",
-		"xpath": "^0.0.32"
+		"xpath": "^0.0.32",
+		"zod": "^3.24.2"
 	},
 	"devDependencies": {
 		"@babel/plugin-transform-modules-commonjs": "^7.14.5",
 		"@commitlint/cli": "^12.1.4",
 		"@commitlint/config-conventional": "^12.1.4",
-		"@types/jest": "^27.0.2",
 		"@types/jsdom": "^16.2.13",
 		"@types/lodash": "^4.14.170",
-		"@types/node": "^15.12.1",
+		"@types/node": "^18.19.86",
 		"@types/xmldom": "^0.1.31",
 		"@typescript-eslint/eslint-plugin": "^4.8.1",
 		"@typescript-eslint/parser": "^4.8.1",
@@ -64,12 +64,11 @@
 		"gulp-sourcemaps": "^3.0.0",
 		"gulp-typescript": "^6.0.0-alpha.1",
 		"husky": "^7.0.0",
-		"jest": "^27.3.1",
 		"lint-staged": "^11.0.0",
 		"merge-stream": "^2.0.0",
 		"mp3-parser": "^0.3.0",
 		"prettier": "^2.3.1",
-		"ts-jest": "^27.0.7",
-		"typescript": "^4.3.2"
+		"typescript": "^4.3.2",
+		"vitest": "^3.1.1"
 	}
 }

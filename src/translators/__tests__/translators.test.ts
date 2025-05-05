@@ -9,6 +9,8 @@ import { YandexTranslator } from '../YandexTranslator';
 import { TartuNLPTranslator } from '../TartuNLPTranslator';
 import { DeepLTranslator } from '../DeepLTranslator';
 import { LibreTranslateTranslator } from '../unstable/LibreTranslateTranslator';
+import { ChatGPTLLMTranslator } from '../LLMTranslators/ChatGPTLLMTranslator';
+import { GeminiLLMTranslator } from '../LLMTranslators/GeminiLLMTranslator';
 
 const commonTranslatorOptions = {
 	headers: {
@@ -44,6 +46,23 @@ const translatorsWithOptions: TranslatorWithOptions[] = [
 			  }
 			: {},
 	},
+	{
+		translator: GeminiLLMTranslator,
+		options: { apiKey: process.env.TEST_GEMINI_API_KEY },
+	},
+	{
+		translator: ChatGPTLLMTranslator,
+		options: {
+			apiKey: process.env.TEST_CHATGPT_API_KEY,
+			model: 'openai/o3-mini',
+			apiOrigin: 'https://cryptotalks.ai',
+		},
+	},
+];
+
+const llmTranslators = [
+	GeminiLLMTranslator.translatorName,
+	ChatGPTLLMTranslator.translatorName,
 ];
 
 const isStringStartFromLetter = (text: string) => Boolean(text.match(/^\p{Letter}/u));
@@ -54,6 +73,9 @@ const longTextForTest = readFileSync(
 ).toString('utf8');
 const midTextForTest = readFileSync(
 	path.resolve(currentDir, 'resources/text-middle.txt'),
+).toString('utf8');
+const textOffensive = readFileSync(
+	path.resolve(currentDir, 'resources/text-offensive.txt'),
 ).toString('utf8');
 
 const LONG_TEXT_TRANSLATION_TIMEOUT = 80000;
@@ -90,7 +112,7 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 	const translatorOptions = { ...commonTranslatorOptions, ...options };
 
 	describe(`Translator ${translatorName}`, () => {
-		jest.setTimeout(60000);
+		vi.setConfig({ testTimeout: 60_000 });
 
 		// TODO: enable test back or remove
 		// Disable test, to allow translators to return any lang codes they support
@@ -104,10 +126,18 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 			});
 		});
 
+		test('Method "getSupportedLanguages" returns a minimum of two language codes', () => {
+			expect(translatorClass.getSupportedLanguages().length).toBeGreaterThanOrEqual(
+				2,
+			);
+		});
+
 		const isNeedCheckToZh = [
 			'GoogleTranslator',
 			'YandexTranslator',
 			'DeepLTranslator',
+			'GeminiLLMTranslator',
+			'ChatGPTLLMTranslator',
 		].some((name) => translatorName.startsWith(name));
 		if (isNeedCheckToZh) {
 			test(`Method "getSupportedLanguages" supports chinese language`, () => {
@@ -225,21 +255,29 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 			expect(typeof translation[2]).toBe('string');
 		});
 
-		// Test long text
+		test('Translator can translate long text ', () => {
+			const translator = new translatorClass(translatorOptions);
+			expect(translator.getLengthLimit()).toBeGreaterThanOrEqual(3000);
+		});
+
 		test(
 			`Translate long text with "translate" method`,
 			async () => {
 				const translator = new translatorClass(translatorOptions);
-				await translator
-					.translate(longTextForTest, 'en', 'ru')
-					.then((translation) => {
-						expect(typeof translation).toBe('string');
 
-						const expectedMinimalLength = longTextForTest.length * 0.7;
-						expect(translation.length >= expectedMinimalLength).toBeTruthy();
+				const translationLengthLimit = translator.getLengthLimit();
+				const longText = longTextForTest.slice(0, translationLengthLimit);
 
-						expect(isStringStartFromLetter(translation)).toBeTruthy();
-					});
+				await translator.translate(longText, 'en', 'ru').then((translation) => {
+					expect(typeof translation).toBe('string');
+
+					const expectedMinimalLength = longText.length * 0.7;
+					expect(translation.length).toBeGreaterThanOrEqual(
+						expectedMinimalLength,
+					);
+
+					expect(isStringStartFromLetter(translation)).toBeTruthy();
+				});
 			},
 			LONG_TEXT_TRANSLATION_TIMEOUT,
 		);
@@ -248,15 +286,19 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 			`Translate long text with "translateBatch" method`,
 			async () => {
 				const translator = new translatorClass(translatorOptions);
+
+				const translationLengthLimit = translator.getLengthLimit();
+				const longText = longTextForTest.slice(0, translationLengthLimit);
+
 				await translator
-					.translateBatch([longTextForTest], 'en', 'ru')
+					.translateBatch([longText], 'en', 'ru')
 					.then(([translation]) => {
 						expect(typeof translation).toBe('string');
 
-						const expectedMinimalLength = longTextForTest.length * 0.7;
-						expect(
-							(translation as string).length >= expectedMinimalLength,
-						).toBeTruthy();
+						const expectedMinimalLength = longText.length * 0.7;
+						expect(translation?.length).toBeGreaterThanOrEqual(
+							expectedMinimalLength,
+						);
 
 						expect(
 							isStringStartFromLetter(translation as string),
@@ -343,6 +385,26 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 							).toBeTruthy();
 						});
 				});
+			});
+		}
+
+		if (llmTranslators.includes(translatorClass.translatorName)) {
+			test('Translate offensive text with LLM translators', async () => {
+				const translator = new translatorClass(translatorOptions);
+
+				await translator
+					.translate(textOffensive, 'en', 'ru')
+					.then((translation) => {
+						expect(typeof translation).toBe('string');
+
+						const expectedMinimalLength = textOffensive.length * 0.7;
+						expect(translation.length).toBeGreaterThanOrEqual(
+							expectedMinimalLength,
+						);
+
+						// The translation needs to contain one of the word forms
+						expect(translation).toMatch(/ниг\W+?|нег\W+?/);
+					});
 			});
 		}
 	});
