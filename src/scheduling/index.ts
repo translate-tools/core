@@ -21,6 +21,14 @@ export interface ISchedulerTranslateOptions {
 }
 
 export interface IScheduler {
+	/**
+	 * Translate text
+	 *
+	 * @param text text for translation
+	 * @param from text language code
+	 * @param to target language code for translation
+	 * @param options {ISchedulerTranslateOptions}
+	 */
 	translate(
 		text: string,
 		from: langCodeWithAuto,
@@ -28,5 +36,12 @@ export interface IScheduler {
 		options?: ISchedulerTranslateOptions,
 	): Promise<string>;
 
+	/**
+	 * Abort translation for all requests with provided context
+	 * - All delayed requests will be immediately rejected
+	 * - If exception thrown for in-flight requests, they will be rejected immediately with no retries
+	 *
+	 * @param context unique name for group of requests that must be aborted
+	 */
 	abort(context: string): Promise<void>;
 }
