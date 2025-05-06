@@ -144,29 +144,31 @@ export class Scheduler implements IScheduler {
 
 	private readonly abortedContexts: Set<string> = new Set();
 	public async abort(context: string) {
+		const abortTasks = (tasks: Task[]) =>
+			tasks.forEach((task) =>
+				task.reject(new Error('Translation is aborted in scheduler')),
+			);
+
 		// Clear tasks
 		for (const task of this.taskContainersStorage) {
 			if (context === task.context) {
 				this.taskContainersStorage.delete(task);
-				task.tasks.forEach((task) =>
-					task.reject(new Error('Translation is aborted in scheduler')),
-				);
+				abortTasks(task.tasks);
 			}
 		}
 
 		// Remove tasks from translation queue
 		this.translateQueue = this.translateQueue.filter((task) => {
-			const isAbortedTask = context === task.context;
-			if (isAbortedTask) {
-				task.tasks.forEach((task) =>
-					task.reject(new Error('Translation is aborted in scheduler')),
-				);
+			// Abort and filter out matched tasks
+			if (context === task.context) {
+				abortTasks(task.tasks);
 				return false;
 			}
 
 			return true;
 		});
 
+		// TODO: abort even sent requests
 		// Abort in-flight translations
 		this.abortedContexts.add(context);
 	}
