@@ -13,6 +13,10 @@ export class SchedulerWithCache implements IScheduler {
 		this.cache = cache;
 	}
 
+	public abort(context: string) {
+		return this.scheduler.abort(context);
+	}
+
 	public async translate(
 		text: string,
 		from: langCodeWithAuto,

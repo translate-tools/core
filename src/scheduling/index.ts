@@ -27,4 +27,6 @@ export interface IScheduler {
 		to: langCode,
 		options?: ISchedulerTranslateOptions,
 	): Promise<string>;
+
+	abort(context: string): Promise<void>;
 }
