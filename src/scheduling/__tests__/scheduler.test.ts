@@ -1,6 +1,8 @@
 import { Scheduler } from '../Scheduler';
 import { FakeTranslator } from '../../translators/FakeTranslator';
 
+const wait = (time: number) => new Promise((res) => setTimeout(res, time));
+
 const from = 'en';
 const to = 'de';
 
@@ -127,5 +129,49 @@ describe('translation abortion', () => {
 				value: expect.stringContaining('Another text for translation'),
 			})),
 		);
+	});
+
+	test('abortion is prevents retries', async () => {
+		const translator = new FakeTranslator();
+		const spyOnTranslateBatch = vi.spyOn(translator, 'translateBatch');
+		spyOnTranslateBatch.mockImplementation(async () => {
+			await wait(200);
+			throw new Error('Translation error emulation');
+		});
+
+		const scheduler = new Scheduler(translator, {
+			translatePoolDelay: 50,
+			translateRetryAttemptLimit: 5,
+		});
+
+		// Collect translation requests
+		const requests = Array(3)
+			.fill(null)
+			.map((_, index) =>
+				scheduler.translate(`Text for translation #${index}`, 'en', 'de', {
+					context: 'test',
+				}),
+			);
+
+		// Wait a pool filled and translation method is called
+		await wait(80);
+
+		// Abort requests
+		await scheduler.abort('test');
+
+		// Abortion immediately rejects a failed in-flight requests with no retries,
+		// even if task have more attempts
+		await expect(Promise.allSettled(requests)).resolves.toEqual(
+			requests.map(() => ({
+				status: 'rejected',
+				reason: expect.objectContaining({
+					message: expect.stringMatching('Translation error emulation'),
+				}),
+			})),
+		);
+
+		// Translation method must be called only once,
+		// then throw error and task will immediately fail with no retries
+		expect(spyOnTranslateBatch).toBeCalledTimes(1);
 	});
 });
