@@ -115,8 +115,6 @@ export class MicrosoftTranslator extends BaseTranslator {
 		})
 			.then((r) => r.json())
 			.then((rawResult) => {
-				console.log('DEBUG', rawResult);
-
 				const result = ResponseScheme.parse(rawResult);
 
 				if ('error' in result) {
