@@ -12,6 +12,7 @@ import { LibreTranslateTranslator } from '../unstable/LibreTranslateTranslator';
 import { ChatGPTLLMTranslator } from '../LLMTranslators/ChatGPTLLMTranslator';
 import { GeminiLLMTranslator } from '../LLMTranslators/GeminiLLMTranslator';
 import { MicrosoftTranslator } from '../MicrosoftTranslator';
+import { z } from 'zod';
 
 const commonTranslatorOptions = {
 	headers: {
@@ -21,6 +22,16 @@ const commonTranslatorOptions = {
 	},
 };
 
+// Run tests against specified translators only
+// Example is `TARGET_TRANSLATORS=MicrosoftTranslator,YandexTranslator`
+const targetTranslators = new Set(
+	z
+		.string()
+		.transform((targets) => targets.split(','))
+		.optional()
+		.parse(process.env.TARGET_TRANSLATORS) ?? [],
+);
+
 // Verify types
 const translators: TranslatorConstructor[] = [
 	GoogleTranslator,
@@ -28,7 +39,10 @@ const translators: TranslatorConstructor[] = [
 	YandexTranslator,
 	TartuNLPTranslator,
 	MicrosoftTranslator,
-];
+].filter(
+	(translator) =>
+		targetTranslators.size === 0 || targetTranslators.has(translator.translatorName),
+);
 
 type TranslatorWithOptions = {
 	translator: TranslatorConstructor;
