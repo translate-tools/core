@@ -1,6 +1,7 @@
 import { langCode, langCodeWithAuto } from '../Translator';
 import { BaseTranslator } from '../BaseTranslator';
 import { z } from 'zod';
+import { LanguageAliases } from '../../languages/LanguageAliases';
 
 const ResponseScheme = z
 	.object({
@@ -20,20 +21,198 @@ const ResponseScheme = z
 		}),
 	);
 
+// eslint-disable
+// prettier-ignore
+const languagesMap = new LanguageAliases([
+	"ace",
+	"af",
+	"sq",
+	"am",
+	"ar",
+	"arz",
+	"ary",
+	"arb",
+	"hy",
+	"as",
+	"ast",
+	"az",
+	"ban",
+	"bn",
+	"ba",
+	"eu",
+	"bbc",
+	"be",
+	"bho",
+	"bik",
+	"brx",
+	"bs",
+	"bg",
+	"yue",
+	"ca",
+	"ceb",
+	"hne",
+	"lzh",
+	"zh-Hans",
+	"zh-Hant",
+	"co",
+	"hr",
+	"cs",
+	"da",
+	"prs",
+	"dv",
+	"doi",
+	"nl",
+	"en",
+	"en-GB",
+	"epo",
+	"et",
+	"fo",
+	"fj",
+	"fil",
+	"fi",
+	"fr",
+	"fr-CA",
+	"fy",
+	"fur",
+	"gl",
+	"lug",
+	"ka",
+	"de",
+	"el",
+	"gu",
+	"ht",
+	"ha",
+	"he",
+	"hil",
+	"hi",
+	"mww",
+	"hu",
+	"iba",
+	"is",
+	"ig",
+	"ilo",
+	"id",
+	"ikt",
+	"iu",
+	"iu-Latn",
+	"ga",
+	"it",
+	"jam",
+	"ja",
+	"jav",
+	"kea",
+	"kn",
+	"pam",
+	"ks",
+	"kk",
+	"km",
+	"rw",
+	"tlh-Latn",
+	"gom",
+	"ko",
+	"kri",
+	"ku",
+	"kmr",
+	"ky",
+	"lo",
+	"la",
+	"lv",
+	"lij",
+	"lim",
+	"ln",
+	"lt",
+	"lmo",
+	"dsb",
+	"lb",
+	"mk",
+	"mai",
+	"mg",
+	"ms",
+	"ml",
+	"mt",
+	"mr",
+	"mwr",
+	"mfe",
+	"min",
+	"mn-Cyrl",
+	"mn-Mong",
+	"my",
+	"mi",
+	"ne",
+	"nb",
+	"nno",
+	"nya",
+	"oc",
+	"or",
+	"pap",
+	"ps",
+	"fa",
+	"pl",
+	"pt",
+	"pt-PT",
+	"pa",
+	"pnb",
+	"otq",
+	"ro",
+	"run",
+	"ru",
+	"sm",
+	"sa",
+	"srd",
+	"sr-Cyrl",
+	"sr-Latn",
+	"st",
+	"nso",
+	"tn",
+	"crs",
+	"sn",
+	"scn",
+	"sd",
+	"si",
+	"sk",
+	"sl",
+	"so",
+	"es",
+	"su",
+	"sw",
+	"sv",
+	"ty",
+	"tgk",
+	"ta",
+	"tt",
+	"te",
+	"tet",
+	"th",
+	"bo",
+	"ti",
+	"tpi",
+	"to",
+	"tr",
+	"tk",
+	"uk",
+	"hsb",
+	"ur",
+	"ug",
+	"uz",
+	"vec",
+	"vi",
+	"war",
+	"cy",
+	"xh",
+	"ydd",
+	"yo",
+	"yua",
+	"zu"
+]);
+// eslint-enable
+
 export class MicrosoftTranslator extends BaseTranslator {
 	public static readonly translatorName = 'MicrosoftTranslator';
 
 	public static isSupportedAutoFrom = () => true;
 
 	public static getSupportedLanguages(): langCode[] {
-		// eslint-disable
-		// prettier-ignore
-		return [
-			'bg', 'cs', 'da', 'de', 'el', 'en', 'es', 'et', 'fi', 'fr',
-			'hu', 'id', 'it', 'ja', 'ko', 'lt', 'lv', 'nb', 'nl', 'pl',
-			'pt', 'ro', 'ru', 'sk', 'sl', 'sv', 'tr', 'uk', 'zh'
-		];
-		// eslint-enable
+		return languagesMap.getAll();
 	}
 
 	public getLengthLimit() {
@@ -59,6 +238,7 @@ export class MicrosoftTranslator extends BaseTranslator {
 		return this.translateBatch([text], from, to).then((resp) => resp[0]);
 	}
 
+	// TODO: cache token
 	private async getToken() {
 		return fetch('https://edge.microsoft.com/translate/auth', {
 			headers: {
@@ -83,13 +263,23 @@ export class MicrosoftTranslator extends BaseTranslator {
 	}
 
 	public async translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
+		const sourceLanguage = from === 'auto' ? 'auto' : languagesMap.get(from);
+		const targetLanguage = languagesMap.get(to);
+
+		if (!sourceLanguage) throw new TypeError(`Unsupported source language ${from}`);
+		if (!targetLanguage) throw new TypeError(`Unsupported source language ${to}`);
+
 		const token = await this.getToken();
 
 		const url =
 			'https://api-edge.cognitive.microsofttranslator.com/translate?' +
 			// Omit `from` parameter for auto detection of language
-			(from !== 'auto' ? `from=${encodeURIComponent(from)}&` : '') +
-			`to=${encodeURIComponent(to)}&api-version=3.0&includeSentenceLength=true`;
+			(sourceLanguage !== 'auto'
+				? `from=${encodeURIComponent(sourceLanguage)}&`
+				: '') +
+			`to=${encodeURIComponent(
+				targetLanguage,
+			)}&api-version=3.0&includeSentenceLength=true`;
 
 		return fetch(url, {
 			headers: {
