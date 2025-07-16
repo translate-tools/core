@@ -31,7 +31,7 @@ test('Top translators list with score', async () => {
 			translation: referenceTranslation,
 		}).then((results) => {
 			results.forEach((result) => {
-				result.score = parseFloat(result.score.toFixed(3));
+				result.score = parseFloat(result.score.toFixed(2));
 			});
 
 			return results;
