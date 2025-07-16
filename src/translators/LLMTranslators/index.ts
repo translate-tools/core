@@ -1,3 +1,6 @@
+export * from './ChatGPTLLMTranslator';
+export * from './GeminiLLMTranslator';
+
 export interface LLMFetcher {
 	/**
 	 * Method for request to AI model

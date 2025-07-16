@@ -1,4 +1,4 @@
-[![CodeQL](https://github.com/translate-tools/core/actions/workflows/codeql.yml/badge.svg?branch=master&event=push)](https://github.com/translate-tools/core/actions/workflows/codeql.yml?branch=master&event=push)
+[![](https://img.shields.io/npm/v/@translate-tools/core.svg)](https://www.npmjs.com/package/@translate-tools/core) ![](https://img.shields.io/npm/l/@translate-tools/core) [![](https://img.shields.io/github/contributors/translate-tools/core)](https://github.com/translate-tools/core/graphs/contributors) [![CodeQL](https://github.com/translate-tools/core/actions/workflows/codeql.yml/badge.svg?branch=master&event=push)](https://github.com/translate-tools/core/actions/workflows/codeql.yml?branch=master&event=push)
 
 The translate tools core is a kit of translation primitives.
 
@@ -8,6 +8,8 @@ Use this package if you need default implementations of translation primitives. 
 
 Feel free to [open a new issue](https://github.com/translate-tools/core/issues) and request a primitives that needs in your project and will useful for other people.
 
+[![](https://primebits.org/badges/built-by.svg)](https://primebits.org)
+
 # Usage
 
 Install package `npm install @translate-tools/core`
@@ -16,12 +18,12 @@ This package provides CJS and ESM modules both. This docs contains CJS examples,
 
 ```js
 // Example with import a CommonJS module
-import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTranslator';
+import { GoogleTranslator } from '@translate-tools/core/translators';
 ```
 
 ```js
 // Example with import a ECMAScript module
-import { GoogleTranslator } from '@translate-tools/core/esm/translators/GoogleTranslator';
+import { GoogleTranslator } from '@translate-tools/core/esm/translators';
 ```
 
 # Migrations
@@ -43,7 +45,7 @@ Translators have 2 public methods, `translate` for translate single text and `tr
 Example with google translator
 
 ```ts
-import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTranslator';
+import { GoogleTranslator } from '@translate-tools/core/translators';
 
 const translator = new GoogleTranslator();
 
@@ -67,7 +69,7 @@ translator
 **For use with nodejs** you have to **specify user agent**. In most cases for nodejs, translator will work incorrectly with not set `User-Agent` header.
 
 ```ts
-import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTranslator';
+import { GoogleTranslator } from '@translate-tools/core/translators';
 
 const translator = new GoogleTranslator({
 	headers: {
@@ -86,7 +88,7 @@ For example, some translators API is **not available in browser, due to CSP poli
 You may pass your implementation of `Fetcher` function to option `fetcher`.
 
 ```ts
-import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTranslator';
+import { GoogleTranslator } from '@translate-tools/core/translators';
 
 import { Fetcher } from '@translate-tools/core/utils/Fetcher';
 import { basicFetcher } from '@translate-tools/core/utils/Fetcher/basicFetcher';
@@ -116,7 +118,7 @@ Exports 2 implementations `GoogleTranslator` and `GoogleTranslatorTokenFree`, th
 import {
 	GoogleTranslator,
 	GoogleTranslatorTokenFree,
-} from '@translate-tools/core/translators/GoogleTranslator';
+} from '@translate-tools/core/translators';
 
 const translator = new GoogleTranslator({
 	headers: {
@@ -139,6 +141,17 @@ const translator2 = new GoogleTranslatorTokenFree({
 translator2
 	.translate('Hello world', 'en', 'de')
 	.then((translate) => console.log('Translate result', translate));
+```
+
+### MicrosoftTranslator
+
+Uses a free Microsoft's translation service that is used in Microsoft Edge browser.
+
+```ts
+import { MicrosoftTranslator } from '@translate-tools/core/translators';
+
+const translator = new MicrosoftTranslator();
+const translatedText = await translator.translate('Hello world', 'en', 'de');
 ```
 
 ### YandexTranslator
@@ -164,7 +177,7 @@ Uses API of https://www.deepl.com/translator
 This translator requires to provide API key
 
 ```ts
-import { DeepLTranslator } from '@translate-tools/core/translators/DeepLTranslator';
+import { DeepLTranslator } from '@translate-tools/core/translators';
 
 const translator = new DeepLTranslator({
 	apiKey: '820c5d18-365b-289c-e63b6fc7e1cb:fx',
@@ -190,7 +203,7 @@ See an [instances list](https://github.com/LibreTranslate/LibreTranslate#mirrors
 - `apiKey` optional - API key
 
 ```ts
-import { LibreTranslateTranslator } from '@translate-tools/core/translators/unstable/LibreTranslateTranslator';
+import { LibreTranslateTranslator } from '@translate-tools/core/translators/unstable';
 
 const freeTranslator = new LibreTranslateTranslator({
 	apiHost: 'https://translate.argosopentech.com/translate',
@@ -396,7 +409,7 @@ Basic scheduler placed at `scheduling/Scheduler`;
 ### Usage
 
 ```ts
-import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTranslator';
+import { GoogleTranslator } from '@translate-tools/core/translators';
 import { Scheduler } from '@translate-tools/core/scheduling/Scheduler';
 
 // We use google translator API for translate requests
@@ -473,7 +486,7 @@ This class is just a decorator over `Scheduler` that allow you to use standard o
 ### Usage
 
 ```ts
-import { GoogleTranslator } from '@translate-tools/core/translators/GoogleTranslator';
+import { GoogleTranslator } from '@translate-tools/core/translators';
 import { Scheduler } from '@translate-tools/core/scheduling/Scheduler';
 import { SchedulerWithCache } from '@translate-tools/core/scheduling/SchedulerWithCache';
 import { ICache } from '@translate-tools/core/utils/Cache';

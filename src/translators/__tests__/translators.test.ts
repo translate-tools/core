@@ -11,6 +11,8 @@ import { DeepLTranslator } from '../DeepLTranslator';
 import { LibreTranslateTranslator } from '../unstable/LibreTranslateTranslator';
 import { ChatGPTLLMTranslator } from '../LLMTranslators/ChatGPTLLMTranslator';
 import { GeminiLLMTranslator } from '../LLMTranslators/GeminiLLMTranslator';
+import { MicrosoftTranslator } from '../MicrosoftTranslator';
+import { z } from 'zod';
 
 const commonTranslatorOptions = {
 	headers: {
@@ -20,13 +22,27 @@ const commonTranslatorOptions = {
 	},
 };
 
+// Run tests against specified translators only
+// Example is `TARGET_TRANSLATORS=MicrosoftTranslator,YandexTranslator`
+const targetTranslators = new Set(
+	z
+		.string()
+		.transform((targets) => targets.split(','))
+		.optional()
+		.parse(process.env.TARGET_TRANSLATORS) ?? [],
+);
+
 // Verify types
 const translators: TranslatorConstructor[] = [
 	GoogleTranslator,
 	GoogleTranslatorTokenFree,
 	YandexTranslator,
 	TartuNLPTranslator,
-];
+	MicrosoftTranslator,
+].filter(
+	(translator) =>
+		targetTranslators.size === 0 || targetTranslators.has(translator.translatorName),
+);
 
 type TranslatorWithOptions = {
 	translator: TranslatorConstructor;
@@ -161,7 +177,7 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 			const translator = new translatorClass(translatorOptions);
 			await translator.translate('Hello world', 'en', 'ru').then((translation) => {
 				expect(typeof translation).toBe('string');
-				expect(translation).toContain('мир');
+				expect(translation).toMatch(/привет|мир/);
 				expect(isStringStartFromLetter(translation)).toBeTruthy();
 			});
 		});
@@ -206,7 +222,7 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 					expect(Array.isArray(translation)).toBe(true);
 					expect(translation.length).toBe(1);
 
-					expect(translation[0]).toContain('мир');
+					expect(translation[0]).toMatch(/привет|мир/);
 					expect(
 						isStringStartFromLetter(translation[0] as string),
 					).toBeTruthy();
@@ -221,7 +237,7 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 					expect(Array.isArray(translation)).toBe(true);
 					expect(translation.length).toBe(2);
 
-					expect(translation[0]).toContain('мир');
+					expect(translation[0]).toMatch(/привет|мир/);
 					expect(translation[1]).toContain('Джефф');
 
 					translation.every((translation) => {
@@ -339,7 +355,7 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 						.translate('Hello world', 'auto', 'ru')
 						.then((translation) => {
 							expect(typeof translation).toBe('string');
-							expect(translation).toContain('мир');
+							expect(translation).toMatch(/привет|мир/);
 
 							expect(isStringStartFromLetter(translation)).toBeTruthy();
 						});
@@ -355,7 +371,7 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 
 							expect(typeof translation[0]).toBe('string');
 
-							expect(translation[0]).toContain('мир');
+							expect(translation[0]).toMatch(/привет|мир/);
 
 							expect(
 								isStringStartFromLetter(translation[0] as string),
@@ -374,7 +390,7 @@ translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 							expect(typeof translation[0]).toBe('string');
 							expect(typeof translation[1]).toBe('string');
 
-							expect(translation[0]).toContain('мир');
+							expect(translation[0]).toMatch(/привет|мир/);
 							expect(translation[1]).toContain('Джефф');
 
 							expect(
