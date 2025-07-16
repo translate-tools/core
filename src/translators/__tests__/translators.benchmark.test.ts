@@ -29,6 +29,12 @@ test('Top translators list with score', async () => {
 		getTranslatorsScore({
 			text: referenceText,
 			translation: referenceTranslation,
-		}).then((results) => results.map(({ name }) => name)),
+		}).then((results) => {
+			results.forEach((result) => {
+				result.score = parseFloat(result.score.toFixed(3));
+			});
+
+			return results;
+		}),
 	).resolves.matchSnapshot();
 });

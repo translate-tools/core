@@ -1,11 +1,26 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Translators score 1`] = `
+exports[`Top translators list with score 1`] = `
 [
-  "MicrosoftTranslator",
-  "YandexTranslator",
-  "TartuNLPTranslator",
-  "GoogleTranslator",
-  "GoogleTranslatorTokenFree",
+  {
+    "name": "MicrosoftTranslator",
+    "score": 0.979,
+  },
+  {
+    "name": "YandexTranslator",
+    "score": 0.978,
+  },
+  {
+    "name": "TartuNLPTranslator",
+    "score": 0.969,
+  },
+  {
+    "name": "GoogleTranslator",
+    "score": 0.934,
+  },
+  {
+    "name": "GoogleTranslatorTokenFree",
+    "score": 0.934,
+  },
 ]
 `;
