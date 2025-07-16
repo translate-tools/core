@@ -1,4 +1,10 @@
 import { getTranslatorsScore } from './benchmark';
+import { TranslatorConstructor } from '../Translator';
+
+import { GoogleTranslator, GoogleTranslatorTokenFree } from '../GoogleTranslator';
+import { YandexTranslator } from '../YandexTranslator';
+import { TartuNLPTranslator } from '../TartuNLPTranslator';
+import { MicrosoftTranslator } from '../MicrosoftTranslator';
 
 const referenceText = `
 Linguist is a powerful browser extension that is ready to replace your favorite translation service.
@@ -24,17 +30,29 @@ Linguist - это мощное расширение для браузера, г�
 Linguist бесплатный проект с открытым исходным кодом, уважает вашу конфиденциальность и не собирает личные данные.
 `.trim();
 
-test('Top translators list with score', async () => {
-	await expect(
-		getTranslatorsScore({
-			text: referenceText,
-			translation: referenceTranslation,
-		}).then((results) => {
-			results.forEach((result) => {
-				result.score = parseFloat(result.score.toFixed(2));
-			});
+const translators: TranslatorConstructor[] = [
+	GoogleTranslator,
+	GoogleTranslatorTokenFree,
+	YandexTranslator,
+	TartuNLPTranslator,
+	MicrosoftTranslator,
+];
 
-			return results;
-		}),
-	).resolves.matchSnapshot();
-});
+test(
+	'Top translators list with score',
+	async () => {
+		await expect(
+			getTranslatorsScore(translators, {
+				text: referenceText,
+				translation: referenceTranslation,
+			}).then((results) => {
+				results.forEach((result) => {
+					result.score = parseFloat(result.score.toFixed(2));
+				});
+
+				return results;
+			}),
+		).resolves.matchSnapshot();
+	},
+	{ timeout: translators.length * 10_000 },
+);

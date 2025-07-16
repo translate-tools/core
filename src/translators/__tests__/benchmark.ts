@@ -1,10 +1,5 @@
 import { TranslatorConstructor } from '../Translator';
 
-import { GoogleTranslator, GoogleTranslatorTokenFree } from '../GoogleTranslator';
-import { YandexTranslator } from '../YandexTranslator';
-import { TartuNLPTranslator } from '../TartuNLPTranslator';
-import { MicrosoftTranslator } from '../MicrosoftTranslator';
-
 import { FeatureExtractionPipeline, pipeline } from '@xenova/transformers';
 
 function cosineSimilarity(a: number[], b: number[]): number {
@@ -44,18 +39,13 @@ class SimilarityScore {
 	}
 }
 
-const translators: TranslatorConstructor[] = [
-	GoogleTranslator,
-	GoogleTranslatorTokenFree,
-	YandexTranslator,
-	TartuNLPTranslator,
-	MicrosoftTranslator,
-];
-
-export async function getTranslatorsScore(reference: {
-	text: string;
-	translation: string;
-}) {
+export async function getTranslatorsScore(
+	translators: TranslatorConstructor[],
+	reference: {
+		text: string;
+		translation: string;
+	},
+) {
 	const similarity = new SimilarityScore();
 
 	const translatorsScore: Record<string, number> = {};
