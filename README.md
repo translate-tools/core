@@ -1,4 +1,4 @@
-[![CodeQL](https://github.com/translate-tools/core/actions/workflows/codeql.yml/badge.svg?branch=master&event=push)](https://github.com/translate-tools/core/actions/workflows/codeql.yml?branch=master&event=push)
+[![](https://img.shields.io/npm/v/@translate-tools/core.svg)](https://www.npmjs.com/package/@translate-tools/core) ![](https://img.shields.io/npm/l/@translate-tools/core) [![](https://img.shields.io/github/contributors/translate-tools/core)](https://github.com/translate-tools/core/graphs/contributors) [![CodeQL](https://github.com/translate-tools/core/actions/workflows/codeql.yml/badge.svg?branch=master&event=push)](https://github.com/translate-tools/core/actions/workflows/codeql.yml?branch=master&event=push)
 
 The translate tools core is a kit of translation primitives.
 
@@ -7,6 +7,8 @@ The package contains translators, scheduler for translation tasks, tex-to-speech
 Use this package if you need default implementations of translation primitives. Use a types of this package, to implement your own entities and to make it compatible with a numerous utils implemented by other people.
 
 Feel free to [open a new issue](https://github.com/translate-tools/core/issues) and request a primitives that needs in your project and will useful for other people.
+
+[![](https://primebits.org/badges/built-by.svg)](https://primebits.org)
 
 # Usage
 
