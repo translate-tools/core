@@ -206,6 +206,27 @@ const languagesMap = new LanguageAliases([
 ]);
 // eslint-enable
 
+const fetchToken = () =>
+	fetch('https://edge.microsoft.com/translate/auth', {
+		headers: {
+			accept: '*/*',
+			'accept-language': 'zh-TW,zh;q=0.9,ja;q=0.8,zh-CN;q=0.7,en-US;q=0.6,en;q=0.5',
+			'cache-control': 'no-cache',
+			pragma: 'no-cache',
+			priority: 'u=1, i',
+			'referrer-policy': 'strict-origin-when-cross-origin',
+			'sec-fetch-dest': 'empty',
+			'sec-fetch-mode': 'cors',
+			'sec-fetch-site': 'none',
+			'sec-fetch-storage-access': 'active',
+		},
+		referrerPolicy: 'strict-origin-when-cross-origin',
+		body: null,
+		method: 'GET',
+		mode: 'cors',
+		credentials: 'omit',
+	}).then((r) => r.text());
+
 export class MicrosoftTranslator extends BaseTranslator {
 	public static readonly translatorName = 'MicrosoftTranslator';
 
@@ -238,28 +259,29 @@ export class MicrosoftTranslator extends BaseTranslator {
 		return this.translateBatch([text], from, to).then((resp) => resp[0]);
 	}
 
-	// TODO: cache token
+	private token:
+		| {
+				value: string;
+				issuedAt: number;
+		  }
+		| Promise<string>
+		| null = null;
 	private async getToken() {
-		return fetch('https://edge.microsoft.com/translate/auth', {
-			headers: {
-				accept: '*/*',
-				'accept-language':
-					'zh-TW,zh;q=0.9,ja;q=0.8,zh-CN;q=0.7,en-US;q=0.6,en;q=0.5',
-				'cache-control': 'no-cache',
-				pragma: 'no-cache',
-				priority: 'u=1, i',
-				'referrer-policy': 'strict-origin-when-cross-origin',
-				'sec-fetch-dest': 'empty',
-				'sec-fetch-mode': 'cors',
-				'sec-fetch-site': 'none',
-				'sec-fetch-storage-access': 'active',
-			},
-			referrerPolicy: 'strict-origin-when-cross-origin',
-			body: null,
-			method: 'GET',
-			mode: 'cors',
-			credentials: 'omit',
-		}).then((r) => r.text());
+		// Wait resolution if pending
+		if (this.token instanceof Promise) return this.token;
+
+		// Fetch new token
+		if (!this.token || this.token.issuedAt < 60_000) {
+			this.token = fetchToken().then((token) => {
+				this.token = { value: token, issuedAt: Date.now() };
+				return token;
+			});
+
+			return await this.token;
+		}
+
+		// Use cached value
+		return this.token.value;
 	}
 
 	public async translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
