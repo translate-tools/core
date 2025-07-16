@@ -9,7 +9,7 @@ export type FetcherOptions<T extends FetcherRequestType> = {
 	method?: string;
 	responseType: T;
 	headers?: Record<string, string>;
-	body?: string | Blob | BufferSource;
+	body?: string | Blob | BufferSource | null;
 
 	/** A string whose value is a same-origin URL, "about:client", or the empty string, to set request's referrer. */
 	referrer?: string;

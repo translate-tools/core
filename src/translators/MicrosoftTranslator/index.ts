@@ -44,27 +44,6 @@ const supportedLanguagesMap = new LanguageAliases([
 ]);
 // eslint-enable
 
-const fetchToken = () =>
-	fetch('https://edge.microsoft.com/translate/auth', {
-		headers: {
-			accept: '*/*',
-			'accept-language': 'zh-TW,zh;q=0.9,ja;q=0.8,zh-CN;q=0.7,en-US;q=0.6,en;q=0.5',
-			'cache-control': 'no-cache',
-			pragma: 'no-cache',
-			priority: 'u=1, i',
-			'referrer-policy': 'strict-origin-when-cross-origin',
-			'sec-fetch-dest': 'empty',
-			'sec-fetch-mode': 'cors',
-			'sec-fetch-site': 'none',
-			'sec-fetch-storage-access': 'active',
-		},
-		referrerPolicy: 'strict-origin-when-cross-origin',
-		body: null,
-		method: 'GET',
-		mode: 'cors',
-		credentials: 'omit',
-	}).then((r) => r.text());
-
 export class MicrosoftTranslator extends BaseTranslator {
 	public static readonly translatorName = 'MicrosoftTranslator';
 
@@ -110,7 +89,24 @@ export class MicrosoftTranslator extends BaseTranslator {
 
 		// Fetch new token
 		if (!this.token || this.token.issuedAt < 60_000) {
-			this.token = fetchToken().then((token) => {
+			this.token = this.fetch('https://edge.microsoft.com/translate/auth', {
+				responseType: 'text',
+				method: 'GET',
+				headers: {
+					accept: '*/*',
+					'accept-language':
+						'zh-TW,zh;q=0.9,ja;q=0.8,zh-CN;q=0.7,en-US;q=0.6,en;q=0.5',
+					'cache-control': 'no-cache',
+					pragma: 'no-cache',
+					priority: 'u=1, i',
+					'referrer-policy': 'strict-origin-when-cross-origin',
+					'sec-fetch-dest': 'empty',
+					'sec-fetch-mode': 'cors',
+					'sec-fetch-site': 'none',
+					'sec-fetch-storage-access': 'active',
+				},
+				body: null,
+			}).then(({ data: token }) => {
 				this.token = { value: token, issuedAt: Date.now() };
 				return token;
 			});
@@ -141,7 +137,9 @@ export class MicrosoftTranslator extends BaseTranslator {
 				targetLanguage,
 			)}&api-version=3.0&includeSentenceLength=true`;
 
-		return fetch(url, {
+		return this.fetch(url, {
+			responseType: 'json',
+			method: 'POST',
 			headers: {
 				accept: '*/*',
 				'accept-language':
@@ -157,27 +155,21 @@ export class MicrosoftTranslator extends BaseTranslator {
 				'sec-fetch-site': 'none',
 				'sec-fetch-storage-access': 'active',
 			},
-			referrerPolicy: 'strict-origin-when-cross-origin',
 			body: JSON.stringify(text.map((text) => ({ Text: text }))),
-			method: 'POST',
-			mode: 'cors',
-			credentials: 'include',
-		})
-			.then((r) => r.json())
-			.then((rawResult) => {
-				const result = ResponseScheme.parse(rawResult);
+		}).then((rawResult) => {
+			const result = ResponseScheme.parse(rawResult.data);
 
-				if ('error' in result) {
-					throw new Error(`Code ${result.error.code}: ${result.error.message}`);
-				}
+			if ('error' in result) {
+				throw new Error(`Code ${result.error.code}: ${result.error.message}`);
+			}
 
-				// Transform translations array
-				return result.map((translationItem) =>
-					// Build translation for single text
-					translationItem.translations
-						.map((translationSegment) => translationSegment.text)
-						.join(' '),
-				);
-			});
+			// Transform translations array
+			return result.map((translationItem) =>
+				// Build translation for single text
+				translationItem.translations
+					.map((translationSegment) => translationSegment.text)
+					.join(' '),
+			);
+		});
 	}
 }
