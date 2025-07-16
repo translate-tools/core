@@ -54,7 +54,7 @@ export class MicrosoftTranslator extends BaseTranslator {
 	}
 
 	public getLengthLimit() {
-		return 5000;
+		return 50_000;
 	}
 
 	public getRequestsTimeout() {
