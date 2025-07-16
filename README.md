@@ -141,6 +141,17 @@ translator2
 	.then((translate) => console.log('Translate result', translate));
 ```
 
+### MicrosoftTranslator
+
+Uses a free Microsoft's translation service that is used in Microsoft Edge browser.
+
+```ts
+import { MicrosoftTranslator } from '@translate-tools/core/translators/MicrosoftTranslator';
+
+const translator = new MicrosoftTranslator();
+const translatedText = await translator.translate('Hello world', 'en', 'de');
+```
+
 ### YandexTranslator
 
 Uses a free API of service translate.yandex.ru
