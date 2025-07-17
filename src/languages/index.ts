@@ -30,14 +30,14 @@ export const getLanguageCodesISO639 = (set: 'v1' | 'v2') => {
 	const pickedLanguages: string[] = [];
 	for (const lang of languages) {
 		switch (set) {
-		case 'v1':
-			if (lang.v1) {
-				pickedLanguages.push(lang.v1);
-			}
-			break;
-		case 'v2':
-			pickedLanguages.push(lang.v2);
-			break;
+			case 'v1':
+				if (lang.v1) {
+					pickedLanguages.push(lang.v1);
+				}
+				break;
+			case 'v2':
+				pickedLanguages.push(lang.v2);
+				break;
 		}
 	}
 

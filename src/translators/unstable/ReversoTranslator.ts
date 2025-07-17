@@ -1,5 +1,7 @@
-import { langCode } from '../Translator';
+import z from 'zod';
+
 import { BaseTranslator } from '../BaseTranslator';
+import { langCode } from '../Translator';
 
 /**
  * This module did not test too ago
@@ -75,9 +77,7 @@ export class ReversoTranslator extends BaseTranslator {
 			},
 		};
 
-		const apiHost = this.wrapUrlToCorsProxy(
-			'https://api.reverso.net/translate/v1/translation',
-		);
+		const apiHost = 'https://api.reverso.net/translate/v1/translation';
 		return this.fetch(apiHost, {
 			responseType: 'json',
 			method: 'POST',
@@ -87,16 +87,13 @@ export class ReversoTranslator extends BaseTranslator {
 			},
 			body: JSON.stringify(data),
 		}).then((rsp) => {
-			const response = rsp.data as any;
-			if (
-				!(response instanceof Object) ||
-				!(response.translation instanceof Array) ||
-				response.translation.every((i: any) => typeof i !== 'string')
-			) {
-				throw new Error('Unexpected response');
-			}
+			const response = z
+				.object({
+					translation: z.string().array(),
+				})
+				.parse(rsp.data, { error: () => 'Unexpected response format' });
 
-			return (response.translation as string[]).join('');
+			return response.translation.join('');
 		});
 	}
 

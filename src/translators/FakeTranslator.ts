@@ -1,5 +1,6 @@
-import { langCode, langCodeWithAuto } from './Translator';
+/* eslint-disable @typescript-eslint/require-await */
 import { BaseTranslator } from './BaseTranslator';
+import { langCode, langCodeWithAuto } from './Translator';
 
 /**
  * Fake translator for use in tests and debug

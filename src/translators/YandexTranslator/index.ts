@@ -1,9 +1,9 @@
-import { stringify } from 'query-string';
 import { unescape } from 'lodash';
+import queryString from 'query-string';
+import z from 'zod';
 
-import { langCode, langCodeWithAuto } from '../Translator';
 import { BaseTranslator } from '../BaseTranslator';
-
+import { langCode, langCodeWithAuto } from '../Translator';
 import { getYandexSID } from './getYandexSID';
 
 export class YandexTranslator extends BaseTranslator {
@@ -67,7 +67,7 @@ export class YandexTranslator extends BaseTranslator {
 			lang: from === 'auto' ? to : `${from}-${to}`,
 		};
 
-		let body = stringify(options);
+		let body = queryString.stringify(options);
 		for (const textChunk of text) {
 			body += '&text=' + encodeURIComponent(textChunk);
 		}
@@ -78,29 +78,21 @@ export class YandexTranslator extends BaseTranslator {
 			'https://translate.yandex.net/api/v1/tr.json/translate?srv=tr-url-widget&id=' +
 			sid +
 			'-0-0&';
-		return this.fetch(this.wrapUrlToCorsProxy(urlWithSid + body), {
+		return this.fetch(urlWithSid + body, {
 			responseType: 'json',
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
 				...this.options.headers,
 			},
-		}).then(({ data: resp }) => {
-			if (
-				!(resp instanceof Object) ||
-				!Array.isArray((resp as any).text) ||
-				(resp as any).text.length !== text.length
-			) {
-				throw new Error('Unexpected response');
-			}
+		}).then((response) => {
+			const data = z
+				.object({
+					text: z.string().array(),
+				})
+				.parse(response.data);
 
-			return (resp as any).text.map((text: unknown) => {
-				if (typeof text !== 'string') {
-					throw new Error('Unexpected response type');
-				}
-
-				return unescape(text);
-			});
+			return data.text.map((text) => unescape(text));
 		});
 	}
 }

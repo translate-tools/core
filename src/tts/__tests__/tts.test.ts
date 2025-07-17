@@ -1,9 +1,10 @@
-const mp3Parser = require('mp3-parser');
+import mp3Parser from 'mp3-parser';
 
-import { TTSProvider } from '..';
 import { isLanguageCodeISO639v1 } from '../../languages';
+
 import { GoogleTTS } from '../GoogleTTS';
 import { LingvaTTS } from '../LingvaTTS';
+import { TTSProvider } from '..';
 
 const ttsConstructor: TTSProvider[] = [GoogleTTS, LingvaTTS];
 

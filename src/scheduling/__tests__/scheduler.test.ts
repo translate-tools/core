@@ -1,5 +1,6 @@
-import { Scheduler } from '../Scheduler';
 import { FakeTranslator } from '../../translators/FakeTranslator';
+
+import { Scheduler } from '../Scheduler';
 
 const wait = (time: number) => new Promise((res) => setTimeout(res, time));
 

@@ -1,6 +1,7 @@
-import { TTSAudioBuffer, TTSProviderProps } from '..';
 import { Fetcher } from '../../utils/Fetcher';
 import { basicFetcher } from '../../utils/Fetcher/basicFetcher';
+
+import { TTSAudioBuffer, TTSProviderProps } from '..';
 
 export class LingvaTTS implements TTSProviderProps {
 	private readonly host;
@@ -23,13 +24,13 @@ export class LingvaTTS implements TTSProviderProps {
 				if (typeof json !== 'object' || json === null) {
 					throw new TypeError('Unexpected response');
 				}
-				if (!('audio' in json) || !Array.isArray((json as any).audio)) {
+				if (!('audio' in json) || !Array.isArray(json.audio)) {
 					throw new TypeError('Unexpected response');
 				}
 
 				return {
 					type: 'audio/mpeg',
-					buffer: new Uint8Array((json as any).audio).buffer,
+					buffer: new Uint8Array(json.audio).buffer,
 				};
 			},
 		);

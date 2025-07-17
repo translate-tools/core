@@ -1,4 +1,5 @@
 import { z } from 'zod';
+
 import { LLMFetcher } from '../../LLMTranslators';
 
 function processRawText(rawText: string) {
@@ -14,7 +15,14 @@ function processRawText(rawText: string) {
 		const text = line.slice(prefix.length);
 		if (text === '[DONE]') break;
 
-		const json = JSON.parse(text);
+		const json = z
+			.object({
+				action: z.string().optional(),
+				type: z.string().optional(),
+				status: z.string().optional(),
+				message: z.string().optional(),
+			})
+			.parse(JSON.parse(text), { error: () => 'Unexpected data' });
 
 		// In case of an error, DuckDuckGo may return a response containing an error object
 		if (json.action === 'error') {

@@ -1,10 +1,9 @@
-import { getTranslatorsScore } from './benchmark';
-import { TranslatorConstructor } from '../Translator';
-
 import { GoogleTranslator, GoogleTranslatorTokenFree } from '../GoogleTranslator';
-import { YandexTranslator } from '../YandexTranslator';
-import { TartuNLPTranslator } from '../TartuNLPTranslator';
 import { MicrosoftTranslator } from '../MicrosoftTranslator';
+import { TartuNLPTranslator } from '../TartuNLPTranslator';
+import { TranslatorConstructor } from '../Translator';
+import { YandexTranslator } from '../YandexTranslator';
+import { getTranslatorsScore } from './benchmark';
 
 const referenceText = `
 Linguist is a powerful browser extension that is ready to replace your favorite translation service.

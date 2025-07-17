@@ -1,5 +1,7 @@
-import { langCode, langCodeWithAuto } from '../Translator';
+import z from 'zod';
+
 import { BaseTranslator } from '../BaseTranslator';
+import { langCode, langCodeWithAuto } from '../Translator';
 
 export class TartuNLPTranslator extends BaseTranslator {
 	public static readonly translatorName = 'TartuNLPTranslator';
@@ -51,15 +53,9 @@ export class TartuNLPTranslator extends BaseTranslator {
 			},
 			body: JSON.stringify({ text, src: from, tgt: to }),
 		}).then((rsp) => {
-			if (
-				typeof rsp.data !== 'object' ||
-				rsp.data === null ||
-				!Array.isArray((rsp.data as any).result)
-			) {
-				throw new TypeError('Unexpected data');
-			}
-
-			return (rsp.data as any).result as string[];
+			return z
+				.object({ result: z.string().array() })
+				.parse(rsp.data, { error: () => 'Unexpected data' }).result;
 		});
 	}
 }

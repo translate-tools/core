@@ -34,7 +34,7 @@ export function getYandexSID(fetcher: Fetcher) {
 				.then((response) => {
 					const result = (
 						typeof response.data === 'string' ? response.data : ''
-					).match(/sid\:\s\'[0-9a-f\.]+/);
+					).match(/sid:\s'[0-9a-f.]+/);
 
 					if (result && result[0] && result[0].length > 7) {
 						yandexTranslateSID = result[0].substring(6);

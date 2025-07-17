@@ -40,5 +40,6 @@ export interface TTSProviderStaticProps {
  * Text to speech module
  */
 export type TTSProvider = TTSProviderStaticProps & {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	new (...args: any[]): TTSProviderProps;
 };

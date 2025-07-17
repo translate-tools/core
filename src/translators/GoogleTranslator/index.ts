@@ -1,9 +1,9 @@
-import { stringify } from 'query-string';
+import queryString from 'query-string';
 import xpath from 'xpath';
-import { DOMParser } from '@xmldom/xmldom';
+import { Document, DOMParser, MIME_TYPE } from '@xmldom/xmldom';
 
-import { langCode, langCodeWithAuto } from '../Translator';
 import { BaseTranslator } from '../BaseTranslator';
+import { langCode, langCodeWithAuto } from '../Translator';
 import { getToken } from './token';
 import { visitArrayItems } from './utils';
 
@@ -43,28 +43,38 @@ export const supportedLanguages = [
 ];
 // eslint-enable
 
-const parseXMLResponse = (text: string) => {
+export const parseXMLResponse = (text: string) => {
 	let doc: Document;
 	try {
-		doc = new DOMParser().parseFromString(text);
+		doc = new DOMParser().parseFromString(text, MIME_TYPE.XML_APPLICATION);
 	} catch (err) {
 		console.error(err);
 		return null;
 	}
 
-	const nodesWithTranslation = xpath.select('//pre/*[not(self::i)]', doc);
+	const nodesWithTranslation = xpath.select(
+		'//pre/*[not(self::i)]',
+		doc as unknown as Node,
+	);
 
-	if (nodesWithTranslation.length === 0) return null;
-	// console.log('Selected nodes', nodesWithTranslation.map((node) => (node as Node).toString()));
+	if (!nodesWithTranslation) return null;
+
+	if (!Array.isArray(nodesWithTranslation))
+		throw new Error('Unexpected XML parsed result');
+
 	return nodesWithTranslation
 		.map((node) => {
 			// Select text in child nodes or in self
-			const textNodes = xpath.select('descendant-or-self::*/text()', node as Node);
+			const textNodes = xpath.select('descendant-or-self::*/text()', node);
+			if (!Array.isArray(textNodes)) return '';
+
 			if (textNodes.length > 1) {
 				console.debug('More than one text node found');
 			}
 
-			return textNodes.length === 0 ? '' : textNodes.join(' ');
+			return textNodes.length === 0
+				? ''
+				: textNodes.map((node) => node.nodeValue).join(' ');
 		})
 		.join(' ');
 };
@@ -135,9 +145,9 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 				tk,
 			};
 
-			const url = apiPath + '?' + stringify(data);
+			const url = apiPath + '?' + queryString.stringify(data);
 
-			return this.fetch(this.wrapUrlToCorsProxy(url), {
+			return this.fetch(url, {
 				responseType: 'json',
 				method: 'GET',
 				headers: this.options.headers,
@@ -176,12 +186,12 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 				tk,
 			};
 
-			const url = apiPath + '?' + stringify(data);
+			const url = apiPath + '?' + queryString.stringify(data);
 			const body = preparedText
 				.map((text) => `&q=${encodeURIComponent(text)}`)
 				.join('');
 
-			return this.fetch(this.wrapUrlToCorsProxy(url), {
+			return this.fetch(url, {
 				responseType: 'json',
 				method: 'POST',
 				headers: {
@@ -222,7 +232,7 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 							);
 						}
 
-						return result as string[];
+						return result;
 					} catch (err) {
 						console.warn('Got response', rawResp);
 						throw err;
@@ -257,9 +267,9 @@ export class GoogleTranslatorTokenFree extends AbstractGoogleTranslator {
 			q: text,
 		};
 
-		const url = apiPath + '?' + stringify(data);
+		const url = apiPath + '?' + queryString.stringify(data);
 
-		return this.fetch(this.wrapUrlToCorsProxy(url), {
+		return this.fetch(url, {
 			responseType: 'json',
 			method: 'GET',
 			headers: {
@@ -286,7 +296,7 @@ export class GoogleTranslatorTokenFree extends AbstractGoogleTranslator {
 					const isSingleResponseMode = text.length === 1;
 					const isOneToOneMappingMode =
 						intermediateTextsArray.length === text.length;
-					for (const idx in intermediateTextsArray) {
+					for (let idx = 0; idx < intermediateTextsArray.length; idx++) {
 						const text = intermediateTextsArray[idx];
 
 						if (isSingleResponseMode) {
@@ -309,7 +319,7 @@ export class GoogleTranslatorTokenFree extends AbstractGoogleTranslator {
 						);
 					}
 
-					return result as string[];
+					return result;
 				} catch (err) {
 					console.warn('Got response', rawResp);
 					throw err;

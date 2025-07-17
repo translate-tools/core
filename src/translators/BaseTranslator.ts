@@ -1,8 +1,8 @@
 import { Fetcher, FetcherOptions, FetcherRequestType } from '../utils/Fetcher';
 import { basicFetcher } from '../utils/Fetcher/basicFetcher';
-import { TranslatorInstanceMembers, langCode, langCodeWithAuto } from './Translator';
+import { langCode, langCodeWithAuto, TranslatorInstanceMembers } from './Translator';
 
-export type TranslatorOptions<O extends Record<any, any> = {}> = O & {
+export type TranslatorOptions<O extends Record<string, unknown> = {}> = O & {
 	/**
 	 * API endpoint URL
 	 */
@@ -38,8 +38,8 @@ export type TranslatorOptions<O extends Record<any, any> = {}> = O & {
  * Basic abstract class for translator
  */
 
-export abstract class BaseTranslator<C extends Record<any, any> = {}>
-implements TranslatorInstanceMembers
+export abstract class BaseTranslator<C extends Record<string, unknown> = {}>
+	implements TranslatorInstanceMembers
 {
 	public static readonly translatorName: string = 'UnknownTranslator';
 
@@ -77,23 +77,6 @@ implements TranslatorInstanceMembers
 		const extra = plainText.length - this.getLengthLimit();
 		return extra > 0 ? extra : 0;
 	}
-
-	/**
-	 * Util to wrap url to CORS proxy
-	 */
-	protected wrapUrlToCorsProxy = (url: string) => {
-		// Use as prefix
-		if (typeof this.options.corsProxy === 'string') {
-			return this.options.corsProxy + url;
-		}
-
-		// Run user defined transformation
-		if (typeof this.options.corsProxy === 'function') {
-			return this.options.corsProxy(url);
-		}
-
-		return url;
-	};
 
 	protected fetch: Fetcher = async <T extends FetcherRequestType>(
 		url: string,

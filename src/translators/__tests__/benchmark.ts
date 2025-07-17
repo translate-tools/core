@@ -1,6 +1,6 @@
-import { TranslatorConstructor } from '../Translator';
-
 import { FeatureExtractionPipeline, pipeline } from '@xenova/transformers';
+
+import { TranslatorConstructor } from '../Translator';
 
 function cosineSimilarity(a: number[], b: number[]): number {
 	const dot = a.reduce((sum, val, i) => sum + val * b[i], 0);
@@ -28,7 +28,7 @@ class SimilarityScore {
 		const pipe = await this.getPipe();
 
 		const output = await pipe(text, { pooling: 'mean', normalize: true });
-		return Array.from(output.data);
+		return Array.from(output.data) as number[];
 	}
 
 	public async score(text1: string, text2: string) {

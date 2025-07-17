@@ -31,7 +31,7 @@ export class LanguageAliases {
 						aliases.map((alias) => [alias, simpleLanguage]),
 					)
 					.flat(),
-			),
+			) as Record<string, string[]>,
 		};
 
 		this.simpleLanguages = new Set(languagesList);

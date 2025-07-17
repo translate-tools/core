@@ -1,7 +1,7 @@
 export { Scheduler } from './Scheduler';
 export { SchedulerWithCache } from './SchedulerWithCache';
 
-import { langCodeWithAuto, langCode } from '../translators/Translator';
+import { langCode, langCodeWithAuto } from '../translators/Translator';
 
 export interface ISchedulerTranslateOptions {
 	/**

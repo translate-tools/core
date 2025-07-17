@@ -9,6 +9,8 @@ interface TextContainer {
 	text: string;
 }
 
+const tokens = ['tokenStart', 'tokenEnd', 'tokenClose'] as const;
+
 /**
  * Util for pack multiple requests to one
  *
@@ -25,14 +27,14 @@ export class Multiplexor {
 	constructor(options?: Options) {
 		if (options !== undefined) {
 			['tokenStart', 'tokenEnd', 'tokenClose'].forEach((key) => {
-				const item = (options as any)[key];
-				if (item !== undefined && item.search(/\&|\:/) !== -1) {
+				const item = options[key as keyof Options];
+				if (item !== undefined && item.search(/&|:/) !== -1) {
 					throw new Error(`Option ${key} has disallow characters (& or :)`);
 				}
 			});
 
 			for (const key in options) {
-				(this.options as any)[key] = (options as any)[key];
+				this.options[key as keyof Options] = options[key as keyof Options];
 			}
 		}
 	}
@@ -76,28 +78,26 @@ export class Multiplexor {
 	}
 
 	private escape(text: string) {
-		['tokenStart', 'tokenEnd', 'tokenClose'].forEach((key, index) => {
-			const token = (this.options as any)[key];
-			if (token.length > 0) {
-				text = text.replace(
-					new RegExp(this.escapeRegExp(token), 'g'),
-					`&${index + 1}:`,
-				);
-			}
-		});
+		return tokens.reduce((text, tokenName, index) => {
+			const token = this.options[tokenName];
 
-		return text;
+			if (!token) return text;
+
+			return text.replace(
+				new RegExp(this.escapeRegExp(token), 'g'),
+				`&${index + 1}:`,
+			);
+		}, text);
 	}
 
 	private unescape(text: string) {
-		['tokenStart', 'tokenEnd', 'tokenClose'].forEach((key, index) => {
-			const token = (this.options as any)[key];
-			if (token.length > 0) {
-				text = text.replace(new RegExp(`&${index + 1}:`, 'g'), token);
-			}
-		});
+		return tokens.reduce((text, tokenName, index) => {
+			const token = this.options[tokenName];
 
-		return text;
+			if (!token) return text;
+
+			return text.replace(new RegExp(`&${index + 1}:`, 'g'), token);
+		}, text);
 	}
 
 	private escapeRegExp(text: string) {

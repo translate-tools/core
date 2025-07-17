@@ -91,5 +91,6 @@ export interface TranslatorStaticMembers {
 export interface TranslatorConstructor<
 	InstanceProps extends TranslatorInstanceMembers = TranslatorInstanceMembers,
 > extends TranslatorStaticMembers {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	new (...args: any[]): InstanceProps;
 }

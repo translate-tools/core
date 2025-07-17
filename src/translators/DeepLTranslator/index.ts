@@ -1,5 +1,7 @@
-import { langCode, langCodeWithAuto } from '../Translator';
+import z from 'zod';
+
 import { BaseTranslator, TranslatorOptions } from '../BaseTranslator';
+import { langCode, langCodeWithAuto } from '../Translator';
 
 export type DeepLTranslatorOptions = {
 	apiKey: string;
@@ -88,15 +90,12 @@ export class DeepLTranslator extends BaseTranslator<DeepLTranslatorOptions> {
 			},
 			body: stringifiedBody,
 		}).then((rsp) => {
-			if (
-				typeof rsp.data !== 'object' ||
-				rsp.data === null ||
-				!Array.isArray((rsp.data as any).translations)
-			) {
-				throw new TypeError('Unexpected data');
-			}
-
-			return ((rsp.data as any).translations as any[]).map(({ text }) => text);
+			return z
+				.object({
+					translations: z.object({ text: z.string() }).array(),
+				})
+				.transform(({ translations }) => translations.map(({ text }) => text))
+				.parse(rsp.data, { error: () => 'Unexpected data' });
 		});
 	}
 }

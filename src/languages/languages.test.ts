@@ -1,7 +1,7 @@
 import {
+	getLanguageCodesISO639,
 	isLanguageCodeISO639v1,
 	isLanguageCodeISO639v2,
-	getLanguageCodesISO639,
 } from '.';
 
 describe('isLanguageCodeISO639v2', () => {
