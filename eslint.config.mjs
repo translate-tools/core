@@ -133,7 +133,7 @@ export default tseslint.config(
 		files: ['**/*.js', '*.{js,mjs,cjs}'],
 		extends: [tseslint.configs.disableTypeChecked],
 		rules: {
-			"@typescript-eslint/no-require-imports": "off"
-		}
+			'@typescript-eslint/no-require-imports': 'off',
+		},
 	},
 );
