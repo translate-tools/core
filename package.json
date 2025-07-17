@@ -72,7 +72,7 @@
 		"husky": "^9.1.7",
 		"lint-staged": "^16.1.2",
 		"merge-stream": "^2.0.0",
-		"mp3-parser": "^0.3.0",
+		"music-metadata": "^11.7.0",
 		"prettier": "^3.6.2",
 		"typescript": "^5.8.3",
 		"typescript-eslint": "^8.37.0",

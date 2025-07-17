@@ -1,4 +1,4 @@
-import mp3Parser from 'mp3-parser';
+import { parseBuffer } from 'music-metadata';
 
 import { isLanguageCodeISO639v1 } from '../../languages';
 
@@ -21,12 +21,11 @@ ttsConstructor.map((ttsConstructor) => {
 			expect(typeof audioBuffer.type).toBe('string');
 
 			// Parse as audio file
-			const audioBufferView = new DataView(audioBuffer.buffer);
-			const parsedAudioFrame = mp3Parser.readFrameHeader(audioBufferView);
-			expect(parsedAudioFrame).toHaveProperty('mpegAudioVersion');
-			expect(parsedAudioFrame).toHaveProperty('channelMode');
-			expect(parsedAudioFrame).toHaveProperty('samplingRate');
-			expect(parsedAudioFrame).toHaveProperty('bitrate');
+			const parsedAudioFrame = await parseBuffer(
+				new Uint8Array(audioBuffer.buffer),
+			);
+
+			expect(parsedAudioFrame).toMatchSnapshot();
 		});
 
 		// Disable test, to allow TTS to return any lang codes they support
