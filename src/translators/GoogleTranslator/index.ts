@@ -1,95 +1,10 @@
 import queryString from 'query-string';
-import xpath from 'xpath';
-import { Document, DOMParser, MIME_TYPE } from '@xmldom/xmldom';
 
 import { BaseTranslator } from '../BaseTranslator';
 import { langCode, langCodeWithAuto } from '../Translator';
+import { getFixedLanguage, languageAliases } from './languages';
 import { getToken } from './token';
-import { visitArrayItems } from './utils';
-
-/**
- * Map with languages aliases.
- *
- * Google translator use legacy codes for some languages,
- * this map useful to use actual language codes by aliases
- *
- * @link https://xml.coverpages.org/iso639a.html
- */
-const fixedLanguagesMap: Record<string, string> = {
-	he: 'iw',
-	jv: 'jw',
-};
-
-/**
- * Map ISO lang codes to google translator lang codes
- */
-const getFixedLanguage = (lang: langCodeWithAuto) => {
-	if (lang === 'zh') return 'zh-CN';
-	return fixedLanguagesMap[lang] ?? lang;
-};
-
-const encodeForBatch = (textList: string[]) => {
-	return textList.map((text, i) => `<pre><a i="${i}">${text}</a></pre>`);
-};
-
-/**
- * Raw languages array
- */
-// eslint-disable
-// prettier-ignore
-export const supportedLanguages = [
-	'af', 'ak', 'am', 'ar', 'as', 'ay', 'az', 'be', 'bg', 'bho',
-	'bm', 'bn', 'bs', 'ca', 'ceb', 'ckb', 'co', 'cs', 'cy', 'da',
-	'de', 'doi', 'dv', 'ee', 'el', 'en', 'eo', 'es', 'et', 'eu',
-	'fa', 'fi', 'fr', 'fy', 'ga', 'gd', 'gl', 'gn', 'gom', 'gu',
-	'ha', 'haw', 'hi', 'hmn', 'hr', 'ht', 'hu', 'hy', 'id', 'ig',
-	'ilo', 'is', 'it', 'iw', 'ja', 'jw', 'ka', 'kk', 'km', 'kn',
-	'ko', 'kri', 'ku', 'ky', 'la', 'lb', 'lg', 'ln', 'lo', 'lt',
-	'lus', 'lv', 'mai', 'mg', 'mi', 'mk', 'ml', 'mn', 'mni-Mtei', 'mr',
-	'ms', 'mt', 'my', 'ne', 'nl', 'no', 'nso', 'ny', 'om', 'or',
-	'pa', 'pl', 'ps', 'pt', 'qu', 'ro', 'ru', 'rw', 'sa', 'sd',
-	'si', 'sk', 'sl', 'sm', 'sn', 'so', 'sq', 'sr', 'st', 'su',
-	'sv', 'sw', 'ta', 'te', 'tg', 'th', 'ti', 'tk', 'tl', 'tr',
-	'ts', 'tt', 'ug', 'uk', 'ur', 'uz', 'vi', 'xh', 'yi', 'yo',
-	'zh', 'zh-CN', 'zh-TW', 'zu'
-];
-// eslint-enable
-
-export const parseXMLResponse = (text: string) => {
-	let doc: Document;
-	try {
-		doc = new DOMParser().parseFromString(text, MIME_TYPE.XML_APPLICATION);
-	} catch (err) {
-		console.error(err);
-		return null;
-	}
-
-	const nodesWithTranslation = xpath.select(
-		'//pre/*[not(self::i)]',
-		doc as unknown as Node,
-	);
-
-	if (!nodesWithTranslation) return null;
-
-	if (!Array.isArray(nodesWithTranslation))
-		throw new Error('Unexpected XML parsed result');
-
-	return nodesWithTranslation
-		.map((node) => {
-			// Select text in child nodes or in self
-			const textNodes = xpath.select('descendant-or-self::*/text()', node);
-			if (!Array.isArray(textNodes)) return '';
-
-			if (textNodes.length > 1) {
-				console.debug('More than one text node found');
-			}
-
-			return textNodes.length === 0
-				? ''
-				: textNodes.map((node) => node.nodeValue).join(' ');
-		})
-		.join(' ');
-};
+import { encodeForBatch, parseXMLResponse, visitArrayItems } from './utils';
 
 /**
  * Common class for google translator implementations
@@ -100,7 +15,7 @@ export abstract class AbstractGoogleTranslator extends BaseTranslator {
 	}
 
 	public static getSupportedLanguages(): langCode[] {
-		return supportedLanguages;
+		return languageAliases.getAll();
 	}
 
 	public getLengthLimit() {

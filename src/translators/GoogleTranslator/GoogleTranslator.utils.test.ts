@@ -1,5 +1,4 @@
-import { parseXMLResponse } from '.';
-import { visitArrayItems } from './utils';
+import { parseXMLResponse, visitArrayItems } from './utils';
 
 describe('parseXMLResponse', () => {
 	test('Single string is returned as is', () => {
