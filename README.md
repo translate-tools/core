@@ -1,4 +1,4 @@
-[![](https://img.shields.io/npm/v/@translate-tools/core.svg)](https://www.npmjs.com/package/@translate-tools/core) ![](https://img.shields.io/npm/l/@translate-tools/core) [![](https://img.shields.io/github/contributors/translate-tools/core)](https://github.com/translate-tools/core/graphs/contributors) [![CodeQL](https://github.com/translate-tools/core/actions/workflows/codeql.yml/badge.svg?branch=master&event=push)](https://github.com/translate-tools/core/actions/workflows/codeql.yml?branch=master&event=push)
+[![](https://img.shields.io/npm/v/anylang.svg)](https://www.npmjs.com/package/anylang) ![](https://img.shields.io/npm/l/anylang) [![](https://img.shields.io/github/contributors/translate-tools/core)](https://github.com/translate-tools/core/graphs/contributors) [![CodeQL](https://github.com/translate-tools/core/actions/workflows/codeql.yml/badge.svg?branch=master&event=push)](https://github.com/translate-tools/core/actions/workflows/codeql.yml?branch=master&event=push)
 
 The translate tools core is a kit of translation primitives.
 
@@ -12,18 +12,18 @@ Feel free to [open a new issue](https://github.com/translate-tools/core/issues) 
 
 # Usage
 
-Install package `npm install @translate-tools/core`
+Install package `npm install anylang`
 
 This package provides CJS and ESM modules both. This docs contains CJS examples, that can be used for both NodeJS and Browser, but if you need to use ESM modules (to make tree-shaking are effective for example), you can add `/esm` prefix for any paths, after package name:
 
 ```js
 // Example with import a CommonJS module
-import { GoogleTranslator } from '@translate-tools/core/translators';
+import { GoogleTranslator } from 'anylang/translators';
 ```
 
 ```js
 // Example with import a ECMAScript module
-import { GoogleTranslator } from '@translate-tools/core/esm/translators';
+import { GoogleTranslator } from 'anylang/esm/translators';
 ```
 
 # Migrations
@@ -45,7 +45,7 @@ Translators have 2 public methods, `translate` for translate single text and `tr
 Example with google translator
 
 ```ts
-import { GoogleTranslator } from '@translate-tools/core/translators';
+import { GoogleTranslator } from 'anylang/translators';
 
 const translator = new GoogleTranslator();
 
@@ -69,7 +69,7 @@ translator
 **For use with nodejs** you have to **specify user agent**. In most cases for nodejs, translator will work incorrectly with not set `User-Agent` header.
 
 ```ts
-import { GoogleTranslator } from '@translate-tools/core/translators';
+import { GoogleTranslator } from 'anylang/translators';
 
 const translator = new GoogleTranslator({
 	headers: {
@@ -88,10 +88,10 @@ For example, some translators API is **not available in browser, due to CSP poli
 You may pass your implementation of `Fetcher` function to option `fetcher`.
 
 ```ts
-import { GoogleTranslator } from '@translate-tools/core/translators';
+import { GoogleTranslator } from 'anylang/translators';
 
-import { Fetcher } from '@translate-tools/core/utils/Fetcher';
-import { basicFetcher } from '@translate-tools/core/utils/Fetcher/basicFetcher';
+import { Fetcher } from 'anylang/utils/Fetcher';
+import { basicFetcher } from 'anylang/utils/Fetcher/basicFetcher';
 
 // Extend `basicFetcher` with use CORS proxy for all requests
 const fetcher: Fetcher = async (url, options) => {
@@ -115,10 +115,7 @@ Uses a free API version of service translate.google.com
 Exports 2 implementations `GoogleTranslator` and `GoogleTranslatorTokenFree`, that have the same features, but uses different API endpoints, so you can choose what implementation better for you.
 
 ```ts
-import {
-	GoogleTranslator,
-	GoogleTranslatorTokenFree,
-} from '@translate-tools/core/translators';
+import { GoogleTranslator, GoogleTranslatorTokenFree } from 'anylang/translators';
 
 const translator = new GoogleTranslator({
 	headers: {
@@ -148,7 +145,7 @@ translator2
 Uses a free Microsoft's translation service that is used in Microsoft Edge browser.
 
 ```ts
-import { MicrosoftTranslator } from '@translate-tools/core/translators';
+import { MicrosoftTranslator } from 'anylang/translators';
 
 const translator = new MicrosoftTranslator();
 const translatedText = await translator.translate('Hello world', 'en', 'de');
@@ -177,7 +174,7 @@ Uses API of https://www.deepl.com/translator
 This translator requires to provide API key
 
 ```ts
-import { DeepLTranslator } from '@translate-tools/core/translators';
+import { DeepLTranslator } from 'anylang/translators';
 
 const translator = new DeepLTranslator({
 	apiKey: '820c5d18-365b-289c-e63b6fc7e1cb:fx',
@@ -203,7 +200,7 @@ See an [instances list](https://github.com/LibreTranslate/LibreTranslate#mirrors
 - `apiKey` optional - API key
 
 ```ts
-import { LibreTranslateTranslator } from '@translate-tools/core/translators/unstable';
+import { LibreTranslateTranslator } from 'anylang/translators/unstable';
 
 const freeTranslator = new LibreTranslateTranslator({
 	apiHost: 'https://translate.argosopentech.com/translate',
@@ -409,8 +406,8 @@ Basic scheduler placed at `scheduling/Scheduler`;
 ### Usage
 
 ```ts
-import { GoogleTranslator } from '@translate-tools/core/translators';
-import { Scheduler } from '@translate-tools/core/scheduling/Scheduler';
+import { GoogleTranslator } from 'anylang/translators';
+import { Scheduler } from 'anylang/scheduling/Scheduler';
 
 // We use google translator API for translate requests
 const translator = new GoogleTranslator();
@@ -486,10 +483,10 @@ This class is just a decorator over `Scheduler` that allow you to use standard o
 ### Usage
 
 ```ts
-import { GoogleTranslator } from '@translate-tools/core/translators';
-import { Scheduler } from '@translate-tools/core/scheduling/Scheduler';
-import { SchedulerWithCache } from '@translate-tools/core/scheduling/SchedulerWithCache';
-import { ICache } from '@translate-tools/core/utils/Cache';
+import { GoogleTranslator } from 'anylang/translators';
+import { Scheduler } from 'anylang/scheduling/Scheduler';
+import { SchedulerWithCache } from 'anylang/scheduling/SchedulerWithCache';
+import { ICache } from 'anylang/utils/Cache';
 
 // Dummy implementation of cache
 class CacheInRam implements ICache {
@@ -561,7 +558,7 @@ TTS modules returns buffer with audio.
 ## TTS usage
 
 ```ts
-import { GoogleTTS } from '@translate-tools/core/tts/GoogleTTS';
+import { GoogleTTS } from 'anylang/tts/GoogleTTS';
 
 const tts = new GoogleTTS();
 tts.getAudioBuffer('Some demo text to speak', 'en').then(({ buffer, type }) => {
