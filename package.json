@@ -21,16 +21,14 @@
 		"url": "https://github.com/translate-tools/core"
 	},
 	"scripts": {
-		"build": "gulp",
-		"build:full": "npm run clean:build && npm run build",
-		"clean:build": "rm -rf ./dist",
-		"prettify": "prettier --write **/*.{ts,tsx,js} && eslint --fix .",
+		"test": "vitest",
+		"build": "rm -rf ./dist && gulp",
 		"lint": "prettier \"{*,**/*}.{ts,tsx,js,jsx}\" --check && eslint --max-warnings 0 .",
-		"publish": "npm run build:full && cd ./dist && npm publish",
-		"publish:patch": "npm version patch && npm run publish",
-		"publish:minor": "npm version minor && npm run publish",
-		"prepare": "husky",
-		"test": "vitest"
+		"prettify": "prettier --write **/*.{ts,tsx,js} && eslint --fix .",
+		"release": "npm run build && cd ./dist && npm publish",
+		"release:patch": "npm version patch && npm run release",
+		"release:minor": "npm version minor && npm run release",
+		"prepare": "husky"
 	},
 	"engines": {
 		"node": ">=18"
