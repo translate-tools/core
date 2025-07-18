@@ -1,16 +1,22 @@
 [![](https://img.shields.io/npm/v/anylang.svg)](https://www.npmjs.com/package/anylang) ![](https://img.shields.io/npm/l/anylang) [![](https://img.shields.io/github/contributors/translate-tools/core)](https://github.com/translate-tools/core/graphs/contributors) [![CodeQL](https://github.com/translate-tools/core/actions/workflows/codeql.yml/badge.svg?branch=master&event=push)](https://github.com/translate-tools/core/actions/workflows/codeql.yml?branch=master&event=push)
 
-The translate tools core is a kit of translation primitives.
+The **AnyLang** kit is purposed to build your own translation system.
 
-The package contains translators, scheduler for translation tasks, tex-to-speech (TTS), some utils and standardized types for a build a large systems.
+This package provides next translation primitives:
+- **Translators**. Bindings to a popular translation APIs, LLMs, and free translation services like Google Translate, Bing, Yandex, etc.
+- **Translation schedulers**, to batch many calls to translator into single request.
+- **Text-to-speech modules**, to make audio of text.
+- **Language utils**, to manage language codes, and aliases between different ISO standards and formats
+- **Processing utils** like text multiplexing tools, cache management, etc.
+- **Consistent interfaces**. You may use presets, like `ChatGPTLLMTranslator` or you may compose configuration yourself, from your own implementation of LLM fetcher and LLM translator, and use it natively with other primitives.
 
-Use this package if you need default implementations of translation primitives. Use a types of this package, to implement your own entities and to make it compatible with a numerous utils implemented by other people.
-
-Feel free to [open a new issue](https://github.com/translate-tools/core/issues) and request a primitives that needs in your project and will useful for other people.
+This package is a part of [TranslateTools project](https://github.com/translate-tools).
 
 [![](https://primebits.org/badges/built-by.svg)](https://primebits.org)
 
 # Usage
+
+Star the project repo, help us to make it popular [![](https://img.shields.io/github/stars/translate-tools/core)](https://github.com/translate-tools/core)
 
 Install this package via `npm install anylang`
 
@@ -673,9 +679,9 @@ type TranslatorOptions<O extends Record<any, any> = {}> = O & {
 
 # Help to us
 
-You can support the project to help it maintain independence and high quality.
+Star the project repo, help us to make it popular [![](https://img.shields.io/github/stars/translate-tools/core)](https://github.com/translate-tools/core)
 
-The most valuable thing you can do is to **spread the word about this package**. Tell about this package to your team and start use it.
+The most valuable thing you can do to support the project if you like it, is to **spread the word about this package**. Tell about `anylang` to your team and start use it.
 
 The more users project have, the better its quality, since we can find edge cases faster and improve code design.
 
