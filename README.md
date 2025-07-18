@@ -75,6 +75,21 @@ Package includes translators implementations for most popular services.
 - `YandexTranslator` - uses a free API of service https://translate.yandex.ru. This service have aggressive bots protection, so it sometimes show page with captcha challenge and blocks API requests until you go to page and will pass challenge or change your IP
 - `TartuNLPTranslator` - Uses a free API https://github.com/TartuNLP/translation-api built with TartuNLP's public NMT engines. Translator have good quality, but strict rate limits. See API docs: https://api.tartunlp.ai/translation/docs and Demo: https://translate.ut.ee/
 
+Example of use
+
+```ts
+import { YandexTranslator } from 'anylang/translators';
+
+const translator = new YandexTranslator();
+
+// You can translate single text
+translator
+  .translate('Hello world', 'en', 'de')
+  .then(console.log);
+
+// will print "Hallo Welt" in console
+```
+
 ## Unstable translators
 
 **Unstable** translators is placed in `unstable` subdirectory, because it is not purposed for high intensive use because of strict rate limits or other problems.
@@ -85,7 +100,50 @@ Unstable translators **may be removed at any time**.
 - `LingvaTranslate` - uses public instances of [LingvaTranslate](https://github.com/thedaviddelta/lingva-translate) that is a Google Translate proxy
 - `ReversoTranslator` - uses a free API of service https://www.reverso.net/text-translation
 
+Example of use
+
+```ts
+import { DuckDuckGoLLMTranslator } from 'anylang/translators/unstable';
+
+const translator = new DuckDuckGoLLMTranslator();
+
+// You can translate single text
+translator
+  .translate('Hello world', 'en', 'de')
+  .then(console.log);
+
+// will print "Hallo Welt" in console
+```
+
 ## Translators that require API keys
+
+### LLM translators
+
+There are few LLM translators configuration is provided
+- `ChatGPTLLMTranslator`
+- `GeminiLLMTranslator`
+
+Example of use is
+
+```ts
+import { ChatGPTLLMTranslator } from 'anylang/translators';
+
+const translator = new ChatGPTLLMTranslator({
+	apiKey: 'YOUR_SECRET_TOKEN_HERE',
+	// Optional config
+	apiOrigin: 'https://api.openai.com',
+	model: 'gpt-4o-mini',
+});
+
+// You can translate single text
+translator
+  .translate('Hello world', 'en', 'de')
+  .then(console.log);
+
+// will print "Hallo Welt" in console
+```
+
+If you want, you may build your own LLM translator from primitives in subdirectory `LLMTranslators`.
 
 ### DeepLTranslator
 
