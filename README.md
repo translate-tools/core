@@ -22,15 +22,19 @@ import { MicrosoftTranslator } from 'anylang/translators';
 const translator = new MicrosoftTranslator();
 
 // You can translate single text
-await translator.translate('Hello world', 'en', 'de');
+translator.translate('Hello world', 'en', 'de').then(console.log);
 
-// will return string: "Hallo Welt"
+// will print string: "Hallo Welt"
 
 // and you can translate array of texts
-await translator.translateBatch(['I am Anthony', 'How are you?'], 'en', 'de');
+translator
+  .translateBatch(['I am Anthony', 'How are you?'], 'en', 'de')
+  .then(console.log);
 
-// will return array of translated strings: ["Ich bin Anthony", "Wie sind Sie?"]
+// will print array of translated strings: ["Ich bin Anthony", "Wie sind Sie?"]
 ```
+
+See a [Live Demo at StackBlitz](https://stackblitz.com/edit/stackblitz-starters-2kwuu5kt?file=index.js)
 
 ## ESM modules
 
