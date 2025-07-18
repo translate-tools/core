@@ -404,7 +404,7 @@ export class Scheduler implements IScheduler {
 	 * Return first item from queue and delete it from queue
 	 * Items is sorted by priority
 	 */
-	private getItemFromTranslateQueue = (): IteratorStep<TaskContainer> => {
+	private readonly getItemFromTranslateQueue = (): IteratorStep<TaskContainer> => {
 		return {
 			done: this.translateQueue.length === 0,
 			value: this.translateQueue.pop() ?? null,

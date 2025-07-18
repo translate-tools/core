@@ -1,3 +1,5 @@
+import { escapeRegExp } from './strings';
+
 interface Options {
 	tokenStart?: string;
 	tokenEnd?: string;
@@ -83,10 +85,7 @@ export class Multiplexor {
 
 			if (!token) return text;
 
-			return text.replace(
-				new RegExp(this.escapeRegExp(token), 'g'),
-				`&${index + 1}:`,
-			);
+			return text.replace(new RegExp(escapeRegExp(token), 'g'), `&${index + 1}:`);
 		}, text);
 	}
 
@@ -98,9 +97,5 @@ export class Multiplexor {
 
 			return text.replace(new RegExp(`&${index + 1}:`, 'g'), token);
 		}, text);
-	}
-
-	private escapeRegExp(text: string) {
-		return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 	}
 }

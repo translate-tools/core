@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 /* eslint-disable @typescript-eslint/require-await */
 import { BaseTranslator } from './BaseTranslator';
 import { langCode, langCodeWithAuto } from './Translator';

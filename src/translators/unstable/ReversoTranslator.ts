@@ -42,7 +42,7 @@ export class ReversoTranslator extends BaseTranslator {
 		}
 	}
 
-	private langMap: Record<string, string> = {
+	private readonly langMap: Record<string, string> = {
 		en: 'eng',
 		ar: 'ara',
 		nl: 'dut',

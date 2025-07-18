@@ -21,6 +21,18 @@ const fixedLanguagesMap: Record<string, string> = {
 };
 
 /**
+ * Map ISO lang codes to google translator lang codes
+ */
+const getFixedLanguage = (lang: langCodeWithAuto) => {
+	if (lang === 'zh') return 'zh-CN';
+	return fixedLanguagesMap[lang] ?? lang;
+};
+
+const encodeForBatch = (textList: string[]) => {
+	return textList.map((text, i) => `<pre><a i="${i}">${text}</a></pre>`);
+};
+
+/**
  * Raw languages array
  */
 // eslint-disable
@@ -98,14 +110,6 @@ export abstract class AbstractGoogleTranslator extends BaseTranslator {
 	public getRequestsTimeout() {
 		return 300;
 	}
-
-	/**
-	 * Map ISO lang codes to google translator lang codes
-	 */
-	protected getFixedLanguage(lang: langCodeWithAuto) {
-		if (lang === 'zh') return 'zh-CN';
-		return fixedLanguagesMap[lang] ?? lang;
-	}
 }
 
 /**
@@ -116,7 +120,7 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 
 	public checkLimitExceeding(text: string | string[]) {
 		if (Array.isArray(text)) {
-			const encodedText = this.encodeForBatch(text).join('');
+			const encodedText = encodeForBatch(text).join('');
 			const extra = encodedText.length - this.getLengthLimit();
 			return extra > 0 ? extra : 0;
 		} else {
@@ -131,9 +135,9 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 
 			const data = {
 				client: 't',
-				sl: this.getFixedLanguage(from),
-				tl: this.getFixedLanguage(to),
-				hl: this.getFixedLanguage(to),
+				sl: getFixedLanguage(from),
+				tl: getFixedLanguage(to),
+				hl: getFixedLanguage(to),
 				dt: ['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't'],
 				ie: 'UTF-8',
 				oe: 'UTF-8',
@@ -172,7 +176,7 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 	}
 
 	public translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
-		const preparedText = this.encodeForBatch(text);
+		const preparedText = encodeForBatch(text);
 		return getToken(preparedText.join('')).then(({ value: tk }) => {
 			const apiPath = 'https://translate.googleapis.com/translate_a/t';
 
@@ -181,8 +185,8 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 				client: 'te',
 				v: '1.0',
 				format: 'html',
-				sl: this.getFixedLanguage(from),
-				tl: this.getFixedLanguage(to),
+				sl: getFixedLanguage(from),
+				tl: getFixedLanguage(to),
 				tk,
 			};
 
@@ -240,10 +244,6 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 				});
 		});
 	}
-
-	private encodeForBatch(textList: string[]) {
-		return textList.map((text, i) => `<pre><a i="${i}">${text}</a></pre>`);
-	}
 }
 
 /**
@@ -262,8 +262,8 @@ export class GoogleTranslatorTokenFree extends AbstractGoogleTranslator {
 
 		const data = {
 			client: 'dict-chrome-ex',
-			sl: this.getFixedLanguage(from),
-			tl: this.getFixedLanguage(to),
+			sl: getFixedLanguage(from),
+			tl: getFixedLanguage(to),
 			q: text,
 		};
 

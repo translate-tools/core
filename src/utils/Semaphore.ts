@@ -1,3 +1,5 @@
+import { wait } from './time';
+
 interface Options {
 	timeout?: number;
 	hijackPrevention?: boolean;
@@ -38,8 +40,6 @@ export class Semaphore implements ISemaphore {
 		}
 	}
 
-	private wait = (time: number) => new Promise((res) => setTimeout(res, time));
-
 	private lastAccess = 0;
 	private semafor: Promise<void> | null = null;
 	async take() {
@@ -50,7 +50,7 @@ export class Semaphore implements ISemaphore {
 			if (this.timeout > 0) {
 				const idle = new Date().getTime() - this.lastAccess;
 				if (idle < this.timeout) {
-					await this.wait(this.timeout - idle);
+					await wait(this.timeout - idle);
 				}
 			}
 
@@ -62,7 +62,7 @@ export class Semaphore implements ISemaphore {
 
 			// Wait random time until 30ms to prevent flow hijacking
 			if (this.hijackPrevention) {
-				await this.wait(Math.floor(Math.random() * 30));
+				await wait(Math.floor(Math.random() * 30));
 			}
 		}
 

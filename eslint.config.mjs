@@ -96,6 +96,13 @@ export default tseslint.config(
 			'@typescript-eslint/dot-notation': 'off',
 			// Disabled, because replaced `type` to `interface` and it makes type is incompatible with an `Record`/object
 			'@typescript-eslint/consistent-type-definitions': 'off',
+			'@typescript-eslint/prefer-readonly': 'error',
+			'class-methods-use-this': [
+				'error',
+				{
+					exceptMethods: ['getLengthLimit', 'getRequestsTimeout'],
+				},
+			],
 			'@typescript-eslint/no-empty-object-type': [
 				'error',
 				{
