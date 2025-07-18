@@ -69,6 +69,8 @@ export class LLMTranslator implements TranslatorInstanceMembers {
 	public async translateBatch(text: string[], from: string, to: string) {
 		let attempt = 0;
 
+		// Retry loop
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		while (true) {
 			try {
 				// first request without delay

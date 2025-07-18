@@ -4,7 +4,7 @@ import { Fetcher } from '../../utils/Fetcher';
 
 let lastYandexRequestSIDTime: number | null = null;
 let yandexTranslateSID: string | null = null;
-let yandexSIDNotFound: boolean = false;
+let yandexSIDNotFound = false;
 
 export function getYandexSID(fetcher: Fetcher) {
 	return new Promise<void>((resolve) => {
@@ -32,11 +32,11 @@ export function getYandexSID(fetcher: Fetcher) {
 
 			fetcher(url, { responseType: 'text' })
 				.then((response) => {
-					const result = (
-						typeof response.data === 'string' ? response.data : ''
-					).match(/sid:\s'[0-9a-f.]+/);
+					const result = /sid:\s'[0-9a-f.]+/.exec(
+						typeof response.data === 'string' ? response.data : '',
+					);
 
-					if (result && result[0] && result[0].length > 7) {
+					if (result?.[0] && result[0].length > 7) {
 						yandexTranslateSID = result[0].substring(6);
 						yandexSIDNotFound = false;
 					} else {
@@ -45,7 +45,7 @@ export function getYandexSID(fetcher: Fetcher) {
 
 					resolve();
 				})
-				.catch((error) => {
+				.catch((error: unknown) => {
 					console.error(error);
 					resolve();
 				});

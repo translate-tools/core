@@ -28,7 +28,7 @@ export interface TranslatorInstanceMembers {
 		text: string[],
 		langFrom: langCodeWithAuto,
 		langTo: langCode,
-	): Promise<Array<string | null>>;
+	): Promise<(string | null)[]>;
 
 	/**
 	 * Check string or array of stings to exceeding a limit

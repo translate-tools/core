@@ -16,7 +16,7 @@ class SimilarityScore {
 		if (this.pipe) return this.pipe;
 
 		this.pipe = pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2').catch(
-			(error) => {
+			(error: unknown) => {
 				this.pipe = null;
 				throw error;
 			},

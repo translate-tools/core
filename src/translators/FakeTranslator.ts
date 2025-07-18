@@ -38,7 +38,9 @@ export class FakeTranslator extends BaseTranslator<{
 					? Math.floor(Math.random() * 1000)
 					: this.options.delay;
 		return new Promise<string>((resolve) => {
-			setTimeout(() => resolve(`*[${from}-${to}]` + text), delay);
+			setTimeout(() => {
+				resolve(`*[${from}-${to}]` + text);
+			}, delay);
 		});
 	}
 

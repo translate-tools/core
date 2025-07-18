@@ -3,7 +3,9 @@ export function deepExploreArray(obj: unknown, depth: number) {
 	let currentObj = obj;
 	while (depth > currentDepth) {
 		if (!Array.isArray(currentObj)) {
-			throw new TypeError('Error while explore array on depth #' + currentDepth);
+			throw new TypeError(
+				'Error while explore array on depth #' + String(currentDepth),
+			);
 		}
 
 		currentObj = currentObj[0];

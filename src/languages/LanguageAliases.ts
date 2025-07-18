@@ -6,7 +6,7 @@ export const createLanguageAliasesMap = (languages: string[]) => {
 	for (const language of complexLanguages) {
 		const simpleLanguage = language.split('-')[0];
 
-		if (!languagesMap[simpleLanguage]) {
+		if (!(simpleLanguage in languagesMap)) {
 			languagesMap[simpleLanguage] = [language];
 			continue;
 		}
@@ -46,6 +46,8 @@ export class LanguageAliases {
 	public get(language: string) {
 		// Return mapped language
 		const languageAliases = this.languagesMaps.normal[language];
+		// Check if key is exists
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (languageAliases) return languageAliases[0];
 
 		// Return language in list

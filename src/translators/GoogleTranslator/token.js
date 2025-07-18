@@ -1,4 +1,5 @@
-/* eslint-disable no-bitwise */
+// This file is generated, so eslint is not needed here
+/* eslint-disable */
 // TKK value from https://github.com/FilipePS/Traduzir-paginas-web/blob/f3a4956a1aa96b7a9124864158a5200827694521/background/translationService.js
 const googleTranslateTKK = '448487.932609646';
 

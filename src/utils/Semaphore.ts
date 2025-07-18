@@ -43,6 +43,8 @@ export class Semaphore implements ISemaphore {
 	private lastAccess = 0;
 	private semafor: Promise<void> | null = null;
 	async take() {
+		// Await loop
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		while (true) {
 			// Wait timeout
 			if (this.timeout > 0) {

@@ -138,13 +138,14 @@ export class Scheduler implements IScheduler {
 		this.semafor = new Semaphore({ timeout: translator.getRequestsTimeout() });
 	}
 
-	private readonly abortedContexts: Set<string> = new Set();
+	private readonly abortedContexts = new Set<string>();
 	// eslint-disable-next-line @typescript-eslint/require-await
 	public async abort(context: string) {
-		const abortTasks = (tasks: Task[]) =>
-			tasks.forEach((task) =>
-				task.reject(new Error('Translation is aborted in scheduler')),
-			);
+		const abortTasks = (tasks: Task[]) => {
+			tasks.forEach((task) => {
+				task.reject(new Error('Translation is aborted in scheduler'));
+			});
+		};
 
 		// Clear tasks
 		for (const task of this.taskContainersStorage) {
@@ -181,7 +182,7 @@ export class Scheduler implements IScheduler {
 			context = '',
 			priority = 0,
 			directTranslate: directTranslateForThisRequest = false,
-		} = options !== undefined ? options : {};
+		} = options ?? {};
 
 		if (this.translator.checkLimitExceeding(text) <= 0) {
 			// Direct translate
@@ -258,7 +259,7 @@ export class Scheduler implements IScheduler {
 		const ctxPrefix = context.length > 0 ? context + ';' : '';
 		return Promise.all(
 			splittedText.map((text, index) =>
-				charsetIndexes.indexOf(index) !== -1
+				charsetIndexes.includes(index)
 					? text
 					: this.makeTask({
 							text,
@@ -393,7 +394,7 @@ export class Scheduler implements IScheduler {
 			.sort((a, b) => a.priority - b.priority);
 
 		if (!this.workerState) {
-			this.runWorker().catch((error) => {
+			this.runWorker().catch((error: unknown) => {
 				throw error;
 			});
 		}
@@ -415,6 +416,8 @@ export class Scheduler implements IScheduler {
 		this.workerState = true;
 
 		let firstIteration = true;
+		// Daemon loop
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		while (true) {
 			// Delay first iteration to await fill the queue, to consider priority better
 			const workerHandleDelay = this.config.taskBatchHandleDelay;
@@ -453,7 +456,7 @@ export class Scheduler implements IScheduler {
 						}
 					}
 				})
-				.catch((reason) => {
+				.catch((reason: unknown) => {
 					console.error(reason);
 
 					for (const task of taskContainer.tasks) {

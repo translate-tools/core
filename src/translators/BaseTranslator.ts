@@ -70,7 +70,7 @@ export abstract class BaseTranslator<C extends Record<string, unknown> = {}>
 		text: string[],
 		langFrom: langCodeWithAuto,
 		langTo: langCode,
-	): Promise<Array<string | null>>;
+	): Promise<(string | null)[]>;
 
 	public checkLimitExceeding(text: string | string[]) {
 		const plainText = Array.isArray(text) ? text.join('') : text;

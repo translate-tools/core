@@ -10,6 +10,10 @@ import eslint from '@eslint/js';
 
 export default tseslint.config(
 	eslint.configs.recommended,
+	tseslint.configs.strict,
+	tseslint.configs.strictTypeChecked,
+	tseslint.configs.stylistic,
+	tseslint.configs.stylisticTypeCheckedOnly,
 	tseslint.configs.recommendedTypeChecked,
 	globalIgnores([
 		'**/*.test.ts',
@@ -53,13 +57,6 @@ export default tseslint.config(
 			'import/no-duplicates': ['error', { 'prefer-inline': true }],
 			'import/newline-after-import': ['error', { count: 1 }],
 
-			'@typescript-eslint/no-empty-object-type': [
-				'error',
-				{
-					allowObjectTypes: 'always',
-				},
-			],
-
 			'unused-imports/no-unused-imports': 'error',
 
 			'simple-import-sort/imports': [
@@ -87,6 +84,24 @@ export default tseslint.config(
 			'prefer-const': 'error',
 
 			'no-use-before-define': 'off',
+
+			// Types
+			// TODO: enable this rule back and remove deprecated entities usage
+			'@typescript-eslint/no-deprecated': 'off',
+			// Disabled, because force programmers to cast anything to `String()` with no profit
+			'@typescript-eslint/restrict-template-expressions': 'off',
+			// Disabled, since case with `or, if empty` is too frequent
+			'@typescript-eslint/prefer-nullish-coalescing': 'off',
+			// Disabled, since conflict with many cases where third party property is not in camelCase
+			'@typescript-eslint/dot-notation': 'off',
+			// Disabled, because replaced `type` to `interface` and it makes type is incompatible with an `Record`/object
+			'@typescript-eslint/consistent-type-definitions': 'off',
+			'@typescript-eslint/no-empty-object-type': [
+				'error',
+				{
+					allowObjectTypes: 'always',
+				},
+			],
 			'@typescript-eslint/no-use-before-define': 'error',
 			'@typescript-eslint/no-unused-vars': [
 				'error',
