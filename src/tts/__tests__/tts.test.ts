@@ -25,7 +25,14 @@ ttsConstructor.map((ttsConstructor) => {
 				new Uint8Array(audioBuffer.buffer),
 			);
 
-			expect(parsedAudioFrame).toMatchSnapshot();
+			expect(parsedAudioFrame.format.bitrate).toBe(64000);
+			expect(parsedAudioFrame.format.codec).toBe('MPEG 2 Layer 3');
+			expect(parsedAudioFrame.format.container).toBe('MPEG');
+			expect(parsedAudioFrame.format.duration).toBeGreaterThan(0);
+			expect(parsedAudioFrame.format.hasAudio).toBe(true);
+			expect(parsedAudioFrame.format.hasVideo).toBe(false);
+			expect(parsedAudioFrame.format.sampleRate).toBe(24000);
+			expect(parsedAudioFrame.format.numberOfSamples).toBeGreaterThan(100_000);
 		});
 
 		// Disable test, to allow TTS to return any lang codes they support
