@@ -20,7 +20,12 @@ export const createLanguageAliasesMap = (languages: string[]) => {
 export class LanguageAliases {
 	private readonly simpleLanguages;
 	private readonly languagesMaps;
-	constructor(private readonly languagesList: string[]) {
+	constructor(
+		private readonly languagesList: string[],
+		private readonly options: {
+			map?: Record<string, string>;
+		} = {},
+	) {
 		// Build map
 		const languagesMap = createLanguageAliasesMap(languagesList);
 		this.languagesMaps = {
@@ -44,15 +49,27 @@ export class LanguageAliases {
 	}
 
 	public get(language: string) {
+		const mappedLanguage = this.getMappedLanguage(language);
+		if (mappedLanguage) return mappedLanguage;
+
 		// Return mapped language
 		const languageAliases = this.languagesMaps.normal[language];
 		// Check if key is exists
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		if (languageAliases) return languageAliases[0];
+		if (languageAliases)
+			return this.getMappedLanguage(languageAliases[0]) ?? languageAliases[0];
 
 		// Return language in list
-		if (this.simpleLanguages.has(language)) return language;
+		if (this.simpleLanguages.has(language))
+			return this.getMappedLanguage(language) ?? language;
 
 		return null;
+	}
+
+	private getMappedLanguage(language: string) {
+		const { map = {} } = this.options;
+
+		// Return mapped language
+		return language in map ? map[language] : null;
 	}
 }
