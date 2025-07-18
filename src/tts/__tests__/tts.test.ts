@@ -37,18 +37,15 @@ ttsConstructor.map((ttsConstructor) => {
 
 		// Disable test, to allow TTS to return any lang codes they support
 		// Users must filter lang codes on their side, to ensure valid ISO codes
-		test.skip(`getSupportedLanguages returns array of supported languages`, async () => {
+		test(`getSupportedLanguages returns array of supported languages`, async () => {
 			const supportedLanguages = ttsConstructor.getSupportedLanguages();
 
 			// Languages array are not empty
 			expect(Array.isArray(supportedLanguages)).toBeTruthy();
-			expect(supportedLanguages.length).not.toEqual(0);
-			expect(supportedLanguages.length > 0).toBeTruthy();
-
-			// All language coded are correct
-			supportedLanguages.forEach((lang) => {
-				expect(isLanguageCodeISO639v1(lang)).toBeTruthy();
-			});
+			expect(supportedLanguages.length).greaterThan(0);
+			expect(supportedLanguages.filter(isLanguageCodeISO639v1).length).greaterThan(
+				0,
+			);
 		});
 	});
 });
