@@ -12,160 +12,80 @@ Feel free to [open a new issue](https://github.com/translate-tools/core/issues) 
 
 # Usage
 
-Install package `npm install anylang`
+Install this package via `npm install anylang`
 
-This package provides CJS and ESM modules both. This docs contains CJS examples, that can be used for both NodeJS and Browser, but if you need to use ESM modules (to make tree-shaking are effective for example), you can add `/esm` prefix for any paths, after package name:
-
-```js
-// Example with import a CommonJS module
-import { GoogleTranslator } from 'anylang/translators';
-```
-
-```js
-// Example with import a ECMAScript module
-import { GoogleTranslator } from 'anylang/esm/translators';
-```
-
-# Migrations
-
-If you update package to a new major version, check [migration guides](https://github.com/translate-tools/core/tree/master/docs/migrations) to do it smooth.
-
-# Translators
-
-Directory `translators` contains a translators interfaces and default implementations.
-
-Translator purpose is translate text from one language to another.
-
-Translators in this package uses 2-letter [ISO 639-1 language codes](https://en.wikipedia.org/wiki/ISO_639-1), but in your translator implementation you can use [ISO 639-2 language codes](https://en.wikipedia.org/wiki/ISO_639-2) too.
-
-Translators have 2 public methods, `translate` for translate single text and `translateBatch` for translate a multiple texts per one request. Method `translateBatch` may have better translation quality for some use cases, because some translator implementations may not just translate every single string independently, but see a context of all strings.
-
-## Translator usage
-
-Example with google translator
-
-```ts
-import { GoogleTranslator } from 'anylang/translators';
-
-const translator = new GoogleTranslator();
-
-// Translate single string
-translator
-	.translate('Hello world', 'en', 'de')
-	.then((translate) => console.log('Translate result', translate));
-
-// Translate multiple strings
-translator
-	.translateBatch(
-		['Hello world', 'Some another text to translate', 'Yet another text'],
-		'en',
-		'de',
-	)
-	.then((translatedTexts) => console.log('Translate result', translatedTexts));
-```
-
-### Use in NodeJS
-
-**For use with nodejs** you have to **specify user agent**. In most cases for nodejs, translator will work incorrectly with not set `User-Agent` header.
-
-```ts
-import { GoogleTranslator } from 'anylang/translators';
-
-const translator = new GoogleTranslator({
-	headers: {
-		'User-Agent':
-			'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36',
-	},
-});
-```
-
-### Custom fetcher
-
-Sometimes you may want to use custom fetcher, to send requests through proxy server, implement retries or cache, etc.
-
-For example, some translators API is **not available in browser, due to CSP policy**, for this cases you may use some [CORS proxy](https://rapidapi.com/guides/cors-proxy-apis) to fix the problem. With this option, translator will use proxy to send requests, keep in mind that those who own the proxy server you use, can see your requests content.
-
-You may pass your implementation of `Fetcher` function to option `fetcher`.
-
-```ts
-import { GoogleTranslator } from 'anylang/translators';
-
-import { Fetcher } from 'anylang/utils/Fetcher';
-import { basicFetcher } from 'anylang/utils/Fetcher/basicFetcher';
-
-// Extend `basicFetcher` with use CORS proxy for all requests
-const fetcher: Fetcher = async (url, options) => {
-	// Use some CORS proxy service as prefix
-	return basicFetcher('https://corsproxy.io/?' + url, options);
-};
-
-const translator = new GoogleTranslator({ fetcher });
-```
-
-You may use any fetcher under the hood, like Axios, Got, or even [postMessage](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage).
-
-## Translators list
-
-Package includes translators implementations for most popular services.
-
-### GoogleTranslator
-
-Uses a free API version of service translate.google.com
-
-Exports 2 implementations `GoogleTranslator` and `GoogleTranslatorTokenFree`, that have the same features, but uses different API endpoints, so you can choose what implementation better for you.
-
-```ts
-import { GoogleTranslator, GoogleTranslatorTokenFree } from 'anylang/translators';
-
-const translator = new GoogleTranslator({
-	headers: {
-		'User-Agent':
-			'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36',
-	},
-});
-
-translator
-	.translate('Hello world', 'en', 'de')
-	.then((translate) => console.log('Translate result', translate));
-
-const translator2 = new GoogleTranslatorTokenFree({
-	headers: {
-		'User-Agent':
-			'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36',
-	},
-});
-
-translator2
-	.translate('Hello world', 'en', 'de')
-	.then((translate) => console.log('Translate result', translate));
-```
-
-### MicrosoftTranslator
-
-Uses a free Microsoft's translation service that is used in Microsoft Edge browser.
+Translate text with one of translators
 
 ```ts
 import { MicrosoftTranslator } from 'anylang/translators';
 
 const translator = new MicrosoftTranslator();
-const translatedText = await translator.translate('Hello world', 'en', 'de');
+
+// You can translate single text
+await translator.translate('Hello world', 'en', 'de');
+
+// will return string: "Hallo Welt"
+
+// and you can translate array of texts
+await translator.translateBatch(['I am Anthony', 'How are you?'], 'en', 'de');
+
+// will return array of translated strings: ["Ich bin Anthony", "Wie sind Sie?"]
 ```
 
-### YandexTranslator
+## ESM modules
 
-Uses a free API of service translate.yandex.ru
+This package provides both CJS and ESM modules.
 
-### TartuNLPTranslator
+In this docs all examples uses CJS modules, if you need to use ESM modules, just add `/esm` prefix for any paths, after a package name like that:
 
-Uses a free API https://github.com/TartuNLP/translation-api built with TartuNLP's public NMT engines
-API docs: https://api.tartunlp.ai/translation/docs
-Demo: https://translate.ut.ee/
+```js
+// Example with import a CommonJS module
+import { GoogleTranslator } from 'anylang/translators';
 
-### ReversoTranslator
+// Example with import an ECMAScript module
+import { GoogleTranslator } from 'anylang/esm/translators';
+```
 
-Uses a free API of service https://www.reverso.net/text-translation
+## Migrations
 
-**Unstable**: this translator are not stable and placed in `unstable` subdirectory. Keep in mind the not stable translators may be removed any time.
+If you update package to a new major version, check [migration guides](https://github.com/translate-tools/core/tree/master/docs/migrations) to do it smooth.
+
+# Translators list
+
+Directory `translators` contains a set of translators and its types and interfaces.
+
+Translator purpose is translate text from one language to another.
+
+Translators in this package uses 2-letter [ISO 639-1 language codes](https://en.wikipedia.org/wiki/ISO_639-1) like `en`, `es`, `ru`, `ja`, etc.
+
+If you want to use another format for language codes, for example [ISO 639-2 language codes](https://en.wikipedia.org/wiki/ISO_639-2), you may implement your own adapter for `Translator` that map languages.
+
+Translators have 2 public methods:
+- `translate` for translate single text
+- `translateBatch` for translate a multiple texts per one request
+
+Method `translateBatch` may have better translation quality for some use cases, because some translator implementations may see a context of all strings.
+
+Package includes translators implementations for most popular services.
+
+## Free translators list
+
+- `GoogleTranslator` and `GoogleTranslatorTokenFree` - both uses a free google translation API. The difference in details of implementation, so you may use any
+- `MicrosoftTranslator` - uses a free Microsoft's translation service that is used in Microsoft Edge browser
+- `YandexTranslator` - uses a free API of service https://translate.yandex.ru. This service have aggressive bots protection, so it sometimes show page with captcha challenge and blocks API requests until you go to page and will pass challenge or change your IP
+- `TartuNLPTranslator` - Uses a free API https://github.com/TartuNLP/translation-api built with TartuNLP's public NMT engines. Translator have good quality, but strict rate limits. See API docs: https://api.tartunlp.ai/translation/docs and Demo: https://translate.ut.ee/
+
+## Unstable translators
+
+**Unstable** translators is placed in `unstable` subdirectory, because it is not purposed for high intensive use because of strict rate limits or other problems.
+
+Unstable translators **may be removed at any time**.
+
+- `DuckDuckGoLLMTranslator` - uses [Duck.ai](https://duck.ai) API that is a public proxy of OpenAI LLM service. Have strict rate limits
+- `LingvaTranslate` - uses public instances of [LingvaTranslate](https://github.com/thedaviddelta/lingva-translate) that is a Google Translate proxy
+- `ReversoTranslator` - uses a free API of service https://www.reverso.net/text-translation
+
+## Translators that require API keys
 
 ### DeepLTranslator
 
@@ -216,137 +136,81 @@ const paidTranslator = new LibreTranslateTranslator({
 });
 ```
 
-### FakeTranslator
+## Special translators
 
-Fake translator for tests, that returns original string with added prefix.
+You may use `FakeTranslator` for test purposes. This translator is just returns original strings with added prefix
 
-## Translator API
 
-Module `translators/Translator` contains translator interfaces.
+# Advanced use of translators
 
-### TranslatorInstanceMembers
+## Use in NodeJS
 
-Interface describes instance members for a translator
+**For use with nodejs** you have to **specify user agent**. In most cases for nodejs, translator will work incorrectly with not set `User-Agent` header.
 
 ```ts
-interface TranslatorInstanceMembers {
-	/**
-	 * Translate text
-	 * @returns Translated string
-	 */
-	translate(text: string, langFrom: langCodeWithAuto, langTo: langCode): Promise<string>;
+import { GoogleTranslator } from 'anylang/translators';
 
-	/**
-	 * Translate texts array
-	 * @returns Array with translated strings and same length as input array
-	 * @returns Texts that did not translated will replaced to `null`
-	 */
-	translateBatch(
-		text: string[],
-		langFrom: langCodeWithAuto,
-		langTo: langCode,
-	): Promise<Array<string | null>>;
-
-	/**
-	 * Check string or array of stings to exceeding a limit
-	 *
-	 * It need for modules with complexity logic of encoding a strings.
-	 * For example, when in `translateBatch` text merge to string
-	 * and split to chunks by tokens with ID: `<id1>Text 1</id1><id2>Text 2</id2>`
-	 *
-	 * Here checked result of encoding a input data
-	 * @returns number of extra chars
-	 */
-	checkLimitExceeding(text: string | string[]): number;
-
-	/**
-	 * Check supporting of translate direction
-	 */
-	checkDirection?: (langFrom: langCodeWithAuto, langTo: langCode) => boolean;
-
-	/**
-	 * Max length of string for `translate` or total length of strings from array for `translateBatch`
-	 */
-	getLengthLimit(): number;
-
-	/**
-	 * Delay between requests that required by translator to a correct work
-	 */
-	getRequestsTimeout: () => number;
-}
+const translator = new GoogleTranslator({
+	headers: {
+		'User-Agent':
+			'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36',
+	},
+});
 ```
 
-### TranslatorStaticMembers
+## Custom fetcher
 
-Interface describes static members, useful to choose most suitable translator in a list by features
+Sometimes you may want to use custom fetcher, to send requests through proxy server, implement retries or cache, etc.
 
-```ts
-interface TranslatorStaticMembers {
-	/**
-	 * Public translator name to displaying
-	 */
-	readonly translatorName: string;
+For example, some translators API is **not available in browser, due to CSP policy**, for this cases you may use some [CORS proxy](https://rapidapi.com/guides/cors-proxy-apis) to fix the problem. With this option, translator will use proxy to send requests, keep in mind that those who own the proxy server you use, can see your requests content.
 
-	/**
-	 * Is required API key for this module
-	 */
-	isRequiredKey(): boolean;
-
-	/**
-	 * Is it supported value `auto` in `langFrom` argument of `translate` and `translateBatch` methods
-	 */
-	isSupportedAutoFrom(): boolean;
-
-	/**
-	 * Array of supported languages as ISO 639-1 codes
-	 */
-	getSupportedLanguages(): langCode[];
-}
-```
-
-### TranslatorConstructor
-
-Interface describes translator constructor, that have members of `TranslatorStaticMembers` and construct an object with type `TranslatorInstanceMembers`
-
-### TranslatorOptions
-
-Interface describes default options for any translator constructor.
-
-Some translators may ignore some options.
+You may pass your implementation of `Fetcher` function to option `fetcher`.
 
 ```ts
-type TranslatorOptions<O extends Record<any, any> = {}> = O & {
-	/**
-	 * Access key for requests to translator API
-	 */
-	apiKey?: string;
+import { GoogleTranslator } from 'anylang/translators';
 
-	/**
-	 * Union text array to 1 request (or more, but less than usualy anyway).
-	 *
-	 * Option for reduce the number of requests, but it can make artefacts in translated text.
-	 *
-	 * Some modules may not support this feature.
-	 */
-	useMultiplexing?: boolean;
+import { Fetcher } from 'anylang/utils/Fetcher';
+import { basicFetcher } from 'anylang/utils/Fetcher/basicFetcher';
 
-	/**
-	 * Additional headers for requests
-	 */
-	headers?: Record<string, string>;
-
-	/**
-	 * Custom fetcher
-	 */
-	fetcher?: Fetcher;
+// Extend `basicFetcher` with use CORS proxy for all requests
+const fetcher: Fetcher = async (url, options) => {
+	// Use some CORS proxy service as prefix
+	return basicFetcher('https://corsproxy.io/?' + url, options);
 };
+
+const translator = new GoogleTranslator({ fetcher });
 ```
+
+You may use any fetcher under the hood, like Axios, Got, or even [postMessage](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage).
+
 
 # Scheduling
 
-Directory `scheduling` contains primitives to schedule translation, that allow to batch few translation requests to one API request.
+Directory `scheduling` contains primitives to schedule translation, that allows to batch few translation requests to a single API request.
 
 Scheduler are extremely useful for cases when your code intensive calls translation methods, to avoid API rate limit errors and to collect few requests for short time to one request.
+
+## Usage
+
+```ts
+import { GoogleTranslator } from 'anylang/translators';
+import { Scheduler } from 'anylang/scheduling/Scheduler';
+
+// We use google translator API for translate requests
+const translator = new GoogleTranslator();
+const scheduler = new Scheduler(translator, { translatePoolDelay: 100 });
+
+// This text will not be translated immediately,
+// instead it will be added to a batch in queue,
+// and will be translated after 100ms from last update on this batch
+scheduler.translate('Some text for translate', 'en', 'de', { priority: 1 });
+
+// The same with this request, but this text will be translated first, since it have most greater priority (the greater the more important)
+scheduler.translate('Text that must be translated ASAP', 'en', 'de', { priority: 10 });
+
+// Texts with same priority will be batched
+scheduler.translate('Some text for translate', 'en', 'de', { priority: 1 });
+```
 
 ## Scheduler API
 
@@ -398,31 +262,6 @@ export interface IScheduler {
 ```
 
 Scheduler API looks like translator with one public method `translate`. User calls this method any times with any frequency, and scheduler executes requests by its own plan.
-
-## Basic scheduler
-
-Basic scheduler placed at `scheduling/Scheduler`;
-
-### Usage
-
-```ts
-import { GoogleTranslator } from 'anylang/translators';
-import { Scheduler } from 'anylang/scheduling/Scheduler';
-
-// We use google translator API for translate requests
-const translator = new GoogleTranslator();
-const scheduler = new Scheduler(translator, { translatePoolDelay: 100 });
-
-// This text will not translated immediately, instead it will be added to suit batch in queue,
-// and will translated after 100ms after last update this batch
-scheduler.translate('Some text for translate', 'en', 'de', { priority: 1 });
-
-// The same with this request, but this text will translated first, because have most high priority
-scheduler.translate('Text that must be translated ASAP', 'en', 'de', { priority: 10 });
-
-// Texts with same priority will be batched
-scheduler.translate('Some text for translate', 'en', 'de', { priority: 1 });
-```
 
 ### API
 
@@ -479,8 +318,6 @@ interface SchedulerConfig {
 Scheduler with cache placed at `scheduling/SchedulerWithCache` and useful for cases when you needs to cache your translations.
 
 This class is just a decorator over `Scheduler` that allow you to use standard object `ICache` with scheduler.
-
-### Usage
 
 ```ts
 import { GoogleTranslator } from 'anylang/translators';
@@ -646,18 +483,140 @@ Predicate to check is language code are valid [ISO-639v2 code](https://en.wikipe
 
 Returns language codes for selected version of ISO-639
 
-# Donations
 
-You can support the project to help it maintain independence and high quality:
+# API
 
-- tell others about this package
-- [suggest](https://github.com/translate-tools/core/issues/new) new ideas, features and elegant ways to make package better
-- help us by trying to reproduce [unconfirmed bug reports](https://github.com/translate-tools/core/labels/unconfirmed)
-- help us address bugs. Just ping us in issues and start work on PRs
+## Translator API
 
-Also, you can donate to us to vote with money for goal prioritization, to add some feature or fix some bug as soon as possible. Just donate with any method below, then leave transaction details in issue comments, or send email to [contact@vitonsky.net](mailto:contact@vitonsky.net) with issue number or feature request description. For significant donations, we will start work on your request as soon as possible.
+Module `translators/Translator` contains translator interfaces.
 
-- Monero (XMR): 861w7WuFGecR7SMpuf7GX9BBUgGJb1Xdx8z5pCpMrKY2ZeZAzS3mwZeQeJGV5RPpu35fr5dURSm587ewpHYGzNuGKGroQnD
-- Bitcoin (BTC): bc1q2krassq0sa2aphkx37zn374lfjnthr5frm6s7y
-- Ethereum (ETH), Tether USDT (ERC-20): 0x2463d84F46c131886CaE457412e8B6eaBc0b91a7
-- Tron (TRC), Tether USDT (TRC-20): TQezzyzkfMCPJRdnYxNXrUfPj3s7kDeMBL
+### TranslatorInstanceMembers
+
+Interface describes instance members for a translator
+
+```ts
+interface TranslatorInstanceMembers {
+	/**
+	 * Translate text
+	 * @returns Translated string
+	 */
+	translate(text: string, langFrom: langCodeWithAuto, langTo: langCode): Promise<string>;
+
+	/**
+	 * Translate texts array
+	 * @returns Array with translated strings and same length as input array
+	 * @returns Texts that did not translated will replaced to `null`
+	 */
+	translateBatch(
+		text: string[],
+		langFrom: langCodeWithAuto,
+		langTo: langCode,
+	): Promise<Array<string | null>>;
+
+	/**
+	 * Check string or array of stings to exceeding a limit
+	 *
+	 * It need for modules with complexity logic of encoding a strings.
+	 * For example, when in `translateBatch` text merge to string
+	 * and split to chunks by tokens with ID: `<id1>Text 1</id1><id2>Text 2</id2>`
+	 *
+	 * Here checked result of encoding a input data
+	 * @returns number of extra chars
+	 */
+	checkLimitExceeding(text: string | string[]): number;
+
+	/**
+	 * Check supporting of translate direction
+	 */
+	checkDirection?: (langFrom: langCodeWithAuto, langTo: langCode) => boolean;
+
+	/**
+	 * Max length of string for `translate` or total length of strings from array for `translateBatch`
+	 */
+	getLengthLimit(): number;
+
+	/**
+	 * Delay between requests that required by translator to a correct work
+	 */
+	getRequestsTimeout: () => number;
+}
+```
+
+
+## TranslatorStaticMembers
+
+Interface describes static members, useful to choose most suitable translator in a list by features
+
+```ts
+interface TranslatorStaticMembers {
+	/**
+	 * Public translator name to displaying
+	 */
+	readonly translatorName: string;
+
+	/**
+	 * Is required API key for this module
+	 */
+	isRequiredKey(): boolean;
+
+	/**
+	 * Is it supported value `auto` in `langFrom` argument of `translate` and `translateBatch` methods
+	 */
+	isSupportedAutoFrom(): boolean;
+
+	/**
+	 * Array of supported languages as ISO 639-1 codes
+	 */
+	getSupportedLanguages(): langCode[];
+}
+```
+
+### TranslatorConstructor
+
+Interface describes translator constructor, that have members of `TranslatorStaticMembers` and construct an object with type `TranslatorInstanceMembers`
+
+### TranslatorOptions
+
+Interface describes default options for any translator constructor.
+
+Some translators may ignore some options.
+
+```ts
+type TranslatorOptions<O extends Record<any, any> = {}> = O & {
+	/**
+	 * Access key for requests to translator API
+	 */
+	apiKey?: string;
+
+	/**
+	 * Union text array to 1 request (or more, but less than usualy anyway).
+	 *
+	 * Option for reduce the number of requests, but it can make artefacts in translated text.
+	 *
+	 * Some modules may not support this feature.
+	 */
+	useMultiplexing?: boolean;
+
+	/**
+	 * Additional headers for requests
+	 */
+	headers?: Record<string, string>;
+
+	/**
+	 * Custom fetcher
+	 */
+	fetcher?: Fetcher;
+};
+```
+
+# Help to us
+
+You can support the project to help it maintain independence and high quality.
+
+The most valuable thing you can do is to **spread the word about this package**. Tell about this package to your team and start use it.
+
+The more users project have, the better its quality, since we can find edge cases faster and improve code design.
+
+You also could [suggest in issues](https://github.com/translate-tools/core/issues/new) a new ideas, features and elegant ways to make package better.
+
+AnyLang is an open source project, so we are opened for your pull requests.
