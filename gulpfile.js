@@ -70,7 +70,7 @@ function copyMetaFiles() {
 		// Clean package.json
 		gulp.src(['package.json']).pipe(cleanPackageJson()),
 		// Copy other
-		gulp.src(['README.md', 'LICENSE']),
+		gulp.src(['README.md', 'LICENSE', 'CHANGELOG.md']),
 	).pipe(gulp.dest(buildDir));
 }
 

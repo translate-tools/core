@@ -1,6 +1,8 @@
 # folders
 node_modules
 
+*.md
+
 # files
 *.d.ts
 *.html

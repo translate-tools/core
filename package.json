@@ -1,36 +1,40 @@
 {
-	"name": "@translate-tools/core",
-	"version": "2.0.1",
-	"description": "A free and unlimited API for Google Translate, Yandex, Bing",
+	"name": "anylang",
+	"version": "3.0.0",
+	"description": "A translator's kit that uses the free APIs of Google Translate, Yandex, Bing, ChatGPT, and other LLMs",
 	"keywords": [
+		"translation",
 		"translate",
 		"translator",
 		"google",
-		"translate",
 		"yandex",
 		"bing",
-		"api",
+		"deepl",
 		"free",
+		"api",
+		"openai",
+		"chatgpt",
+		"llm",
+		"scheduling",
+		"batch-translation",
 		"language"
 	],
 	"license": "Apache-2.0",
-	"author": "Vitonsky <https://github.com/vitonsky>",
+	"author": "Robert Vitonsky <https://github.com/vitonsky>",
 	"homepage": "https://github.com/translate-tools/core",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/translate-tools/core"
 	},
 	"scripts": {
-		"build": "gulp",
-		"build:full": "npm run clean:build && npm run build",
-		"clean:build": "rm -rf ./dist",
-		"prettify": "prettier --write **/*.{ts,tsx,js} && eslint --fix .",
+		"test": "vitest",
+		"build": "rm -rf ./dist && gulp",
 		"lint": "prettier \"{*,**/*}.{ts,tsx,js,jsx}\" --check && eslint --max-warnings 0 .",
-		"publish": "npm run build:full && cd ./dist && npm publish",
-		"publish:patch": "npm version patch && npm run publish",
-		"publish:minor": "npm version minor && npm run publish",
-		"prepare": "husky",
-		"test": "vitest"
+		"prettify": "prettier --write **/*.{ts,tsx,js} && eslint --fix .",
+		"release": "npm run build && cd ./dist && npm publish",
+		"release:patch": "npm version patch && npm run release",
+		"release:minor": "npm version minor && npm run release",
+		"prepare": "husky"
 	},
 	"engines": {
 		"node": ">=18"
