@@ -1,4 +1,5 @@
 import { z } from 'zod';
+
 import { LLMFetcher } from '..';
 
 export const GeminiLLMResponseSchema = z.object({
@@ -62,10 +63,8 @@ export class GeminiLLMFetcher implements LLMFetcher {
 			);
 		}
 
-		const res = await response.json();
-
 		// validate response structure
-		const parseResult = GeminiLLMResponseSchema.parse(res);
+		const parseResult = GeminiLLMResponseSchema.parse(await response.json());
 
 		// content.parts contains ordered segments that together may form a complete response from the LLM
 		// each segment may contain different types of data (e.g., text, functions, etc.), we join all text parts to get the complete response

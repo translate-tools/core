@@ -1,18 +1,18 @@
 import { readFileSync } from 'fs';
 import path from 'path';
+import { z } from 'zod';
 
-import { TranslatorConstructor } from '../Translator';
 import { isLanguageCodeISO639v1, isLanguageCodeISO639v2 } from '../../languages';
 
-import { GoogleTranslator, GoogleTranslatorTokenFree } from '../GoogleTranslator';
-import { YandexTranslator } from '../YandexTranslator';
-import { TartuNLPTranslator } from '../TartuNLPTranslator';
 import { DeepLTranslator } from '../DeepLTranslator';
-import { LibreTranslateTranslator } from '../unstable/LibreTranslateTranslator';
+import { GoogleTranslator, GoogleTranslatorTokenFree } from '../GoogleTranslator';
 import { ChatGPTLLMTranslator } from '../LLMTranslators/ChatGPTLLMTranslator';
 import { GeminiLLMTranslator } from '../LLMTranslators/GeminiLLMTranslator';
 import { MicrosoftTranslator } from '../MicrosoftTranslator';
-import { z } from 'zod';
+import { TartuNLPTranslator } from '../TartuNLPTranslator';
+import { TranslatorConstructor } from '../Translator';
+import { LibreTranslateTranslator } from '../unstable/LibreTranslateTranslator';
+import { YandexTranslator } from '../YandexTranslator';
 
 const commonTranslatorOptions = {
 	headers: {
@@ -57,9 +57,9 @@ const translatorsWithOptions: TranslatorWithOptions[] = [
 		translator: LibreTranslateTranslator,
 		options: process.env.TEST_LIBRETRANSLATE_API_ENDPOINT
 			? {
-				apiHost: process.env.TEST_LIBRETRANSLATE_API_ENDPOINT,
-				apiKey: process.env.TEST_LIBRETRANSLATE_API_KEY,
-			  }
+					apiHost: process.env.TEST_LIBRETRANSLATE_API_ENDPOINT,
+					apiKey: process.env.TEST_LIBRETRANSLATE_API_KEY,
+				}
 			: {},
 	},
 	{

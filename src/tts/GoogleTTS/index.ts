@@ -1,7 +1,8 @@
 import { bufferToArrayBuffer } from '../../utils/buffers';
-import { TTSAudioBuffer, TTSProviderProps } from '..';
-import { basicFetcher } from '../../utils/Fetcher/basicFetcher';
 import { Fetcher } from '../../utils/Fetcher';
+import { basicFetcher } from '../../utils/Fetcher/basicFetcher';
+
+import { TTSAudioBuffer, TTSProviderProps } from '..';
 
 export class GoogleTTS implements TTSProviderProps {
 	private readonly fetcher;

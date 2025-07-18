@@ -1,5 +1,11 @@
 import 'isomorphic-fetch';
-import { Fetcher, FetcherOptions, FetcherRequestType } from '.';
+
+import {
+	Fetcher,
+	FetcherOptions,
+	FetcherRequestType,
+	FetcherResponseDataByTypeMap,
+} from '.';
 
 export const convertHeadersToMap = (headers: Headers) => {
 	const map = new Map<string, string>();
@@ -15,9 +21,7 @@ export const basicFetcher: Fetcher = async <T extends FetcherRequestType>(
 	{ responseType, ...options }: FetcherOptions<T>,
 ) => {
 	return fetch(url, options).then(async (response) => {
-		const data = await response[
-			responseType as Exclude<FetcherRequestType, 'stream'>
-		]();
+		const data = (await response[responseType]()) as FetcherResponseDataByTypeMap[T];
 
 		const { ok, status, statusText } = response;
 		return {

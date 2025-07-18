@@ -1,7 +1,9 @@
-import { langCode, langCodeWithAuto } from '../Translator';
-import { BaseTranslator } from '../BaseTranslator';
 import { z } from 'zod';
+
 import { LanguageAliases } from '../../languages/LanguageAliases';
+
+import { BaseTranslator } from '../BaseTranslator';
+import { langCode, langCodeWithAuto } from '../Translator';
 
 const ResponseScheme = z
 	.object({

@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import { LLMFetcher } from '.';
+
 import { TranslatorInstanceMembers } from '../Translator';
+import { LLMFetcher } from '.';
 
 export type PromptGenerator = (texts: string[], from: string, to: string) => string;
 
@@ -68,6 +69,8 @@ export class LLMTranslator implements TranslatorInstanceMembers {
 	public async translateBatch(text: string[], from: string, to: string) {
 		let attempt = 0;
 
+		// Retry loop
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		while (true) {
 			try {
 				// first request without delay
@@ -79,7 +82,6 @@ export class LLMTranslator implements TranslatorInstanceMembers {
 					this.config.getPrompt(text, from, to),
 				);
 
-				const textResponse: string[] = JSON.parse(response);
 				const validateResult = z
 					.string()
 					.array()
@@ -87,7 +89,7 @@ export class LLMTranslator implements TranslatorInstanceMembers {
 						message:
 							'The response must be the same length as the requested array',
 					})
-					.parse(textResponse);
+					.parse(JSON.parse(response));
 
 				return validateResult;
 			} catch (error) {

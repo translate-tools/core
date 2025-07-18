@@ -32,5 +32,5 @@
 		"resolveJsonModule": true,
 		"types": ["vitest/globals"]
 	},
-	"include": ["src/*.ts", "src/**/*.ts"]
+	"include": ["**/*.ts"]
 }

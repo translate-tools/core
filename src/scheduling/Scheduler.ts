@@ -1,10 +1,10 @@
-import { ISchedulerTranslateOptions, IScheduler } from '.';
 import {
 	langCode,
 	langCodeWithAuto,
 	TranslatorInstanceMembers,
 } from '../translators/Translator';
 import { Semaphore } from '../utils/Semaphore';
+import { IScheduler, ISchedulerTranslateOptions } from '.';
 
 interface SchedulerConfig {
 	/**
@@ -71,7 +71,7 @@ interface TaskConstructorInternal extends TaskConstructor {
 	attempt?: number;
 
 	resolve: (value: string | PromiseLike<string>) => void;
-	reject: (reason?: any) => void;
+	reject: (reason?: unknown) => void;
 }
 
 interface Task {
@@ -85,7 +85,7 @@ interface Task {
 	attempt: number;
 
 	resolve: (value: string | PromiseLike<string>) => void;
-	reject: (reason?: any) => void;
+	reject: (reason?: unknown) => void;
 }
 
 interface TaskContainer {
@@ -133,21 +133,19 @@ export class Scheduler implements IScheduler {
 	constructor(translator: TranslatorInstanceMembers, config?: SchedulerConfig) {
 		this.translator = translator;
 
-		if (config !== undefined) {
-			for (const key in config) {
-				(this.config as any)[key] = (config as any)[key];
-			}
-		}
+		this.config = { ...this.config, ...config };
 
 		this.semafor = new Semaphore({ timeout: translator.getRequestsTimeout() });
 	}
 
-	private readonly abortedContexts: Set<string> = new Set();
+	private readonly abortedContexts = new Set<string>();
+	// eslint-disable-next-line @typescript-eslint/require-await
 	public async abort(context: string) {
-		const abortTasks = (tasks: Task[]) =>
-			tasks.forEach((task) =>
-				task.reject(new Error('Translation is aborted in scheduler')),
-			);
+		const abortTasks = (tasks: Task[]) => {
+			tasks.forEach((task) => {
+				task.reject(new Error('Translation is aborted in scheduler'));
+			});
+		};
 
 		// Clear tasks
 		for (const task of this.taskContainersStorage) {
@@ -184,7 +182,7 @@ export class Scheduler implements IScheduler {
 			context = '',
 			priority = 0,
 			directTranslate: directTranslateForThisRequest = false,
-		} = options !== undefined ? options : {};
+		} = options ?? {};
 
 		if (this.translator.checkLimitExceeding(text) <= 0) {
 			// Direct translate
@@ -261,15 +259,15 @@ export class Scheduler implements IScheduler {
 		const ctxPrefix = context.length > 0 ? context + ';' : '';
 		return Promise.all(
 			splittedText.map((text, index) =>
-				charsetIndexes.indexOf(index) !== -1
+				charsetIndexes.includes(index)
 					? text
 					: this.makeTask({
-						text,
-						from,
-						to,
-						context: ctxPrefix + `text#${this.contextCounter++}`,
-						priority,
-					  }),
+							text,
+							from,
+							to,
+							context: ctxPrefix + `text#${this.contextCounter++}`,
+							priority,
+						}),
 			),
 		).then((translatedParts) => translatedParts.join(''));
 	}
@@ -317,8 +315,8 @@ export class Scheduler implements IScheduler {
 		for (const taskContainer of this.taskContainersStorage) {
 			// Skip containers with not equal parameters
 			if (
-				['from', 'to', 'context', 'priority'].some(
-					(key) => (params as any)[key] !== (taskContainer as any)[key],
+				(['from', 'to', 'context', 'priority'] as const).some(
+					(key) => params[key] !== taskContainer[key],
 				)
 			)
 				continue;
@@ -364,7 +362,7 @@ export class Scheduler implements IScheduler {
 		// Flush timer
 		if (this.timersMap.has(taskContainer)) {
 			// Due to expectation run on one platform, timer objects will same always
-			globalThis.clearTimeout(this.timersMap.get(taskContainer) as any);
+			globalThis.clearTimeout(this.timersMap.get(taskContainer));
 		}
 
 		this.timersMap.set(
@@ -384,7 +382,7 @@ export class Scheduler implements IScheduler {
 		// Flush timer
 		if (this.timersMap.has(taskContainer)) {
 			// Due to expectation run on one platform, timer objects will same always
-			globalThis.clearTimeout(this.timersMap.get(taskContainer) as any);
+			globalThis.clearTimeout(this.timersMap.get(taskContainer));
 			this.timersMap.delete(taskContainer);
 		}
 
@@ -396,7 +394,9 @@ export class Scheduler implements IScheduler {
 			.sort((a, b) => a.priority - b.priority);
 
 		if (!this.workerState) {
-			this.runWorker();
+			this.runWorker().catch((error: unknown) => {
+				throw error;
+			});
 		}
 	}
 
@@ -404,7 +404,7 @@ export class Scheduler implements IScheduler {
 	 * Return first item from queue and delete it from queue
 	 * Items is sorted by priority
 	 */
-	private getItemFromTranslateQueue = (): IteratorStep<TaskContainer> => {
+	private readonly getItemFromTranslateQueue = (): IteratorStep<TaskContainer> => {
 		return {
 			done: this.translateQueue.length === 0,
 			value: this.translateQueue.pop() ?? null,
@@ -416,6 +416,8 @@ export class Scheduler implements IScheduler {
 		this.workerState = true;
 
 		let firstIteration = true;
+		// Daemon loop
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		while (true) {
 			// Delay first iteration to await fill the queue, to consider priority better
 			const workerHandleDelay = this.config.taskBatchHandleDelay;
@@ -438,7 +440,7 @@ export class Scheduler implements IScheduler {
 			await this.translator
 				.translateBatch(textArray, taskContainer.from, taskContainer.to)
 				.then((result) => {
-					for (const index in taskContainer.tasks) {
+					for (let index = 0; index < taskContainer.tasks.length; index++) {
 						const task = taskContainer.tasks[index];
 
 						const translatedText = result[index];
@@ -454,7 +456,7 @@ export class Scheduler implements IScheduler {
 						}
 					}
 				})
-				.catch((reason) => {
+				.catch((reason: unknown) => {
 					console.error(reason);
 
 					for (const task of taskContainer.tasks) {
@@ -472,7 +474,12 @@ export class Scheduler implements IScheduler {
 		this.workerState = false;
 	}
 
-	private taskErrorHandler(task: Task, error: any, context: string, priority: number) {
+	private taskErrorHandler(
+		task: Task,
+		error: unknown,
+		context: string,
+		priority: number,
+	) {
 		if (this.abortedContexts.has(context)) {
 			task.reject(error);
 			return;

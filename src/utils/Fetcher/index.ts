@@ -1,7 +1,7 @@
 export type FetcherRequestType = 'text' | 'json' | 'arrayBuffer';
 export type FetcherResponseDataByTypeMap = {
 	text: string;
-	json: any;
+	json: unknown;
 	arrayBuffer: ArrayBuffer;
 };
 
@@ -18,7 +18,7 @@ export type FetcherOptions<T extends FetcherRequestType> = {
 	signal?: AbortSignal | null;
 };
 
-export interface FetcherResponse<D = any> {
+export interface FetcherResponse<D = unknown> {
 	readonly headers: Map<string, string>;
 	readonly ok: boolean;
 	readonly status: number;

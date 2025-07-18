@@ -1,7 +1,8 @@
-import { stringify } from 'query-string';
+import queryString from 'query-string';
+import z from 'zod';
 
-import { langCode, langCodeWithAuto } from '../../Translator';
 import { BaseTranslator, TranslatorOptions } from '../../BaseTranslator';
+import { langCode, langCodeWithAuto } from '../../Translator';
 
 export class LibreTranslateTranslator extends BaseTranslator {
 	public static readonly translatorName = 'LibreTranslateTranslator';
@@ -54,7 +55,7 @@ export class LibreTranslateTranslator extends BaseTranslator {
 	}
 
 	public async translate(text: string, from: langCodeWithAuto, to: langCode) {
-		const requestData: Record<any, any> = {
+		const requestData: Record<string, string> = {
 			q: text,
 			source: from,
 			target: to,
@@ -78,17 +79,13 @@ export class LibreTranslateTranslator extends BaseTranslator {
 				'Sec-Fetch-Site': 'same-origin',
 				'Content-Type': 'application/x-www-form-urlencoded',
 			},
-			body: stringify(requestData),
+			body: queryString.stringify(requestData),
 		}).then((rsp) => {
-			if (
-				typeof rsp.data !== 'object' ||
-				rsp.data === null ||
-				typeof (rsp.data as any).translatedText !== 'string'
-			) {
-				throw new TypeError('Unexpected data');
-			}
-
-			return (rsp.data as any).translatedText as string;
+			return z
+				.object({
+					translatedText: z.string(),
+				})
+				.parse(rsp.data, { error: () => 'Unexpected data' }).translatedText;
 		});
 	}
 

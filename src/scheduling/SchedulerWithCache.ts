@@ -1,8 +1,7 @@
 import { langCode, langCodeWithAuto } from '../translators/Translator';
 import { ICache } from '../utils/Cache';
-
-import { IScheduler, ISchedulerTranslateOptions } from '.';
 import { Scheduler } from './Scheduler';
+import { IScheduler, ISchedulerTranslateOptions } from '.';
 
 export class SchedulerWithCache implements IScheduler {
 	private readonly scheduler: Scheduler;
@@ -32,10 +31,12 @@ export class SchedulerWithCache implements IScheduler {
 		const cache = this.cache;
 
 		// Try to get cache
-		const cacheData = await cache.get(trimmedText, from, to).catch((reason) => {
-			console.warn(reason);
-			return null;
-		});
+		const cacheData = await cache
+			.get(trimmedText, from, to)
+			.catch((reason: unknown) => {
+				console.warn(reason);
+				return null;
+			});
 
 		if (cacheData !== null) {
 			return start + cacheData + end;
@@ -73,9 +74,9 @@ export class SchedulerWithCache implements IScheduler {
 	private getTrimmed(text: string) {
 		const match = text.match(this.trimmerRegExp);
 		return {
-			start: match && match[1] ? match[1] : '',
-			text: match && match[2] ? match[2] : '',
-			end: match && match[3] ? match[3] : '',
+			start: match?.[1] || '',
+			text: match?.[2] || '',
+			end: match?.[3] || '',
 		};
 	}
 }

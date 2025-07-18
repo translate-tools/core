@@ -1,5 +1,7 @@
-import { langCode, langCodeWithAuto } from '../../Translator';
+import z from 'zod';
+
 import { BaseTranslator, TranslatorOptions } from '../../BaseTranslator';
+import { langCode, langCodeWithAuto } from '../../Translator';
 
 // FIXME: translator fails the test `Translate many texts with "translateBatch"` - fix it or remove this translator
 export class LingvaTranslate extends BaseTranslator {
@@ -56,7 +58,7 @@ export class LingvaTranslate extends BaseTranslator {
 		const requestUrl = `${this.apiHost}/api/v1/${encodeURIComponent(
 			from,
 		)}/${encodeURIComponent(to)}/${encodeURIComponent(text)}`;
-		return this.fetch(this.wrapUrlToCorsProxy(requestUrl), {
+		return this.fetch(requestUrl, {
 			responseType: 'json',
 			method: 'GET',
 			headers: {
@@ -71,15 +73,11 @@ export class LingvaTranslate extends BaseTranslator {
 				...this.options.headers,
 			},
 		}).then((rsp) => {
-			if (
-				typeof rsp.data !== 'object' ||
-				rsp.data === null ||
-				typeof (rsp.data as any).translation !== 'string'
-			) {
-				throw new TypeError('Unexpected data');
-			}
-
-			return (rsp.data as any).translation as string;
+			return z
+				.object({
+					translation: z.string(),
+				})
+				.parse(rsp.data, { error: () => 'Unexpected data' }).translation;
 		});
 	}
 

@@ -1,10 +1,11 @@
+// This file is generated, so eslint is not needed here
+/* eslint-disable */
 // TKK value from https://github.com/FilipePS/Traduzir-paginas-web/blob/f3a4956a1aa96b7a9124864158a5200827694521/background/translationService.js
 const googleTranslateTKK = '448487.932609646';
 
 //
 // Obfuscated logic: START
 //
-/* eslint-disable no-bitwise */
 
 function shiftLeftOrRightThenSumOrXor(num, optString) {
 	for (let i = 0; i < optString.length - 2; i += 3) {
@@ -85,7 +86,6 @@ function calcHash(query, windowTkk) {
 	return normalizedResult.toString() + '.' + (normalizedResult ^ tkkIndex);
 }
 
-/* eslint-enable no-bitwise */
 //
 // Obfuscated logic: END
 //
