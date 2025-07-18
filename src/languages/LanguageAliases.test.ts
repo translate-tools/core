@@ -61,7 +61,7 @@ describe('Language codes mapping', () => {
 		},
 	});
 
-	test('Complex language codes is converted to a simple aliases with no mapped languages', () => {
+	test('Languages list is contains original languages list + aliases + mapped languages keys', () => {
 		expect(map.getAll()).toStrictEqual([
 			'foo',
 			'bar-A',
@@ -72,6 +72,7 @@ describe('Language codes mapping', () => {
 			'qux',
 			'bar',
 			'baz',
+			'nonExistsLang',
 		]);
 	});
 

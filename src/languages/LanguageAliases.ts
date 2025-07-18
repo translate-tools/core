@@ -44,7 +44,11 @@ export class LanguageAliases {
 
 	public getAll() {
 		return Array.from(
-			new Set([...this.languagesList, ...Object.keys(this.languagesMaps.normal)]),
+			new Set([
+				...this.languagesList,
+				...Object.keys(this.languagesMaps.normal),
+				...Object.keys(this.options.map ?? {}),
+			]),
 		);
 	}
 
