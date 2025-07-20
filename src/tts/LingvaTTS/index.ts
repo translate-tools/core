@@ -1,7 +1,7 @@
 import { Fetcher } from '../../utils/Fetcher';
 import { basicFetcher } from '../../utils/Fetcher/basicFetcher';
 
-import { TTSAudioBuffer, TTSProviderProps } from '..';
+import { TTSAudioBuffer, TTSProviderProps } from '../types';
 
 export class LingvaTTS implements TTSProviderProps {
 	private readonly host;

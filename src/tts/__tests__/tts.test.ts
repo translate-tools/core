@@ -4,7 +4,7 @@ import { isLanguageCodeISO639v1 } from '../../languages/codes';
 
 import { GoogleTTS } from '../GoogleTTS';
 import { LingvaTTS } from '../LingvaTTS';
-import { TTSProvider } from '..';
+import { TTSProvider } from '../types';
 
 const ttsConstructor: TTSProvider[] = [GoogleTTS, LingvaTTS];
 
