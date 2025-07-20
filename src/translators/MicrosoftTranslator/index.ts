@@ -3,7 +3,6 @@ import { z } from 'zod';
 import { LanguageAliases } from '../../languages/LanguageAliases';
 
 import { BaseTranslator } from '../BaseTranslator';
-import { langCode, langCodeWithAuto } from '../Translator';
 
 const ResponseScheme = z
 	.object({
@@ -51,7 +50,7 @@ export class MicrosoftTranslator extends BaseTranslator {
 
 	public static isSupportedAutoFrom = () => true;
 
-	public static getSupportedLanguages(): langCode[] {
+	public static getSupportedLanguages(): string[] {
 		return supportedLanguagesMap.getAll();
 	}
 
@@ -74,7 +73,7 @@ export class MicrosoftTranslator extends BaseTranslator {
 		}
 	}
 
-	public async translate(text: string, from: langCodeWithAuto, to: langCode) {
+	public async translate(text: string, from: string, to: string) {
 		return this.translateBatch([text], from, to).then((resp) => resp[0]);
 	}
 
@@ -120,7 +119,7 @@ export class MicrosoftTranslator extends BaseTranslator {
 		return this.token.value;
 	}
 
-	public async translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
+	public async translateBatch(text: string[], from: string, to: string) {
 		const sourceLanguage = from === 'auto' ? 'auto' : supportedLanguagesMap.get(from);
 		const targetLanguage = supportedLanguagesMap.get(to);
 

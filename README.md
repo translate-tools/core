@@ -237,8 +237,7 @@ You may pass your implementation of `Fetcher` function to option `fetcher`.
 ```ts
 import { GoogleTranslator } from 'anylang/translators';
 
-import { Fetcher } from 'anylang/utils/Fetcher';
-import { basicFetcher } from 'anylang/utils/Fetcher/basicFetcher';
+import { Fetcher, basicFetcher } from 'anylang/utils';
 
 // Extend `basicFetcher` with use CORS proxy for all requests
 const fetcher: Fetcher = async (url, options) => {
@@ -313,8 +312,8 @@ export interface IScheduler {
 	 */
 	translate(
 		text: string,
-		from: langCodeWithAuto,
-		to: langCode,
+		from: string,
+		to: string,
 		options?: ISchedulerTranslateOptions,
 	): Promise<string>;
 
@@ -391,7 +390,7 @@ This class is just a decorator over `Scheduler` that allow you to use standard o
 import { GoogleTranslator } from 'anylang/translators';
 import { Scheduler } from 'anylang/scheduling/Scheduler';
 import { SchedulerWithCache } from 'anylang/scheduling/SchedulerWithCache';
-import { ICache } from 'anylang/utils/Cache';
+import { ICache } from 'anylang/utils';
 
 // Dummy implementation of cache
 class CacheInRam implements ICache {
@@ -568,7 +567,7 @@ interface TranslatorInstanceMembers {
 	 * Translate text
 	 * @returns Translated string
 	 */
-	translate(text: string, langFrom: langCodeWithAuto, langTo: langCode): Promise<string>;
+	translate(text: string, langFrom: string, langTo: string): Promise<string>;
 
 	/**
 	 * Translate texts array
@@ -577,8 +576,8 @@ interface TranslatorInstanceMembers {
 	 */
 	translateBatch(
 		text: string[],
-		langFrom: langCodeWithAuto,
-		langTo: langCode,
+		langFrom: string,
+		langTo: string,
 	): Promise<Array<string | null>>;
 
 	/**
@@ -596,7 +595,7 @@ interface TranslatorInstanceMembers {
 	/**
 	 * Check supporting of translate direction
 	 */
-	checkDirection?: (langFrom: langCodeWithAuto, langTo: langCode) => boolean;
+	checkDirection?: (langFrom: string, langTo: string) => boolean;
 
 	/**
 	 * Max length of string for `translate` or total length of strings from array for `translateBatch`
@@ -635,7 +634,7 @@ interface TranslatorStaticMembers {
 	/**
 	 * Array of supported languages as ISO 639-1 codes
 	 */
-	getSupportedLanguages(): langCode[];
+	getSupportedLanguages(): string[];
 }
 ```
 

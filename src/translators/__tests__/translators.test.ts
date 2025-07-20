@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 import path from 'path';
 import { z } from 'zod';
 
-import { isLanguageCodeISO639v1, isLanguageCodeISO639v2 } from '../../languages';
+import { isLanguageCodeISO639v1, isLanguageCodeISO639v2 } from '../../languages/codes';
 
 import { DeepLTranslator } from '../DeepLTranslator';
 import { GoogleTranslator, GoogleTranslatorTokenFree } from '../GoogleTranslator';

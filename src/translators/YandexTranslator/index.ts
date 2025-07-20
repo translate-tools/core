@@ -3,7 +3,6 @@ import queryString from 'query-string';
 import z from 'zod';
 
 import { BaseTranslator } from '../BaseTranslator';
-import { langCode, langCodeWithAuto } from '../Translator';
 import { getYandexSID } from './getYandexSID';
 
 export class YandexTranslator extends BaseTranslator {
@@ -13,7 +12,7 @@ export class YandexTranslator extends BaseTranslator {
 		return true;
 	}
 
-	public static getSupportedLanguages(): langCode[] {
+	public static getSupportedLanguages(): string[] {
 		// Supported, but not valid languages ['mhr', 'pap', 'ceb', 'mrj', 'udm']
 
 		// eslint-disable
@@ -52,11 +51,11 @@ export class YandexTranslator extends BaseTranslator {
 		}
 	}
 
-	public async translate(text: string, from: langCodeWithAuto, to: langCode) {
+	public async translate(text: string, from: string, to: string) {
 		return this.translateBatch([text], from, to).then((resp) => resp[0]);
 	}
 
-	public async translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
+	public async translateBatch(text: string[], from: string, to: string) {
 		const sid = await getYandexSID(this.fetch);
 		if (sid === null) {
 			throw new Error('Invalid SID');

@@ -1,10 +1,10 @@
 /**
- * @deprecated this type too strict, use `string` instead
+ * @deprecated this type will be removed in future, use `string` instead
  */
 export type langCode = string;
 
 /**
- * @deprecated this type too strict, use `string` instead
+ * @deprecated this type will be removed in future, use `string` instead
  */
 export type langCodeWithAuto = string;
 
@@ -15,8 +15,8 @@ export interface TranslatorInstanceMembers {
 	 */
 	translate(
 		text: string,
-		langFrom: langCodeWithAuto,
-		langTo: langCode,
+		sourceLanguage: string,
+		targetLanguage: string,
 	): Promise<string>;
 
 	/**
@@ -26,8 +26,8 @@ export interface TranslatorInstanceMembers {
 	 */
 	translateBatch(
 		text: string[],
-		langFrom: langCodeWithAuto,
-		langTo: langCode,
+		sourceLanguage: string,
+		targetLanguage: string,
 	): Promise<(string | null)[]>;
 
 	/**
@@ -45,7 +45,7 @@ export interface TranslatorInstanceMembers {
 	/**
 	 * Check supporting of translate direction
 	 */
-	checkDirection?: (langFrom: langCodeWithAuto, langTo: langCode) => boolean;
+	checkDirection?: (sourceLanguage: string, targetLanguage: string) => boolean;
 
 	/**
 	 * Max length of string for `translate` or total length of strings from array for `translateBatch`
@@ -73,14 +73,14 @@ export interface TranslatorStaticMembers {
 	isRequiredKey(): boolean;
 
 	/**
-	 * Is it supported value `auto` in `langFrom` argument of `translate` and `translateBatch` methods
+	 * Is it supported value `auto` in `sourceLanguage` argument of `translate` and `translateBatch` methods
 	 */
 	isSupportedAutoFrom(): boolean;
 
 	/**
 	 * Array of supported languages as ISO 639-1 codes
 	 */
-	getSupportedLanguages(): langCode[];
+	getSupportedLanguages(): string[];
 }
 
 /**

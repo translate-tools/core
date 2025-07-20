@@ -1,5 +1,4 @@
-import { langCode, langCodeWithAuto } from '../translators/Translator';
-import { ICache } from '../utils/Cache';
+import { ICache } from '../utils/cache';
 import { Scheduler } from './Scheduler';
 import { IScheduler, ISchedulerTranslateOptions } from '.';
 
@@ -18,8 +17,8 @@ export class SchedulerWithCache implements IScheduler {
 
 	public async translate(
 		text: string,
-		from: langCodeWithAuto,
-		to: langCode,
+		from: string,
+		to: string,
 		options?: ISchedulerTranslateOptions,
 	) {
 		// Immediately return text without letters
