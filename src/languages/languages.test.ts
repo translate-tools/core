@@ -2,7 +2,7 @@ import {
 	getLanguageCodesISO639,
 	isLanguageCodeISO639v1,
 	isLanguageCodeISO639v2,
-} from '.';
+} from './codes';
 
 describe('isLanguageCodeISO639v2', () => {
 	test('v1 langCodes are valid', () => {

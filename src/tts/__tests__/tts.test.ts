@@ -1,6 +1,6 @@
 import { parseBuffer } from 'music-metadata';
 
-import { isLanguageCodeISO639v1 } from '../../languages';
+import { isLanguageCodeISO639v1 } from '../../languages/codes';
 
 import { GoogleTTS } from '../GoogleTTS';
 import { LingvaTTS } from '../LingvaTTS';
