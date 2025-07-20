@@ -1,7 +1,6 @@
 import queryString from 'query-string';
 
 import { BaseTranslator } from '../BaseTranslator';
-import { langCode, langCodeWithAuto } from '../Translator';
 import { getFixedLanguage, languageAliases } from './languages';
 import { getToken } from './token';
 import { encodeForBatch, parseXMLResponse, visitArrayItems } from './utils';
@@ -14,7 +13,7 @@ export abstract class AbstractGoogleTranslator extends BaseTranslator {
 		return true;
 	}
 
-	public static getSupportedLanguages(): langCode[] {
+	public static getSupportedLanguages(): string[] {
 		return languageAliases.getAll();
 	}
 
@@ -44,7 +43,7 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 		}
 	}
 
-	public translate(text: string, from: langCodeWithAuto, to: langCode) {
+	public translate(text: string, from: string, to: string) {
 		return getToken(text).then(({ value: tk }) => {
 			const apiPath = 'https://translate.google.com/translate_a/single';
 
@@ -90,7 +89,7 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 		});
 	}
 
-	public translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
+	public translateBatch(text: string[], from: string, to: string) {
 		const preparedText = encodeForBatch(text);
 		return getToken(preparedText.join('')).then(({ value: tk }) => {
 			const apiPath = 'https://translate.googleapis.com/translate_a/t';
@@ -167,12 +166,12 @@ export class GoogleTranslator extends AbstractGoogleTranslator {
 export class GoogleTranslatorTokenFree extends AbstractGoogleTranslator {
 	public static readonly translatorName = 'GoogleTranslatorTokenFree';
 
-	public translate = async (text: string, from: langCodeWithAuto, to: langCode) => {
+	public translate = async (text: string, from: string, to: string) => {
 		const [translation] = await this.translateBatch([text], from, to);
 		return translation;
 	};
 
-	public translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
+	public translateBatch(text: string[], from: string, to: string) {
 		const apiPath = 'https://translate.googleapis.com/translate_a/t';
 
 		const data = {

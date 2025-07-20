@@ -1,7 +1,6 @@
 import z from 'zod';
 
 import { BaseTranslator, TranslatorOptions } from '../../BaseTranslator';
-import { langCode, langCodeWithAuto } from '../../Translator';
 
 // FIXME: translator fails the test `Translate many texts with "translateBatch"` - fix it or remove this translator
 export class LingvaTranslate extends BaseTranslator {
@@ -11,7 +10,7 @@ export class LingvaTranslate extends BaseTranslator {
 
 	public static isSupportedAutoFrom = () => true;
 
-	public static getSupportedLanguages(): langCode[] {
+	public static getSupportedLanguages(): string[] {
 		// eslint-disable
 		// prettier-ignore
 		return [
@@ -54,7 +53,7 @@ export class LingvaTranslate extends BaseTranslator {
 		}
 	}
 
-	public async translate(text: string, from: langCodeWithAuto, to: langCode) {
+	public async translate(text: string, from: string, to: string) {
 		const requestUrl = `${this.apiHost}/api/v1/${encodeURIComponent(
 			from,
 		)}/${encodeURIComponent(to)}/${encodeURIComponent(text)}`;
@@ -81,7 +80,7 @@ export class LingvaTranslate extends BaseTranslator {
 		});
 	}
 
-	public async translateBatch(texts: string[], from: langCodeWithAuto, to: langCode) {
+	public async translateBatch(texts: string[], from: string, to: string) {
 		return Promise.all(texts.map((text) => this.translate(text, from, to)));
 	}
 }

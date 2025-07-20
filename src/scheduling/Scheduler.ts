@@ -1,8 +1,4 @@
-import {
-	langCode,
-	langCodeWithAuto,
-	TranslatorInstanceMembers,
-} from '../translators/Translator';
+import { TranslatorInstanceMembers } from '../translators/Translator';
 import { Semaphore } from '../utils/Semaphore';
 import { IScheduler, ISchedulerTranslateOptions } from '.';
 
@@ -50,8 +46,8 @@ interface SchedulerConfig {
 
 interface TaskConstructor {
 	text: string;
-	from: langCodeWithAuto;
-	to: langCode;
+	from: string;
+	to: string;
 
 	/**
 	 * To combine tasks by unique key
@@ -76,8 +72,8 @@ interface TaskConstructorInternal extends TaskConstructor {
 
 interface Task {
 	text: string;
-	from: langCodeWithAuto;
-	to: langCode;
+	from: string;
+	to: string;
 
 	/**
 	 * Current retry attempt
@@ -96,8 +92,8 @@ interface TaskContainer {
 
 	priority: number;
 
-	from: langCodeWithAuto;
-	to: langCode;
+	from: string;
+	to: string;
 	tasks: Task[];
 
 	/**
@@ -174,8 +170,8 @@ export class Scheduler implements IScheduler {
 	private contextCounter = 0;
 	public async translate(
 		text: string,
-		from: langCodeWithAuto,
-		to: langCode,
+		from: string,
+		to: string,
 		options?: ISchedulerTranslateOptions,
 	) {
 		const {
@@ -201,15 +197,15 @@ export class Scheduler implements IScheduler {
 		}
 	}
 
-	private async directTranslate(text: string, from: langCodeWithAuto, to: langCode) {
+	private async directTranslate(text: string, from: string, to: string) {
 		const free = await this.semafor.take();
 		return this.translator.translate(text, from, to).finally(free);
 	}
 
 	private splitAndTranslate(
 		text: string,
-		from: langCodeWithAuto,
-		to: langCode,
+		from: string,
+		to: string,
 		context: string,
 		priority: number,
 	) {

@@ -1,7 +1,6 @@
 import z from 'zod';
 
 import { BaseTranslator } from '../BaseTranslator';
-import { langCode, langCodeWithAuto } from '../Translator';
 
 export class TartuNLPTranslator extends BaseTranslator {
 	public static readonly translatorName = 'TartuNLPTranslator';
@@ -10,7 +9,7 @@ export class TartuNLPTranslator extends BaseTranslator {
 		return false;
 	}
 
-	public static getSupportedLanguages(): langCode[] {
+	public static getSupportedLanguages(): string[] {
 		// eslint-disable
 		// prettier-ignore
 		return [
@@ -39,11 +38,11 @@ export class TartuNLPTranslator extends BaseTranslator {
 		}
 	}
 
-	public async translate(text: string, from: langCodeWithAuto, to: langCode) {
+	public async translate(text: string, from: string, to: string) {
 		return this.translateBatch([text], from, to).then((resp) => resp[0]);
 	}
 
-	public async translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
+	public async translateBatch(text: string[], from: string, to: string) {
 		return this.fetch('https://api.tartunlp.ai/translation/v2', {
 			responseType: 'json',
 			method: 'POST',

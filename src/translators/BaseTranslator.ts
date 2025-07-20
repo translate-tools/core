@@ -1,6 +1,6 @@
 import { basicFetcher } from '../utils/fetcher/basicFetcher';
 import { Fetcher, FetcherOptions, FetcherRequestType } from '../utils/fetcher/types';
-import { langCode, langCodeWithAuto, TranslatorInstanceMembers } from './Translator';
+import { TranslatorInstanceMembers } from './Translator';
 
 export type TranslatorOptions<O extends Record<string, unknown> = {}> = O & {
 	/**
@@ -47,7 +47,7 @@ export abstract class BaseTranslator<C extends Record<string, unknown> = {}>
 
 	public static isSupportedAutoFrom = () => false;
 
-	public static getSupportedLanguages = (): langCode[] => [];
+	public static getSupportedLanguages = (): string[] => [];
 
 	public abstract getLengthLimit(): number;
 
@@ -62,14 +62,14 @@ export abstract class BaseTranslator<C extends Record<string, unknown> = {}>
 
 	abstract translate(
 		text: string,
-		langFrom: langCodeWithAuto,
-		langTo: langCode,
+		sourceLanguage: string,
+		targetLanguage: string,
 	): Promise<string>;
 
 	abstract translateBatch(
 		text: string[],
-		langFrom: langCodeWithAuto,
-		langTo: langCode,
+		sourceLanguage: string,
+		targetLanguage: string,
 	): Promise<(string | null)[]>;
 
 	public checkLimitExceeding(text: string | string[]) {

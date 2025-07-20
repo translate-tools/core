@@ -1,7 +1,6 @@
 import z from 'zod';
 
 import { BaseTranslator } from '../BaseTranslator';
-import { langCode } from '../Translator';
 
 /**
  * This module did not test too ago
@@ -13,7 +12,7 @@ export class ReversoTranslator extends BaseTranslator {
 		return false;
 	}
 
-	public static getSupportedLanguages(): langCode[] {
+	public static getSupportedLanguages(): string[] {
 		// eslint-disable
 		// prettier-ignore
 		return [
@@ -60,7 +59,7 @@ export class ReversoTranslator extends BaseTranslator {
 		ja: 'jpn',
 	};
 
-	public translate(text: string, from: langCode, to: langCode) {
+	public translate(text: string, from: string, to: string) {
 		const localFrom = this.langMap[from];
 		const localTo = this.langMap[to];
 
@@ -97,7 +96,7 @@ export class ReversoTranslator extends BaseTranslator {
 		});
 	}
 
-	public translateBatch(text: string[], langFrom: langCode, langTo: langCode) {
-		return Promise.all(text.map((text) => this.translate(text, langFrom, langTo)));
+	public translateBatch(text: string[], from: string, to: string) {
+		return Promise.all(text.map((text) => this.translate(text, from, to)));
 	}
 }

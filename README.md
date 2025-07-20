@@ -312,8 +312,8 @@ export interface IScheduler {
 	 */
 	translate(
 		text: string,
-		from: langCodeWithAuto,
-		to: langCode,
+		from: string,
+		to: string,
 		options?: ISchedulerTranslateOptions,
 	): Promise<string>;
 
@@ -567,7 +567,7 @@ interface TranslatorInstanceMembers {
 	 * Translate text
 	 * @returns Translated string
 	 */
-	translate(text: string, langFrom: langCodeWithAuto, langTo: langCode): Promise<string>;
+	translate(text: string, langFrom: string, langTo: string): Promise<string>;
 
 	/**
 	 * Translate texts array
@@ -576,8 +576,8 @@ interface TranslatorInstanceMembers {
 	 */
 	translateBatch(
 		text: string[],
-		langFrom: langCodeWithAuto,
-		langTo: langCode,
+		langFrom: string,
+		langTo: string,
 	): Promise<Array<string | null>>;
 
 	/**
@@ -595,7 +595,7 @@ interface TranslatorInstanceMembers {
 	/**
 	 * Check supporting of translate direction
 	 */
-	checkDirection?: (langFrom: langCodeWithAuto, langTo: langCode) => boolean;
+	checkDirection?: (langFrom: string, langTo: string) => boolean;
 
 	/**
 	 * Max length of string for `translate` or total length of strings from array for `translateBatch`
@@ -634,7 +634,7 @@ interface TranslatorStaticMembers {
 	/**
 	 * Array of supported languages as ISO 639-1 codes
 	 */
-	getSupportedLanguages(): langCode[];
+	getSupportedLanguages(): string[];
 }
 ```
 

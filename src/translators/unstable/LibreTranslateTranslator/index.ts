@@ -2,7 +2,6 @@ import queryString from 'query-string';
 import z from 'zod';
 
 import { BaseTranslator, TranslatorOptions } from '../../BaseTranslator';
-import { langCode, langCodeWithAuto } from '../../Translator';
 
 export class LibreTranslateTranslator extends BaseTranslator {
 	public static readonly translatorName = 'LibreTranslateTranslator';
@@ -11,7 +10,7 @@ export class LibreTranslateTranslator extends BaseTranslator {
 
 	public static isSupportedAutoFrom = () => true;
 
-	public static getSupportedLanguages(): langCode[] {
+	public static getSupportedLanguages(): string[] {
 		// eslint-disable
 		// prettier-ignore
 		return [
@@ -54,7 +53,7 @@ export class LibreTranslateTranslator extends BaseTranslator {
 		}
 	}
 
-	public async translate(text: string, from: langCodeWithAuto, to: langCode) {
+	public async translate(text: string, from: string, to: string) {
 		const requestData: Record<string, string> = {
 			q: text,
 			source: from,
@@ -89,7 +88,7 @@ export class LibreTranslateTranslator extends BaseTranslator {
 		});
 	}
 
-	public async translateBatch(texts: string[], from: langCodeWithAuto, to: langCode) {
+	public async translateBatch(texts: string[], from: string, to: string) {
 		return Promise.all(texts.map((text) => this.translate(text, from, to)));
 	}
 }

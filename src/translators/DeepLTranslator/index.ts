@@ -1,7 +1,6 @@
 import z from 'zod';
 
 import { BaseTranslator, TranslatorOptions } from '../BaseTranslator';
-import { langCode, langCodeWithAuto } from '../Translator';
 
 export type DeepLTranslatorOptions = {
 	apiKey: string;
@@ -14,7 +13,7 @@ export class DeepLTranslator extends BaseTranslator<DeepLTranslatorOptions> {
 
 	public static isSupportedAutoFrom = () => true;
 
-	public static getSupportedLanguages(): langCode[] {
+	public static getSupportedLanguages(): string[] {
 		// eslint-disable
 		// prettier-ignore
 		return [
@@ -59,11 +58,11 @@ export class DeepLTranslator extends BaseTranslator<DeepLTranslatorOptions> {
 		}
 	}
 
-	public async translate(text: string, from: langCodeWithAuto, to: langCode) {
+	public async translate(text: string, from: string, to: string) {
 		return this.translateBatch([text], from, to).then((resp) => resp[0]);
 	}
 
-	public async translateBatch(text: string[], from: langCodeWithAuto, to: langCode) {
+	public async translateBatch(text: string[], from: string, to: string) {
 		// eslint-disable-next-line camelcase
 		const requestBody: Record<string, string | string[]> = { text, target_lang: to };
 
