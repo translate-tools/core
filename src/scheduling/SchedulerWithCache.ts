@@ -1,5 +1,5 @@
 import { langCode, langCodeWithAuto } from '../translators/Translator';
-import { ICache } from '../utils/Cache';
+import { ICache } from '../utils/cache';
 import { Scheduler } from './Scheduler';
 import { IScheduler, ISchedulerTranslateOptions } from '.';
 
