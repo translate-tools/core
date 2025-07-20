@@ -1,4 +1,6 @@
 export * from './BaseTranslator';
+export * from './Translator';
+export * from './FakeTranslator';
 
 // Stable translators
 export * from './MicrosoftTranslator';
