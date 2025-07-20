@@ -86,8 +86,6 @@ export default tseslint.config(
 			'no-use-before-define': 'off',
 
 			// Types
-			// TODO: enable this rule back and remove deprecated entities usage
-			'@typescript-eslint/no-deprecated': 'off',
 			// Disabled, because force programmers to cast anything to `String()` with no profit
 			'@typescript-eslint/restrict-template-expressions': 'off',
 			// Disabled, since case with `or, if empty` is too frequent
