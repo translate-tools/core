@@ -237,8 +237,7 @@ You may pass your implementation of `Fetcher` function to option `fetcher`.
 ```ts
 import { GoogleTranslator } from 'anylang/translators';
 
-import { Fetcher } from 'anylang/utils/Fetcher';
-import { basicFetcher } from 'anylang/utils/Fetcher/basicFetcher';
+import { Fetcher, basicFetcher } from 'anylang/utils/fetcher';
 
 // Extend `basicFetcher` with use CORS proxy for all requests
 const fetcher: Fetcher = async (url, options) => {

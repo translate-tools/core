@@ -1,5 +1,5 @@
-import { Fetcher, FetcherOptions, FetcherRequestType } from '../utils/Fetcher';
-import { basicFetcher } from '../utils/Fetcher/basicFetcher';
+import { basicFetcher } from '../utils/fetcher/basicFetcher';
+import { Fetcher, FetcherOptions, FetcherRequestType } from '../utils/fetcher/types';
 import { langCode, langCodeWithAuto, TranslatorInstanceMembers } from './Translator';
 
 export type TranslatorOptions<O extends Record<string, unknown> = {}> = O & {

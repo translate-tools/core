@@ -1,6 +1,6 @@
 // Source: https://github.com/FilipePS/Traduzir-paginas-web/blob/f3a4956a1aa96b7a9124864158a5200827694521/background/translationService.js
 
-import { Fetcher } from '../../utils/Fetcher';
+import { Fetcher } from '../../utils/fetcher/types';
 
 let lastYandexRequestSIDTime: number | null = null;
 let yandexTranslateSID: string | null = null;

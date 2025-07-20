@@ -1,6 +1,6 @@
 import { bufferToArrayBuffer } from '../../utils/buffers';
-import { Fetcher } from '../../utils/Fetcher';
-import { basicFetcher } from '../../utils/Fetcher/basicFetcher';
+import { basicFetcher } from '../../utils/fetcher/basicFetcher';
+import { Fetcher } from '../../utils/fetcher/types';
 
 import { TTSAudioBuffer, TTSProviderProps } from '../types';
 

@@ -5,7 +5,7 @@ import {
 	FetcherOptions,
 	FetcherRequestType,
 	FetcherResponseDataByTypeMap,
-} from '.';
+} from './types';
 
 export const convertHeadersToMap = (headers: Headers) => {
 	const map = new Map<string, string>();
@@ -16,6 +16,9 @@ export const convertHeadersToMap = (headers: Headers) => {
 	return map;
 };
 
+/**
+ * Basic implementation of API fetcher
+ */
 export const basicFetcher: Fetcher = async <T extends FetcherRequestType>(
 	url: string,
 	{ responseType, ...options }: FetcherOptions<T>,
