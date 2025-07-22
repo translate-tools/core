@@ -1,5 +1,5 @@
 /**
- * This code taken from https://github.com/zlargon/google-tts/blob/42bae63cf406c3cf20521e0cf36cbc5d9b9dce31/test/split-long-text.test.js
+ * This code taken from https://github.com/zlargon/google-tts/blob/42bae63cf406c3cf20521e0cf36cbc5d9b9dce31/src/splitLongText.ts
  * This code is under MIT license (2016 Leon Huang)
  */
 
