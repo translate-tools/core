@@ -1,6 +1,7 @@
 // Foundation utils
 export * from './fetcher';
 export * from './cache';
+export * from './text';
 
 // Additional utils
 export * from './Multiplexor';

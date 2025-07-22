@@ -1,3 +1,7 @@
+# 3.2.0
+
+- [#127](https://github.com/translate-tools/core/pull/127) - added text util to split long text into array of small strings
+
 # 3.0.0
 
 - [#111](https://github.com/translate-tools/core/pull/111) - implemented LLM translators.
