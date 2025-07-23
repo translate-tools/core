@@ -45,7 +45,7 @@ const supportedLanguagesMap = new LanguageAliases([
 ]);
 // eslint-enable
 
-export class MicrosoftTranslator extends BaseTranslator {
+export class MicrosoftTranslator extends BaseTranslator<{ tokenLifetime?: number }> {
 	public static readonly translatorName = 'MicrosoftTranslator';
 
 	public static isSupportedAutoFrom = () => true;
@@ -75,48 +75,6 @@ export class MicrosoftTranslator extends BaseTranslator {
 
 	public async translate(text: string, from: string, to: string) {
 		return this.translateBatch([text], from, to).then((resp) => resp[0]);
-	}
-
-	private token:
-		| {
-				value: string;
-				issuedAt: number;
-		  }
-		| Promise<string>
-		| null = null;
-	private async getToken() {
-		// Wait resolution if pending
-		if (this.token instanceof Promise) return this.token;
-
-		// Fetch new token
-		if (!this.token || this.token.issuedAt < 60_000) {
-			this.token = this.fetch('https://edge.microsoft.com/translate/auth', {
-				responseType: 'text',
-				method: 'GET',
-				headers: {
-					accept: '*/*',
-					'accept-language':
-						'zh-TW,zh;q=0.9,ja;q=0.8,zh-CN;q=0.7,en-US;q=0.6,en;q=0.5',
-					'cache-control': 'no-cache',
-					pragma: 'no-cache',
-					priority: 'u=1, i',
-					'referrer-policy': 'strict-origin-when-cross-origin',
-					'sec-fetch-dest': 'empty',
-					'sec-fetch-mode': 'cors',
-					'sec-fetch-site': 'none',
-					'sec-fetch-storage-access': 'active',
-				},
-				body: null,
-			}).then(({ data: token }) => {
-				this.token = { value: token, issuedAt: Date.now() };
-				return token;
-			});
-
-			return await this.token;
-		}
-
-		// Use cached value
-		return this.token.value;
 	}
 
 	public async translateBatch(text: string[], from: string, to: string) {
@@ -172,5 +130,48 @@ export class MicrosoftTranslator extends BaseTranslator {
 					.join(' '),
 			);
 		});
+	}
+
+	protected token:
+		| {
+				value: string;
+				issuedAt: number;
+		  }
+		| Promise<string>
+		| null = null;
+	protected async getToken() {
+		// Wait resolution if pending
+		if (this.token instanceof Promise) return this.token;
+
+		// Fetch new token
+		const tokenLifetime = this.options.tokenLifetime ?? 30_000;
+		if (!this.token || Date.now() - this.token.issuedAt > tokenLifetime) {
+			this.token = this.fetch('https://edge.microsoft.com/translate/auth', {
+				responseType: 'text',
+				method: 'GET',
+				headers: {
+					accept: '*/*',
+					'accept-language':
+						'zh-TW,zh;q=0.9,ja;q=0.8,zh-CN;q=0.7,en-US;q=0.6,en;q=0.5',
+					'cache-control': 'no-cache',
+					pragma: 'no-cache',
+					priority: 'u=1, i',
+					'referrer-policy': 'strict-origin-when-cross-origin',
+					'sec-fetch-dest': 'empty',
+					'sec-fetch-mode': 'cors',
+					'sec-fetch-site': 'none',
+					'sec-fetch-storage-access': 'active',
+				},
+				body: null,
+			}).then(({ data: token }) => {
+				this.token = { value: token, issuedAt: Date.now() };
+				return token;
+			});
+
+			return await this.token;
+		}
+
+		// Use cached value
+		return this.token.value;
 	}
 }
