@@ -9,6 +9,41 @@ beforeEach(() => {
 	fetchMock.mockClear();
 });
 
+test('Access token must be requested only once for multiple translation calls', async () => {
+	const translator = new MicrosoftTranslator();
+
+	await expect(
+		Promise.all([
+			translator.translate('Hello world', 'en', 'ja'),
+			translator.translate('Hello world', 'en', 'ja'),
+			translator.translate('Hello world', 'en', 'ja'),
+		]),
+	).resolves.not.toThrow();
+
+	expect(fetchMock.mock.calls).toEqual([
+		['https://edge.microsoft.com/translate/auth', expect.any(Object)],
+
+		[
+			expect.stringMatching(
+				'https://api-edge.cognitive.microsofttranslator.com/translate?',
+			),
+			expect.any(Object),
+		],
+		[
+			expect.stringMatching(
+				'https://api-edge.cognitive.microsofttranslator.com/translate?',
+			),
+			expect.any(Object),
+		],
+		[
+			expect.stringMatching(
+				'https://api-edge.cognitive.microsofttranslator.com/translate?',
+			),
+			expect.any(Object),
+		],
+	]);
+});
+
 describe('Access token must be reused during its lifetime', () => {
 	const translator = new MicrosoftTranslator({ tokenLifetime: 100_000 });
 	vi.setSystemTime(100_000);
