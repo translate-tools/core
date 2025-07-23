@@ -1,6 +1,6 @@
 {
 	"name": "anylang",
-	"version": "3.2.0",
+	"version": "3.2.1",
 	"description": "A translator's kit that uses the free APIs of Google Translate, Yandex, Bing, ChatGPT, and other LLMs",
 	"keywords": [
 		"translation",
