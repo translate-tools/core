@@ -163,10 +163,20 @@ export class MicrosoftTranslator extends BaseTranslator<{ tokenLifetime?: number
 					'sec-fetch-storage-access': 'active',
 				},
 				body: null,
-			}).then(({ data: token }) => {
-				this.token = { value: token, issuedAt: Date.now() };
-				return token;
-			});
+			})
+				.then(({ data: token, statusText, status, ok }) => {
+					if (!ok)
+						throw new Error(
+							statusText || `Unknown error with status ${status}`,
+						);
+
+					this.token = { value: token, issuedAt: Date.now() };
+					return token;
+				})
+				.catch((error: unknown) => {
+					this.token = null;
+					throw error;
+				});
 
 			return await this.token;
 		}
