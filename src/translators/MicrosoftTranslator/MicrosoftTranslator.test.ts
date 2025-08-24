@@ -112,3 +112,75 @@ describe('Access token must be reused during its lifetime', () => {
 		]);
 	});
 });
+
+describe('Requests must be retried for network errors', () => {
+	const translator = new MicrosoftTranslator({ tokenLifetime: 100_000 });
+
+	describe('Method "translate" will throw error if any problems with token fetching', () => {
+		test('Network errors for token fetching', async () => {
+			fetchMock.mockReturnValueOnce(
+				Promise.reject(new Error('Network error emulation')),
+			);
+
+			await expect(translator.translate('Hello world', 'en', 'ja')).rejects.toThrow(
+				'Network error emulation',
+			);
+
+			expect(fetchMock.mock.calls).toEqual([
+				['https://edge.microsoft.com/translate/auth', expect.any(Object)],
+			]);
+		});
+
+		test('Invalid response for token fetching', async () => {
+			fetchMock.mockReturnValueOnce(
+				Promise.resolve(
+					new Response('Invalid response', {
+						status: 404,
+					}),
+				),
+			);
+
+			await expect(translator.translate('Hello world', 'en', 'ja')).rejects.toThrow(
+				'Unknown error with status 404',
+			);
+
+			expect(fetchMock.mock.calls).toEqual([
+				['https://edge.microsoft.com/translate/auth', expect.any(Object)],
+			]);
+		});
+
+		test('Server errors for token fetching', async () => {
+			fetchMock.mockReturnValueOnce(
+				Promise.resolve(
+					new Response('Invalid response', {
+						status: 500,
+						statusText: 'Server error',
+					}),
+				),
+			);
+
+			await expect(translator.translate('Hello world', 'en', 'ja')).rejects.toThrow(
+				'Server error',
+			);
+
+			expect(fetchMock.mock.calls).toEqual([
+				['https://edge.microsoft.com/translate/auth', expect.any(Object)],
+			]);
+		});
+	});
+
+	test('Method "translate" will fetch token after network errors', async () => {
+		await expect(
+			translator.translate('Hello world', 'en', 'ja'),
+		).resolves.not.toThrow();
+		expect(fetchMock.mock.calls).toEqual([
+			['https://edge.microsoft.com/translate/auth', expect.any(Object)],
+			[
+				expect.stringMatching(
+					'https://api-edge.cognitive.microsofttranslator.com/translate?',
+				),
+				expect.any(Object),
+			],
+		]);
+	});
+});
