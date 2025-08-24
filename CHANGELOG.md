@@ -1,3 +1,7 @@
+# 3.2.2
+
+- [#131](https://github.com/translate-tools/core/pull/131) - fix MicrosoftTranslator errors while token fetching after network problems
+
 # 3.2.0
 
 - [#127](https://github.com/translate-tools/core/pull/127) - added text util to split long text into array of small strings
