@@ -1,3 +1,5 @@
+import { getLanguageCodesISO639 } from '../../../languages';
+
 import {
 	LLMTranslator,
 	LLMTranslatorRetryOptions,
@@ -37,13 +39,7 @@ export class ChatGPTLLMTranslator extends LLMTranslator {
 	public static getSupportedLanguages = (): string[] => {
 		// eslint-disable
 		// prettier-ignore
-		return [
-			"ar", "bn", "bg", "zh", "hr", "cs", "da", "nl", "en",
-			"et", "fa", "fi", "fr", "de", "el", "gu", "he", "hi", "hu",
-			"id", "it", "ja", "kn", "ko", "lv", "lt", "ml", "mr", "no",
-			"pl", "pt", "ro", "ru", "sr", "sk", "sl", "es", "sw", "sv",
-			"ta", "te", "th", "tr", "uk", "ur", "vi"
-		];
+		return getLanguageCodesISO639('v1');
 		// eslint-enable
 	};
 }
