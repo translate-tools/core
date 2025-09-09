@@ -3,20 +3,19 @@ import {
 	LLMTranslatorRetryOptions,
 	PromptGenerator,
 } from '../LLMTranslator';
-import { ChatGPTLLMFetcher } from './ChatGPTLLMFetcher';
+import { ChatGPTLLMFetcher, LLMOptions } from './ChatGPTLLMFetcher';
 
 export class ChatGPTLLMTranslator extends LLMTranslator {
-	constructor(config: {
-		apiKey: string;
-		model?: string;
-		getPrompt?: PromptGenerator;
-		apiOrigin?: string;
-		retryOptions?: LLMTranslatorRetryOptions;
-	}) {
+	constructor(
+		config: LLMOptions & {
+			getPrompt?: PromptGenerator;
+			retryOptions?: LLMTranslatorRetryOptions;
+		},
+	) {
 		const llm = new ChatGPTLLMFetcher({
 			apiKey: config.apiKey,
 			model: config.model,
-			apiOrigin: config.apiOrigin,
+			baseUrl: config.baseUrl,
 		});
 		super(llm, {
 			getPrompt: config.getPrompt,

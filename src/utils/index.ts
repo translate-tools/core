@@ -11,3 +11,4 @@ export * from './Semaphore';
 export * from './buffers';
 export * from './time';
 export * from './strings';
+export * from './url';
