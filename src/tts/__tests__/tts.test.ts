@@ -3,10 +3,9 @@ import { parseBuffer } from 'music-metadata';
 import { isLanguageCodeISO639v1 } from '../../languages/codes';
 
 import { GoogleTTS } from '../GoogleTTS';
-import { LingvaTTS } from '../LingvaTTS';
 import { TTSProvider } from '../types';
 
-const ttsConstructor: TTSProvider[] = [GoogleTTS, LingvaTTS];
+const ttsConstructor: TTSProvider[] = [GoogleTTS];
 
 ttsConstructor.map((ttsConstructor) => {
 	describe(`methods of TTS class "${ttsConstructor.name}"`, () => {

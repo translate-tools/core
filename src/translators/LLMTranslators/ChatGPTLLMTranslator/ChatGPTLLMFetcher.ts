@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { buildUrl } from '../../../utils';
+
 import { LLMFetcher } from '..';
 
 export const ChatGPTLLMResponseSchema = z.object({
@@ -9,25 +11,21 @@ export const ChatGPTLLMResponseSchema = z.object({
 		.min(1),
 });
 
+export type LLMOptions = {
+	apiKey: string;
+	model?: string;
+	baseUrl?: string;
+};
+
 export class ChatGPTLLMFetcher implements LLMFetcher {
-	private readonly apiUrl: string;
 	private readonly config;
 
-	constructor({
-		apiKey,
-		model,
-		apiOrigin,
-	}: {
-		apiKey: string;
-		model?: string;
-		apiOrigin?: string;
-	}) {
+	constructor({ apiKey, model, baseUrl }: LLMOptions) {
 		this.config = {
 			apiKey: apiKey,
 			model: model ?? 'gpt-4o-mini',
-			apiOrigin: apiOrigin ?? 'https://api.openai.com',
+			baseUrl: baseUrl ?? 'https://api.openai.com/v1',
 		};
-		this.apiUrl = new URL('/v1/chat/completions', this.config.apiOrigin).toString();
 	}
 
 	public getLengthLimit() {
@@ -39,7 +37,7 @@ export class ChatGPTLLMFetcher implements LLMFetcher {
 	}
 
 	public async fetch(prompt: string): Promise<string> {
-		const response = await fetch(this.apiUrl, {
+		const response = await fetch(buildUrl(this.config.baseUrl, '/chat/completions'), {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
