@@ -71,7 +71,7 @@ const translatorsWithOptions: TranslatorWithOptions[] = [
 		options: {
 			apiKey: process.env.TEST_CHATGPT_API_KEY,
 			model: 'openai/o3-mini',
-			apiOrigin: 'https://cryptotalks.ai',
+			baseUrl: 'https://openrouter.ai/api/v1',
 		},
 	},
 ];
@@ -115,6 +115,16 @@ const translatorsForTest: TranslatorWithOptions[] = [
 
 translatorsForTest.forEach(({ translator: translatorClass, options }) => {
 	const translatorName = translatorClass.translatorName;
+
+	const targetTranslators = process.env.TARGET_TRANSLATORS
+		? process.env.TARGET_TRANSLATORS.split(',')
+		: [];
+	if (targetTranslators.length > 0 && !targetTranslators.includes(translatorName)) {
+		console.warn(
+			`Skip tests for translator "${translatorName}". Target translators are ${targetTranslators.join(',')}`,
+		);
+		return;
+	}
 
 	const isKeyRequiredButNotSpecified =
 		translatorClass.isRequiredKey() && !options.apiKey;
