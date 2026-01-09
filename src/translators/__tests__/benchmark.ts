@@ -61,6 +61,7 @@ export async function getTranslatorsScore(
 
 		const score = await similarity.score(reference.translation, translation);
 		console.log(`Score is ${score}`);
+		console.log(`Translator ${translator.translatorName} result: ${translation}`);
 
 		translatorsScore[translator.translatorName] = score;
 	}
