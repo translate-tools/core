@@ -3,7 +3,7 @@ import queryString from 'query-string';
 import z from 'zod';
 
 import { BaseTranslator } from '../BaseTranslator';
-import { getYandexSID } from './getYandexSID';
+import { YandexSidFetcher } from './YandexSidFetcher';
 
 export class YandexTranslator extends BaseTranslator {
 	public static readonly translatorName = 'YandexTranslator';
@@ -55,8 +55,9 @@ export class YandexTranslator extends BaseTranslator {
 		return this.translateBatch([text], from, to).then((resp) => resp[0]);
 	}
 
+	private readonly sid = new YandexSidFetcher(this.fetch);
 	public async translateBatch(text: string[], from: string, to: string) {
-		const sid = await getYandexSID(this.fetch);
+		const sid = await this.sid.get();
 		if (sid === null) {
 			throw new Error('Invalid SID');
 		}
