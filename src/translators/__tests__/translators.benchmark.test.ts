@@ -2,7 +2,6 @@ import { GoogleTranslator, GoogleTranslatorTokenFree } from '../GoogleTranslator
 import { MicrosoftTranslator } from '../MicrosoftTranslator';
 import { TartuNLPTranslator } from '../TartuNLPTranslator';
 import { TranslatorConstructor } from '../Translator';
-import { YandexTranslator } from '../YandexTranslator';
 import { getTranslatorsScore } from './benchmark';
 
 const referenceText = `
@@ -32,7 +31,6 @@ Linguist бесплатный проект с открытым исходным 
 const translators: TranslatorConstructor[] = [
 	GoogleTranslator,
 	GoogleTranslatorTokenFree,
-	YandexTranslator,
 	TartuNLPTranslator,
 	MicrosoftTranslator,
 ];

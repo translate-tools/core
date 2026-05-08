@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 import { FeatureExtractionPipeline, pipeline } from '@xenova/transformers';
 
 import { TranslatorConstructor } from '../Translator';
@@ -20,7 +24,7 @@ class SimilarityScore {
 				this.pipe = null;
 				throw error;
 			},
-		);
+		) as Promise<FeatureExtractionPipeline>;
 		return this.pipe;
 	}
 

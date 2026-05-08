@@ -12,7 +12,6 @@ import { MicrosoftTranslator } from '../MicrosoftTranslator';
 import { TartuNLPTranslator } from '../TartuNLPTranslator';
 import { TranslatorConstructor } from '../Translator';
 import { LibreTranslateTranslator } from '../unstable/LibreTranslateTranslator';
-import { YandexTranslator } from '../YandexTranslator';
 
 const commonTranslatorOptions = {
 	headers: {
@@ -36,7 +35,6 @@ const targetTranslators = new Set(
 const translators: TranslatorConstructor[] = [
 	GoogleTranslator,
 	GoogleTranslatorTokenFree,
-	YandexTranslator,
 	TartuNLPTranslator,
 	MicrosoftTranslator,
 ].filter(
