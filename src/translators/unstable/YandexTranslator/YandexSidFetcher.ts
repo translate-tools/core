@@ -1,6 +1,6 @@
 // Source: https://github.com/FilipePS/Traduzir-paginas-web/blob/f3a4956a1aa96b7a9124864158a5200827694521/background/translationService.js
 
-import { Fetcher } from '../../utils/fetcher/types';
+import { Fetcher } from '../../../utils/fetcher/types';
 
 export class YandexSidFetcher {
 	constructor(private readonly fetcher: Fetcher) {}

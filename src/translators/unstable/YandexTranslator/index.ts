@@ -2,7 +2,8 @@ import { unescape } from 'lodash';
 import queryString from 'query-string';
 import z from 'zod';
 
-import { BaseTranslator } from '../BaseTranslator';
+import { BaseTranslator } from '../../BaseTranslator';
+
 import { YandexSidFetcher } from './YandexSidFetcher';
 
 export class YandexTranslator extends BaseTranslator {

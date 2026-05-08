@@ -82,7 +82,6 @@ Package includes translators implementations for most popular services.
 
 - `GoogleTranslator` and `GoogleTranslatorTokenFree` - both uses a free google translation API. The difference in details of implementation, so you may use any
 - `MicrosoftTranslator` - uses a free Microsoft's translation service that is used in Microsoft Edge browser
-- `YandexTranslator` - uses a free API of service https://translate.yandex.ru. This service have aggressive bots protection, so it sometimes show page with captcha challenge and blocks API requests until you go to page and will pass challenge or change your IP
 - `TartuNLPTranslator` - Uses a free API https://github.com/TartuNLP/translation-api built with TartuNLP's public NMT engines. Translator have good quality, but strict rate limits. See API docs: https://api.tartunlp.ai/translation/docs and Demo: https://translate.ut.ee/
 
 Example of use
@@ -108,6 +107,7 @@ Unstable translators **may be removed at any time**.
 
 - `DuckDuckGoLLMTranslator` - uses [Duck.ai](https://duck.ai) API that is a public proxy of OpenAI LLM service. Have strict rate limits
 - `LingvaTranslate` - uses public instances of [LingvaTranslate](https://github.com/thedaviddelta/lingva-translate) that is a Google Translate proxy
+- `YandexTranslator` - uses a free API of service https://translate.yandex.ru. This service have aggressive bots protection, so it sometimes show page with captcha challenge and blocks API requests until you go to page and will pass challenge or change your IP
 - `ReversoTranslator` - uses a free API of service https://www.reverso.net/text-translation
 
 Example of use
