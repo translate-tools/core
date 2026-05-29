@@ -1,5 +1,5 @@
 import queryString from 'query-string';
-import z from 'zod';
+import { z } from 'zod';
 
 import { BaseTranslator, TranslatorOptions } from '../../BaseTranslator';
 
