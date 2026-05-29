@@ -1,6 +1,6 @@
 import { unescape } from 'lodash';
 import queryString from 'query-string';
-import z from 'zod';
+import { z } from 'zod';
 
 import { BaseTranslator } from '../../BaseTranslator';
 
