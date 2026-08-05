@@ -7,6 +7,8 @@ export type TranslatorOption = {
 };
 
 export function createFallbackTranslator(translators: TranslatorOption[]) {
+	if (translators.length === 0) throw new Error('No translators provided');
+
 	const supportedLanguages = new Set<string>();
 	let isSupportedAutoFrom = false;
 	for (const translator of translators) {
@@ -64,7 +66,7 @@ export function createFallbackTranslator(translators: TranslatorOption[]) {
 			sourceLanguage: string,
 			targetLanguage: string,
 		) {
-			if (translators.length === 0) throw new Error('No translators provided');
+			if (translators.length === 0) throw new Error('Translators list is empty');
 
 			const startIndex = this.#currentTranslatorIndex ?? 0;
 			for (let attempt = 0; ; attempt++) {
