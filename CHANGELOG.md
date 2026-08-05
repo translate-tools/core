@@ -1,5 +1,7 @@
 # 4.0.0
 
+**Breaking change** - `MicrosoftTranslator` have been removed. Use `GoogleTranslator` instead.
+
 - [#146](https://github.com/translate-tools/core/pull/146) - translator MicrosoftTranslator is deleted
 - [#146](https://github.com/translate-tools/core/pull/146) - added primitive to implement fallbacks to a backup translators
 
