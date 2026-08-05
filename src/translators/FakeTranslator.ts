@@ -18,6 +18,13 @@ export class FakeTranslator extends BaseTranslator<{
 		return ['ru', 'en', 'de', 'ja'];
 	}
 
+	protected readonly config;
+	constructor({ prefix = '*' }: { prefix?: string } = {}) {
+		super();
+
+		this.config = { prefix };
+	}
+
 	public getLengthLimit() {
 		return 3000;
 	}
@@ -39,15 +46,13 @@ export class FakeTranslator extends BaseTranslator<{
 					: this.options.delay;
 		return new Promise<string>((resolve) => {
 			setTimeout(() => {
-				resolve(`*[${from}-${to}]` + text);
+				resolve(`${this.config.prefix}[${from}-${to}]` + text);
 			}, delay);
 		});
 	}
 
 	public translateBatch(text: string[], from: string, to: string) {
-		return Promise.all(
-			text.map((i) => this.translate(i, from, to).catch(() => null)),
-		);
+		return Promise.all(text.map((i) => this.translate(i, from, to)));
 	}
 }
 
