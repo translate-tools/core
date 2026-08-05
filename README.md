@@ -23,9 +23,9 @@ Install this package via `npm install anylang`
 Translate text with one of translators
 
 ```ts
-import { MicrosoftTranslator } from 'anylang/translators';
+import { GoogleTranslator } from 'anylang/translators';
 
-const translator = new MicrosoftTranslator();
+const translator = new GoogleTranslator();
 
 // You can translate single text
 translator.translate('Hello world', 'en', 'de').then(console.log);
@@ -81,7 +81,6 @@ Package includes translators implementations for most popular services.
 ## Free translators list
 
 - `GoogleTranslator` and `GoogleTranslatorTokenFree` - both uses a free google translation API. The difference in details of implementation, so you may use any
-- `MicrosoftTranslator` - uses a free Microsoft's translation service that is used in Microsoft Edge browser
 - `TartuNLPTranslator` - Uses a free API https://github.com/TartuNLP/translation-api built with TartuNLP's public NMT engines. Translator have good quality, but strict rate limits. See API docs: https://api.tartunlp.ai/translation/docs and Demo: https://translate.ut.ee/
 
 Example of use
