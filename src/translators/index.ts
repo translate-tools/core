@@ -4,7 +4,6 @@ export * from './FallbackTranslator';
 export * from './FakeTranslator';
 
 // Stable translators
-export * from './MicrosoftTranslator';
 export * from './GoogleTranslator';
 export * from './DeepLTranslator';
 export * from './TartuNLPTranslator';
