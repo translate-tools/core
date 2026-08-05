@@ -85,6 +85,14 @@ export function createFallbackTranslator(translators: TranslatorOption[]) {
 				)
 					continue;
 				if (!translatorInfo.languages.has(targetLanguage)) continue;
+				if (
+					translatorInfo.translator.checkDirection &&
+					!translatorInfo.translator.checkDirection(
+						sourceLanguage,
+						targetLanguage,
+					)
+				)
+					continue;
 
 				// Ensure safety in runtime
 				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
