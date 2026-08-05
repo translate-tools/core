@@ -3,20 +3,12 @@
 exports[`Top translators list with score 1`] = `
 [
   {
-    "name": "MicrosoftTranslator",
-    "score": 0.99,
-  },
-  {
     "name": "GoogleTranslator",
     "score": 0.98,
   },
   {
     "name": "GoogleTranslatorTokenFree",
     "score": 0.98,
-  },
-  {
-    "name": "TartuNLPTranslator",
-    "score": 0.97,
   },
 ]
 `;
