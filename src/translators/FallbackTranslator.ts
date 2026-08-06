@@ -32,15 +32,14 @@ export function createFallbackTranslator(
 		// eslint-disable-next-line class-methods-use-this
 		public checkDirection(sourceLanguage: string, targetLanguage: string) {
 			return translators.some(({ languages, languageDetection, translator }) => {
-				if (translator.checkDirection)
-					return translator.checkDirection(sourceLanguage, targetLanguage);
-
 				if (!languages.has(targetLanguage)) return false;
 
 				if (sourceLanguage === 'auto') {
 					if (!languageDetection) return false;
 				} else if (!languages.has(sourceLanguage)) return false;
 
+				if (translator.checkDirection)
+					return translator.checkDirection(sourceLanguage, targetLanguage);
 				return true;
 			});
 		}
