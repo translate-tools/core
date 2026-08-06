@@ -211,11 +211,11 @@ You may use `FakeTranslator` for test purposes. This translator is just returns 
 
 ### Fallback translator
 
-Sometimes the API server goes down and your requests fails. To solve that problem you can use a **fallback translator**.
+Sometimes an API server goes down and your requests fail. Use a **fallback translator** to continue with another service.
 
 You configure a proxy translator, pass the list with actual translators, and the first translator in list will be used until its failure.
 
-When translation methods throws, next translator will be used as a fallback.
+When a translation method throws or rejects, the next compatible translator will be used as a fallback.
 
 The example
 
