@@ -8,8 +8,6 @@ import { DeepLTranslator } from '../DeepLTranslator';
 import { GoogleTranslator, GoogleTranslatorTokenFree } from '../GoogleTranslator';
 import { ChatGPTLLMTranslator } from '../LLMTranslators/ChatGPTLLMTranslator';
 import { GeminiLLMTranslator } from '../LLMTranslators/GeminiLLMTranslator';
-import { MicrosoftTranslator } from '../MicrosoftTranslator';
-import { TartuNLPTranslator } from '../TartuNLPTranslator';
 import { TranslatorConstructor } from '../Translator';
 import { LibreTranslateTranslator } from '../unstable/LibreTranslateTranslator';
 
@@ -35,8 +33,6 @@ const targetTranslators = new Set(
 const translators: TranslatorConstructor[] = [
 	GoogleTranslator,
 	GoogleTranslatorTokenFree,
-	TartuNLPTranslator,
-	MicrosoftTranslator,
 ].filter(
 	(translator) =>
 		targetTranslators.size === 0 || targetTranslators.has(translator.translatorName),

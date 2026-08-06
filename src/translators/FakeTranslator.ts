@@ -2,12 +2,15 @@
 /* eslint-disable @typescript-eslint/require-await */
 import { BaseTranslator } from './BaseTranslator';
 
+type FakeTranslatorOptions = {
+	delay?: number | 'random';
+	prefix?: string;
+};
+
 /**
  * Fake translator for use in tests and debug
  */
-export class FakeTranslator extends BaseTranslator<{
-	delay?: number | 'random';
-}> {
+export class FakeTranslator extends BaseTranslator<FakeTranslatorOptions> {
 	public static readonly translatorName = 'FakeTranslator';
 
 	public static isSupportedAutoFrom() {
@@ -16,6 +19,10 @@ export class FakeTranslator extends BaseTranslator<{
 
 	public static getSupportedLanguages(): string[] {
 		return ['ru', 'en', 'de', 'ja'];
+	}
+
+	constructor(options: FakeTranslatorOptions = {}) {
+		super({ prefix: '*', ...options });
 	}
 
 	public getLengthLimit() {
@@ -39,15 +46,13 @@ export class FakeTranslator extends BaseTranslator<{
 					: this.options.delay;
 		return new Promise<string>((resolve) => {
 			setTimeout(() => {
-				resolve(`*[${from}-${to}]` + text);
+				resolve(`${this.options.prefix}[${from}-${to}]` + text);
 			}, delay);
 		});
 	}
 
 	public translateBatch(text: string[], from: string, to: string) {
-		return Promise.all(
-			text.map((i) => this.translate(i, from, to).catch(() => null)),
-		);
+		return Promise.all(text.map((i) => this.translate(i, from, to)));
 	}
 }
 

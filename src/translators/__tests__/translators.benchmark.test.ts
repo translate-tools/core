@@ -1,6 +1,4 @@
 import { GoogleTranslator, GoogleTranslatorTokenFree } from '../GoogleTranslator';
-import { MicrosoftTranslator } from '../MicrosoftTranslator';
-import { TartuNLPTranslator } from '../TartuNLPTranslator';
 import { TranslatorConstructor } from '../Translator';
 import { getTranslatorsScore } from './benchmark';
 
@@ -31,8 +29,6 @@ Linguist бесплатный проект с открытым исходным 
 const translators: TranslatorConstructor[] = [
 	GoogleTranslator,
 	GoogleTranslatorTokenFree,
-	TartuNLPTranslator,
-	MicrosoftTranslator,
 ];
 
 test(

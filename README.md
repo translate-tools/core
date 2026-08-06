@@ -23,9 +23,9 @@ Install this package via `npm install anylang`
 Translate text with one of translators
 
 ```ts
-import { MicrosoftTranslator } from 'anylang/translators';
+import { GoogleTranslator } from 'anylang/translators';
 
-const translator = new MicrosoftTranslator();
+const translator = new GoogleTranslator();
 
 // You can translate single text
 translator.translate('Hello world', 'en', 'de').then(console.log);
@@ -81,7 +81,6 @@ Package includes translators implementations for most popular services.
 ## Free translators list
 
 - `GoogleTranslator` and `GoogleTranslatorTokenFree` - both uses a free google translation API. The difference in details of implementation, so you may use any
-- `MicrosoftTranslator` - uses a free Microsoft's translation service that is used in Microsoft Edge browser
 - `TartuNLPTranslator` - Uses a free API https://github.com/TartuNLP/translation-api built with TartuNLP's public NMT engines. Translator have good quality, but strict rate limits. See API docs: https://api.tartunlp.ai/translation/docs and Demo: https://translate.ut.ee/
 
 Example of use
@@ -206,7 +205,55 @@ const paidTranslator = new LibreTranslateTranslator({
 
 ## Special translators
 
-You may use `FakeTranslator` for test purposes. This translator is just returns original strings with added prefix
+### Fake translator
+
+You may use `FakeTranslator` for test purposes. This translator is just returns original strings with added prefix.
+
+### Fallback translator
+
+Sometimes an API server goes down and your requests fail. Use a **fallback translator** to continue with another service.
+
+You configure a proxy translator, pass the list with actual translators, and the first translator in list will be used until its failure.
+
+When a translation method throws or rejects, the next compatible translator will be used as a fallback.
+
+The example
+
+```js
+import { createFallbackTranslator, YandexTranslator, GoogleTranslator, GoogleTranslatorTokenFree } from 'anylang/translators';
+
+const FallbackTranslator = createFallbackTranslator([
+	{
+		translator: new YandexTranslator(),
+		languages: new Set(YandexTranslator.getSupportedLanguages()),
+		languageDetection: YandexTranslator.isSupportedAutoFrom(),
+	},
+	{
+		translator: new GoogleTranslator(),
+		languages: new Set(GoogleTranslator.getSupportedLanguages()),
+		languageDetection: GoogleTranslator.isSupportedAutoFrom(),
+	},
+	{
+		translator: new GoogleTranslatorTokenFree(),
+		languages: new Set(GoogleTranslatorTokenFree.getSupportedLanguages()),
+		languageDetection: GoogleTranslatorTokenFree.isSupportedAutoFrom(),
+	},
+]);
+
+const translator = new FallbackTranslator({
+	// You can optionally set callback for errors in translators
+	onTranslatorError(error, translator) {
+		console.warn('Expected in translator', error, translator);
+	},
+});
+
+const translatedText = await translator.translate('Universe is a deep space', 'en', 'ja');
+// console.log(translatedText);
+```
+
+In case you will pass translators that support different language directions, the fallback translator will automatically search for the nearest translator with supported direction per each translation request.
+
+So you can use this approach to aggregate many translators with different features into one translator.
 
 
 # Advanced use of translators
