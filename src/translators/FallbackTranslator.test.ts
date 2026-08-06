@@ -38,8 +38,15 @@ test('Fallback translator must be used when preferred translator does not work',
 		},
 	]);
 
-	await expect(new FallbackTranslator().translate('foo', 'en', 'de')).resolves.toMatch(
-		/^\*2/,
+	const onTranslatorError = vi.fn();
+	await expect(
+		new FallbackTranslator({ onTranslatorError }).translate('foo', 'en', 'de'),
+	).resolves.toMatch(/^\*2/);
+
+	expect(onTranslatorError).toBeCalledTimes(1);
+	expect(onTranslatorError).toBeCalledWith(
+		expect.objectContaining({ message: 'Fake error' }),
+		translator1,
 	);
 });
 

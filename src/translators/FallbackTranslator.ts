@@ -1,12 +1,18 @@
-import { TranslatorInstanceMembers } from './Translator';
+import { TranslatorConstructor, TranslatorInstanceMembers } from './Translator';
 
-export type TranslatorOption = {
+export type TranslatorInstance = {
 	languages: Set<string>;
 	languageDetection: boolean;
 	translator: TranslatorInstanceMembers;
 };
 
-export function createFallbackTranslator(translators: TranslatorOption[]) {
+type FallbackTranslatorOptions = {
+	onTranslatorError?: (error: unknown, translator: TranslatorInstanceMembers) => void;
+};
+
+export function createFallbackTranslator(
+	translators: TranslatorInstance[],
+): TranslatorConstructor<TranslatorInstanceMembers, [FallbackTranslatorOptions] | []> {
 	if (translators.length === 0) throw new Error('No translators provided');
 
 	const supportedLanguages = new Set<string>();
@@ -55,7 +61,7 @@ export function createFallbackTranslator(translators: TranslatorOption[]) {
 		}
 
 		#currentTranslatorIndex;
-		constructor() {
+		constructor(private readonly options: FallbackTranslatorOptions = {}) {
 			this.#currentTranslatorIndex = translators.length > 0 ? 0 : null;
 		}
 
@@ -133,7 +139,11 @@ export function createFallbackTranslator(translators: TranslatorOption[]) {
 					}
 
 					return result;
-				} catch (_error) {
+				} catch (error) {
+					// Report error
+					if (this.options.onTranslatorError)
+						this.options.onTranslatorError(error, translator);
+
 					continue;
 				}
 			}
