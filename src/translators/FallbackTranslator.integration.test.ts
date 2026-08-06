@@ -5,24 +5,24 @@ import { YandexTranslator } from './unstable/YandexTranslator';
 
 const FallbackTranslator = createFallbackTranslator([
 	{
+		translator: new TartuNLPTranslator(),
 		languages: new Set(TartuNLPTranslator.getSupportedLanguages()),
 		languageDetection: TartuNLPTranslator.isSupportedAutoFrom(),
-		translator: new TartuNLPTranslator(),
 	},
 	{
+		translator: new YandexTranslator(),
 		languages: new Set(YandexTranslator.getSupportedLanguages()),
 		languageDetection: YandexTranslator.isSupportedAutoFrom(),
-		translator: new YandexTranslator(),
 	},
 	{
+		translator: new GoogleTranslator(),
 		languages: new Set(GoogleTranslator.getSupportedLanguages()),
 		languageDetection: GoogleTranslator.isSupportedAutoFrom(),
-		translator: new GoogleTranslator(),
 	},
 	{
+		translator: new GoogleTranslatorTokenFree(),
 		languages: new Set(GoogleTranslatorTokenFree.getSupportedLanguages()),
 		languageDetection: GoogleTranslatorTokenFree.isSupportedAutoFrom(),
-		translator: new GoogleTranslatorTokenFree(),
 	},
 ]);
 

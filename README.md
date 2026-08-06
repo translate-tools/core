@@ -205,7 +205,55 @@ const paidTranslator = new LibreTranslateTranslator({
 
 ## Special translators
 
-You may use `FakeTranslator` for test purposes. This translator is just returns original strings with added prefix
+### Fake translator
+
+You may use `FakeTranslator` for test purposes. This translator is just returns original strings with added prefix.
+
+### Fallback translator
+
+Sometimes the API server goes down and your requests fails. To solve that problem you can use a **fallback translator**.
+
+You configure a proxy translator, pass the list with actual translators, and the first translator in list will be used until its failure.
+
+When translation methods throws, next translator will be used as a fallback.
+
+The example
+
+```js
+import { createFallbackTranslator, YandexTranslator, GoogleTranslator, GoogleTranslatorTokenFree } from 'anylang/translators';
+
+const FallbackTranslator = createFallbackTranslator([
+	{
+		translator: new YandexTranslator(),
+		languages: new Set(YandexTranslator.getSupportedLanguages()),
+		languageDetection: YandexTranslator.isSupportedAutoFrom(),
+	},
+	{
+		translator: new GoogleTranslator(),
+		languages: new Set(GoogleTranslator.getSupportedLanguages()),
+		languageDetection: GoogleTranslator.isSupportedAutoFrom(),
+	},
+	{
+		translator: new GoogleTranslatorTokenFree(),
+		languages: new Set(GoogleTranslatorTokenFree.getSupportedLanguages()),
+		languageDetection: GoogleTranslatorTokenFree.isSupportedAutoFrom(),
+	},
+]);
+
+const translator = new FallbackTranslator({
+	// You can optionally set callback for errors in translators
+	onTranslatorError(error, translator) {
+		console.warn('Expected in translator', error, translator);
+	},
+});
+
+const translatedText = await translator.translate('Universe is a deep space', 'en', 'ja');
+// console.log(translatedText);
+```
+
+In case you will pass translators that support different language directions, the fallback translator will automatically search for the nearest translator with supported direction per each translation request.
+
+So you can use this approach to aggregate many translators with different features into one translator.
 
 
 # Advanced use of translators
